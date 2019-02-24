@@ -28,7 +28,6 @@ class ButtonViewController: UIViewController{
     var green: Bool = true
     var cur: Int = 0
     var correct: String = "nil"
-    var alert1: UIAlertController!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,10 +54,6 @@ class ButtonViewController: UIViewController{
         
         if username == "123"{
             
-            //let photoViewController = PhotoViewController(nibName: "PhotoViewController",bundle: nil)
-            
-            //counter = photoViewController.dictionary[which]
-            //print(photoViewController.dictionary)
             if diction.count == 4{
                 
                 let alert = UIAlertController(title: "确定用这四张图吗?", message: "", preferredStyle: .alert)
@@ -79,6 +74,10 @@ class ButtonViewController: UIViewController{
                     self.store.updateValue(self.diction[2]!, forKey: "pic2")
                     self.store.updateValue(self.diction[3]!, forKey: "pic3")
                     self.store.updateValue(self.diction[4]!, forKey: "pic4")
+                    
+                    let alert = UIAlertController(title: "请在下面输入答案选项", message: "", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "好", style: .default, handler: nil))
+                    self.present(alert, animated: true)
                     
                 }))
                 
@@ -131,8 +130,6 @@ class ButtonViewController: UIViewController{
             }
         }
     }
-    
-    
     
     @IBAction func action(_ sender: UIButton) {
         print("1")
@@ -207,8 +204,7 @@ extension ButtonViewController: UITextFieldDelegate{
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
         
-        if hao{
-            
+        if hao {
             
             if textField.text == store["op1"] as? String{
                 option1.resignFirstResponder()
@@ -228,11 +224,10 @@ extension ButtonViewController: UITextFieldDelegate{
                     self.option4.layer.borderWidth = 0.0
                 }))
                 
-                //self.present(alert, animated: true)
                 if presentedViewController == nil {
                     self.present(alert, animated: true, completion: nil)
                 } else {
-                    self.dismiss(animated: false) { () -> Void in
+                    self.dismiss(animated: true) { () -> Void in
                         self.present(alert, animated: true, completion: nil)
                     }
                 }
@@ -255,11 +250,10 @@ extension ButtonViewController: UITextFieldDelegate{
                     self.option4.layer.borderWidth = 0.0
                 }))
                 
-                //self.present(alert, animated: true)
                 if presentedViewController == nil {
                     self.present(alert, animated: true, completion: nil)
                 } else {
-                    self.dismiss(animated: false) { () -> Void in
+                    self.dismiss(animated: true) { () -> Void in
                         self.present(alert, animated: true, completion: nil)
                     }
                 }
@@ -282,11 +276,10 @@ extension ButtonViewController: UITextFieldDelegate{
                     self.option4.layer.borderWidth = 0.0
                 }))
                 
-                //self.present(alert, animated: true)
                 if presentedViewController == nil {
                     self.present(alert, animated: true, completion: nil)
                 } else {
-                    self.dismiss(animated: false) { () -> Void in
+                    self.dismiss(animated: true) { () -> Void in
                         self.present(alert, animated: true, completion: nil)
                     }
                 }
@@ -309,19 +302,17 @@ extension ButtonViewController: UITextFieldDelegate{
                     self.option4.layer.borderWidth = 0.0
                 }))
                 
-                //self.present(alert, animated: true)
                 if presentedViewController == nil {
                     self.present(alert, animated: true, completion: nil)
                 } else {
-                    self.dismiss(animated: false) { () -> Void in
+                    self.dismiss(animated: true) { () -> Void in
                         self.present(alert, animated: true, completion: nil)
                     }
                 }
             }
             
             green = false
-            
-            
+        
         }
         
         if textField == option1{
@@ -351,9 +342,9 @@ extension ButtonViewController: UITextFieldDelegate{
             
             if (store["op1"] as? String != "") && (store["op2"] as? String != "") &&   (store["op3"] as? String != "") && (store["op4"] as? String != ""){
             
-                alert1 = UIAlertController(title: "确定用这些选项吗?", message: "", preferredStyle: .alert)
+                let alert = UIAlertController(title: "确定用这些选项吗?", message: "", preferredStyle: .alert)
             
-                alert1.addAction(UIAlertAction(title: "确定", style: .default, handler: { action in
+                alert.addAction(UIAlertAction(title: "确定", style: .default, handler: { action in
                 
                     let alert = UIAlertController(title: "选择一个正确答案", message: "", preferredStyle: .alert)
                 
@@ -364,10 +355,9 @@ extension ButtonViewController: UITextFieldDelegate{
                 
                     self.hao = true
                     
-                    
                 }))
             
-                alert1.addAction(UIAlertAction(title: "再改改", style: .cancel, handler: { action in
+                alert.addAction(UIAlertAction(title: "再改改", style: .cancel, handler: { action in
                 
                     /*self.option1.isUserInteractionEnabled = true
                     self.option2.isUserInteractionEnabled = true
@@ -376,7 +366,7 @@ extension ButtonViewController: UITextFieldDelegate{
                     
                 }))
             
-                self.present(alert1, animated: true, completion: nil)
+                self.present(alert, animated: true)
                 
             }
         }
