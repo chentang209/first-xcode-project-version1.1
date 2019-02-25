@@ -103,7 +103,8 @@ class PhotoViewController: UIViewController, UIImagePickerControllerDelegate, UI
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage;dismiss(animated: true, completion: nil)
         
-        imageDisplay.image = self.scaleImageWith(image: pickedImage!, and: CGSize(width: 1000, height: 1000))
+        //imageDisplay.image = self.scaleImageWith(image: pickedImage!, and: CGSize(width: 281, height: 343))
+        imageDisplay.image = pickedImage
     }
     
     func scaleImageWith(image: UIImage, and newSize: CGSize)->UIImage{

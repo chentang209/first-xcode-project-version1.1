@@ -26,6 +26,9 @@
 		C2F6F97F221F7E0C002E67E2 /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2F6F97D221F7E0C002E67E2 /* Bolts.framework */; };
 		C2F6F983221FEFF0002E67E2 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F6F982221FEFF0002E67E2 /* LoginViewController.swift */; };
 		C2F6F98522200205002E67E2 /* SignupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F6F98422200205002E67E2 /* SignupViewController.swift */; };
+		C2F6F98722224D8D002E67E2 /* FullPicViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F6F98622224D8D002E67E2 /* FullPicViewController.swift */; };
+		C2F6F98922238207002E67E2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F6F98822238207002E67E2 /* ViewController.swift */; };
+		C2F6F9912223D5EC002E67E2 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F6F9902223D5EC002E67E2 /* TableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,6 +78,9 @@
 		C2F6F97D221F7E0C002E67E2 /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Bolts.framework; sourceTree = "<group>"; };
 		C2F6F982221FEFF0002E67E2 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		C2F6F98422200205002E67E2 /* SignupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupViewController.swift; sourceTree = "<group>"; };
+		C2F6F98622224D8D002E67E2 /* FullPicViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullPicViewController.swift; sourceTree = "<group>"; };
+		C2F6F98822238207002E67E2 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		C2F6F9902223D5EC002E67E2 /* TableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 		D14F35A1C008B719CB88E638 /* Pods_CameraApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CameraApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -117,7 +123,6 @@
 				586C7431EE0636A72147CE63 /* Pods-CameraApp.debug.xcconfig */,
 				B41C9502FCE96C75DE1C7339 /* Pods-CameraApp.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -163,15 +168,18 @@
 				C2E7818A21F677DD0023F4FB /* AppDelegate.swift */,
 				C2F6F97D221F7E0C002E67E2 /* Bolts.framework */,
 				C2F6F97C221F7E0B002E67E2 /* Parse.framework */,
+				C2E7818E21F677DD0023F4FB /* Main.storyboard */,
+				C2F6F9902223D5EC002E67E2 /* TableViewController.swift */,
+				C2F6F98822238207002E67E2 /* ViewController.swift */,
 				C2E7818C21F677DD0023F4FB /* ButtonViewController.swift */,
 				C2E400162204E8B200DA2F80 /* ShowViewController.swift */,
 				C2F6F982221FEFF0002E67E2 /* LoginViewController.swift */,
 				C2F6F98422200205002E67E2 /* SignupViewController.swift */,
-				C2E7818E21F677DD0023F4FB /* Main.storyboard */,
+				C2E781BA21F760680023F4FB /* PhotoViewController.swift */,
+				C2F6F98622224D8D002E67E2 /* FullPicViewController.swift */,
 				C2E7819121F677E00023F4FB /* Assets.xcassets */,
 				C2E7819321F677E00023F4FB /* LaunchScreen.storyboard */,
 				C2E7819621F677E00023F4FB /* Info.plist */,
-				C2E781BA21F760680023F4FB /* PhotoViewController.swift */,
 			);
 			path = CameraApp;
 			sourceTree = "<group>";
@@ -393,9 +401,12 @@
 				C2F6F98522200205002E67E2 /* SignupViewController.swift in Sources */,
 				C2E7818D21F677DD0023F4FB /* ButtonViewController.swift in Sources */,
 				C2E7818B21F677DD0023F4FB /* AppDelegate.swift in Sources */,
+				C2F6F9912223D5EC002E67E2 /* TableViewController.swift in Sources */,
 				C2E781BB21F760680023F4FB /* PhotoViewController.swift in Sources */,
 				C2F6F983221FEFF0002E67E2 /* LoginViewController.swift in Sources */,
 				C2E400172204E8B200DA2F80 /* ShowViewController.swift in Sources */,
+				C2F6F98922238207002E67E2 /* ViewController.swift in Sources */,
+				C2F6F98722224D8D002E67E2 /* FullPicViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

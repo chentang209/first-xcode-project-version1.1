@@ -29,6 +29,11 @@ class ButtonViewController: UIViewController{
     var cur: Int = 0
     var correct: String = "nil"
     
+    //override func viewWillAppear(_ animated: Bool) {
+      //  super.viewWillAppear(animated)
+        //navigationController?.setNavigationBarHidden(false, animated: animated)
+    //}
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -337,7 +342,6 @@ extension ButtonViewController: UITextFieldDelegate{
                 self.store.updateValue(option2.text! as AnyObject, forKey: "op2")
                 self.store.updateValue(option3.text! as AnyObject, forKey: "op3")
                 self.store.updateValue(option4.text! as AnyObject, forKey: "op4")
-                
             }
             
             if (store["op1"] as? String != "") && (store["op2"] as? String != "") &&   (store["op3"] as? String != "") && (store["op4"] as? String != ""){
@@ -357,14 +361,8 @@ extension ButtonViewController: UITextFieldDelegate{
                     
                 }))
             
-                alert.addAction(UIAlertAction(title: "再改改", style: .cancel, handler: { action in
-                
-                    /*self.option1.isUserInteractionEnabled = true
-                    self.option2.isUserInteractionEnabled = true
-                    self.option3.isUserInteractionEnabled = true
-                    self.option4.isUserInteractionEnabled = true*/
-                    
-                }))
+                alert.addAction(UIAlertAction(title: "再改改", style: .cancel, handler: nil
+                ))
             
                 self.present(alert, animated: true)
                 
@@ -398,11 +396,6 @@ extension ButtonViewController: UITextFieldDelegate{
         option4.resignFirstResponder()
         return true
     }
-    
-    /*override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        option1.resignFirstResponder()
-    }*/
-    
     
 }
 

@@ -9,6 +9,7 @@
 import UIKit
 import CloudKit
 import Parse
+var enter = true
 
 class ShowViewController: UIViewController {
     
@@ -32,6 +33,7 @@ class ShowViewController: UIViewController {
     var very : String!
     var pp : NSData!
     
+    
     let database = CKContainer.default().publicCloudDatabase
     
     override func viewDidLoad() {
@@ -39,23 +41,39 @@ class ShowViewController: UIViewController {
 
         self.navigationItem.hidesBackButton = true
         
+        if enter {
+            let alert = UIAlertController(title: "点击图片可放大🔍", message: "", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
+            self.present(alert, animated: true)
+        }
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(true)
-        
-        print("appear")
-       
+        //super.viewDidAppear(true)
     }
-    
     
     @IBAction func test(_ sender: UIButton) {
         print("test!")
     }
     
-
+    @IBAction func sendPic(_ sender: UIButton) {
+        enter = false
+        self.performSegue(withIdentifier: "sendSegue", sender: self)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?)
+    {
+        if segue.destination is FullPicViewController
+        {
+            let vc = segue.destination as? FullPicViewController
+            vc?.image = self.img
+        }
+    }
+    
     @IBAction func showact(_ sender: UIButton) {
       
+        /*
         let findDic = PFQuery(className: "Users")
         findDic.getFirstObjectInBackground{
         (obj: PFObject?, err: Error?) -> Void in
@@ -81,8 +99,24 @@ class ShowViewController: UIViewController {
                 print("7")
                 self.button2.setImage(self.img, for: [])
             }
+            */
             
-        }
+        
+            let user = PFUser.current()
+            let file = user!["avatar"]!
+            let group = DispatchGroup()
+            group.enter()
+        
+            (file as! PFFileObject).getDataInBackground{
+            (qData: Data?, error: Error?) -> Void in
+             
+                self.img = UIImage(data: qData!)
+        
+                group.leave()
+            }
+            group.notify(queue: .main) {
+                self.button2.setImage(self.img, for: [])
+            }
         
        // let query = CKQuery(recordType: "Question", predicate: NSPredicate(value: true))
         
@@ -248,5 +282,5 @@ class ShowViewController: UIViewController {
         
     }
 
-}
 
+}
