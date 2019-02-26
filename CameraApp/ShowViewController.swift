@@ -105,8 +105,8 @@ class ShowViewController: UIViewController {
             let user = PFUser.current()
             let file = user!["avatar"]!
             let group = DispatchGroup()
-            group.enter()
         
+            group.enter()
             (file as! PFFileObject).getDataInBackground{
             (qData: Data?, error: Error?) -> Void in
              
