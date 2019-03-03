@@ -9,12 +9,14 @@
 import UIKit
 import Parse
 
-class SearchViewController: UIViewController, UIGestureRecognizerDelegate, myTableDelegate{
+class SearchViewController: UIViewController, UIGestureRecognizerDelegate, myTableDelegate {
 
     @IBOutlet weak var tblView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
+    
     var userObj: PFObject!
     var searching = false
+    var arrayUserObj: [PFObject] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -77,8 +79,9 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: "IconCell") as! IconCell
 
         if searching {
+            
             cell.delegate = self
-            let target = self.userObj
+            let target = userObj
             let file = target!["avatar"]
             let username = target!["username"]
             var img: UIImage!
@@ -93,8 +96,10 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
             
                 group.leave()
             }
+            
             group.notify(queue: .main) {
-                cell.setAvatar(username: username as! String, icon: img)
+                
+                cell.setAvatar(username: username as! String, icon: img, search: self.searching)
                 
                 let alert = UIAlertController(title: "点击结果栏添加", message: "", preferredStyle: .alert)
                 
@@ -104,22 +109,90 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
                 
             }
             
+        } else {
+            
+            cell.setAvatar(username: "", icon: UIImage(), search: self.searching)
+        
         }
         
         return cell
         
     }
     
-    func myTableDelegate() {
-        let alert = UIAlertController(title: "是否添加该用户为好友？", message: "", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "是", style: .cancel, handler: {action in
-            print("wu tian jia")
+    func myTableDelegate(name: String) {
+        
+        if searching{
+            var array: [String] = []
+            var con = true
             
-        }))
-        
-        alert.addAction(UIAlertAction(title: "否", style: .default, handler: nil))
-        
-        self.present(alert, animated: true)
+            let list = PFUser.current()!["friendList"] as! [PFObject]
+            
+            for o in list {
+                let ta = o.objectId
+                let qt = PFUser.query()
+                qt?.whereKey("objectId", equalTo: ta)
+                let oo = try! qt?.getFirstObject()
+                let na = oo!["username"] as! String
+                array.append(na)
+            }
+            
+            for o in array {
+                if o == name {
+                    con = false
+                }
+            }
+            
+            if con {
+                
+                let str = PFUser.current()!["username"] as! String
+                
+                if name != str {
+                    
+                    let alert = UIAlertController(title: "是否添加该用户为好友", message: "", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "是", style: .cancel, handler: {action in
+                        
+                        self.arrayUserObj.append(self.userObj)
+                        let user = PFUser.current()!
+                        user.setObject(self.arrayUserObj, forKey: "friendList")
+                        
+                        user.saveInBackground{(success, error) in
+                            if success {
+                                print("friendlist saved")
+                            } else {
+                                if let error = error {
+                                    print(error)
+                                } else {
+                                    print("Error")
+                                }
+                            }
+                        }
+                        
+                    }))
+                    
+                    alert.addAction(UIAlertAction(title: "否", style: .default, handler: nil))
+                    
+                    self.present(alert, animated: true)
+                    
+                } else {
+                    
+                    let alert = UIAlertController(title: "不能添加自己为好友", message: "", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
+                    self.present(alert, animated: true)
+                    
+                }
+                
+            } else {
+                
+                let alert = UIAlertController(title: "你已经添加过该好友", message: "", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
+                self.present(alert, animated: true)
+                
+            }
+            
+        }
+    
     }
     
 }
+
+

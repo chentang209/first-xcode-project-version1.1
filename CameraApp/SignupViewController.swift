@@ -45,6 +45,10 @@ class SignupViewController: UIViewController {
         navigationController?.setNavigationBarHidden(true, animated: animated)
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
     
     @IBAction func changeAvatar(_ sender: UIButton) {
         let imagePicker = UIImagePickerController()
@@ -95,11 +99,21 @@ class SignupViewController: UIViewController {
             
             let file:PFFileObject = PFFileObject(data: avatar)!
             user.setObject(file, forKey:"avatar")
+            user.setObject([], forKey: "friendList")
+            user.setObject([], forKey: "receivedQuestions")
             user.signUpInBackground{
                 (result,error) -> Void in
             
                 if error == nil && result == true {
-                    //User was successfully created
+                    
+                    let alert = CustomAlert(title: "", image: UIImage(named: "enter")!)
+                    alert.show(animated: true)
+                    let when = DispatchTime.now() + 3
+                    DispatchQueue.main.asyncAfter(deadline: when){
+                        alert.dismiss(animated: true)
+                        self.performSegue(withIdentifier: "signupSuccess", sender: self)
+                    }
+                    
                 } else {
                     let alert = UIAlertController(title: error!.localizedDescription, message: "", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))

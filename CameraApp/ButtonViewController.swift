@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Parse
 
 class ButtonViewController: UIViewController{
     
@@ -175,6 +176,31 @@ class ButtonViewController: UIViewController{
             vc?.accept = store
         }
         
+        if segue.destination is FriendViewController
+        {
+            let vc = segue.destination as? FriendViewController
+            
+            let target = PFUser.current()
+            let file = target!["avatar"]
+            let username = target!["username"]
+            var img: UIImage!
+            let group = DispatchGroup()
+            group.enter()
+            
+            (file as! PFFileObject).getDataInBackground {
+                (data: Data?, error: Error?) -> Void in
+                img = UIImage(data: data!)
+                group.leave()
+            }
+           
+            group.notify(queue: .main){
+                self.store.updateValue(img, forKey: "self_icon")
+                self.store.updateValue(username as AnyObject, forKey: "self_name")
+                vc?.store = self.store
+                vc?.afterchuti = true
+            }
+        }
+        
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -298,6 +324,7 @@ extension ButtonViewController: UITextFieldDelegate{
                     self.correct = textField.text!
                     self.store.updateValue(self.correct as AnyObject, forKey: "correct")
                     self.performSegue(withIdentifier: "showSegue", sender: self)
+                    
                 }))
                 
                 alert.addAction(UIAlertAction(title: "再改改", style: .cancel, handler: { action in

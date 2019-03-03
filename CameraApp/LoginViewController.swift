@@ -30,9 +30,6 @@ class LoginViewController: UIViewController{
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
-        /*if PFUser.current() != nil{
-            self.performSegue(withIdentifier: "loginSuccess", sender: self)
-        }*/
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -49,17 +46,27 @@ class LoginViewController: UIViewController{
         if usernameTextField.text != "" && passwordTextField.text != "" {
             PFUser.logInWithUsername(inBackground: usernameTextField.text!, password: passwordTextField.text!) { (user, error) in
                 if let loggedInUser = user {
+                    
                     // User object isn't nill
                     // TODO: User logged in successfully, transition into homepage
                     self.user = loggedInUser
-                    self.performSegue(withIdentifier: "loginSuccess", sender: self)
+                    let alert = CustomAlert(title: "", image: UIImage(named: "enter")!)
+                    alert.show(animated: true)
+                    let when = DispatchTime.now() + 3
+                    DispatchQueue.main.asyncAfter(deadline: when){
+                        alert.dismiss(animated: true)
+                        self.performSegue(withIdentifier: "loginSuccess", sender: self)
+                    }
+                    
                 } else {
+                    
                     // User object is nil, check error parameter
                     print(error as Any)
                     
                     let alert = UIAlertController(title: "用户名或密码错误", message: "", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
                     self.present(alert, animated: true)
+                
                 }
             }
         } else {
@@ -82,7 +89,6 @@ class LoginViewController: UIViewController{
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
             //Dismiss the keyboards
             usernameTextField.resignFirstResponder()
             passwordTextField.resignFirstResponder()

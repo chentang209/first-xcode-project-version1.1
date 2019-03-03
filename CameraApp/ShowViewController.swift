@@ -33,8 +33,7 @@ class ShowViewController: UIViewController {
     var very : String!
     var pp : NSData!
     
-    
-    let database = CKContainer.default().publicCloudDatabase
+    //let database = CKContainer.default().publicCloudDatabase
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -73,7 +72,38 @@ class ShowViewController: UIViewController {
     
     @IBAction func showact(_ sender: UIButton) {
       
-        /*
+        let findD = PFQuery(className: "Users")
+        let u = try! findD.getFirstObject()
+        let y = u.objectId as! String
+        let x = u["Name"]
+        print(y)
+        print(x)
+        
+        let user = PFObject(className: "JoinTable")
+       
+        user.setObject("dduo" , forKey: "tu")
+        
+        user.saveInBackground{(success, error) in
+            if success {
+                print("tu saved")
+            } else {
+                if let error = error {
+                    print(error)
+                } else {
+                    print("Error")
+                }
+            }
+        }
+        
+        let findDi = PFQuery(className: "JoinTable")
+        let uu = try! findDi.getFirstObject()
+        let yy = uu.objectId as! String
+        let qq = uu["tu"]
+        print(yy)
+        print(qq)
+        
+        
+        
         let findDic = PFQuery(className: "Users")
         findDic.getFirstObjectInBackground{
         (obj: PFObject?, err: Error?) -> Void in
@@ -84,7 +114,7 @@ class ShowViewController: UIViewController {
             group.enter()
             pf.getDataInBackground{
                 (qData: Data?, error: Error?) -> Void in
-            
+         
                 let actualdic = try! JSONSerialization.jsonObject(with: qData!, options: []) as! [String : String]
                 let x = actualdic["pic3"]
                 print("5")
@@ -94,29 +124,29 @@ class ShowViewController: UIViewController {
                 print(actualdic["op3"] as Any)
                 group.leave()
             }
-            
+         
             group.notify(queue: .main) {
                 print("7")
                 self.button2.setImage(self.img, for: [])
             }
-            */
             
+        }
         
-            let user = PFUser.current()
-            let file = user!["avatar"]!
-            let group = DispatchGroup()
-        
-            group.enter()
-            (file as! PFFileObject).getDataInBackground{
-            (qData: Data?, error: Error?) -> Void in
-             
-                self.img = UIImage(data: qData!)
-        
-                group.leave()
-            }
-            group.notify(queue: .main) {
-                self.button2.setImage(self.img, for: [])
-            }
+//            let user = PFUser.current()
+//            let file = user!["avatar"]!
+//            let group = DispatchGroup()
+//
+//            group.enter()
+//            (file as! PFFileObject).getDataInBackground{
+//            (qData: Data?, error: Error?) -> Void in
+//
+//                self.img = UIImage(data: qData!)
+//
+//                group.leave()
+//            }
+//            group.notify(queue: .main) {
+//                self.button2.setImage(self.img, for: [])
+//            }
         
        // let query = CKQuery(recordType: "Question", predicate: NSPredicate(value: true))
         
