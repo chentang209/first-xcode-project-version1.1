@@ -94,9 +94,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         
         let configuration = ParseClientConfiguration {
-            $0.applicationId = "7ea0ab94ae2a30fdacc0903007dbd28690e32ff2"
-            $0.clientKey = "938ec1e70fb87d7b23ac4eef5e0fc5d516d3faaf"
-            $0.server = "http://ec2-3-86-52-13.compute-1.amazonaws.com/parse"
+            $0.applicationId = "63a761e0143dd8816731cb17c6c99fa3bdace703"
+            $0.clientKey = "d9db04be32714994dbef56f0ffd9a4d09785d4a4"
+            $0.server = "http://ec2-54-166-239-182.compute-1.amazonaws.com/parse"
         }
         Parse.initialize(with: configuration)
         
@@ -109,7 +109,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // PFFacebookUtils.initializeFacebook()
         // ****************************************************************************
         
-        PFUser.enableAutomaticUser()
+        //PFUser.enableAutomaticUser()
         
         let defaultACL = PFACL()
         

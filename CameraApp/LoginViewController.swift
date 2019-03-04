@@ -25,6 +25,18 @@ class LoginViewController: UIViewController{
         usernameTextField.delegate = self
         passwordTextField.delegate = self
         
+        if PFUser.current() != nil {
+            
+            let alert = CustomAlert(title: "", image: UIImage(named: "enter")!)
+            alert.show(animated: true)
+            let when = DispatchTime.now() + 3
+            DispatchQueue.main.asyncAfter(deadline: when){
+                alert.dismiss(animated: true)
+                self.performSegue(withIdentifier: "loginSuccess", sender: self)
+            }
+            
+        }
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {

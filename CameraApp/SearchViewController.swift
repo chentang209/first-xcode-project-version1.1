@@ -151,12 +151,18 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
                     let alert = UIAlertController(title: "是否添加该用户为好友", message: "", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "是", style: .cancel, handler: {action in
                         
+                        let current = PFUser.current()
+                        let friendList = current!["friendList"] as! [PFObject]
+                        self.arrayUserObj = friendList
                         self.arrayUserObj.append(self.userObj)
                         let user = PFUser.current()!
                         user.setObject(self.arrayUserObj, forKey: "friendList")
                         
                         user.saveInBackground{(success, error) in
                             if success {
+                                let alert = UIAlertController(title: "添加成功！", message: "", preferredStyle: .alert)
+                                alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
+                                self.present(alert, animated: true)
                                 print("friendlist saved")
                             } else {
                                 if let error = error {

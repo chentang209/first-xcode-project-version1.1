@@ -205,9 +205,9 @@ class ButtonViewController: UIViewController{
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
-        if (option1.text!.count > 6) || (option2.text!.count > 6)||(option3.text!.count > 6) || (option4.text!.count > 6){
+        if (option1.text!.count > 8) || (option2.text!.count > 8)||(option3.text!.count > 8) || (option4.text!.count > 8) {
             
-            let alert = UIAlertController(title: "选项长度不能大于6!", message: "", preferredStyle: .alert)
+            let alert = UIAlertController(title: "选项长度不能大于8!", message: "", preferredStyle: .alert)
             
             alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
             
@@ -364,14 +364,14 @@ extension ButtonViewController: UITextFieldDelegate{
     
         if green{
             
-            if textField.text!.count <= 6{
+            if textField.text!.count <= 8{
                 self.store.updateValue(option1.text! as AnyObject, forKey: "op1")
                 self.store.updateValue(option2.text! as AnyObject, forKey: "op2")
                 self.store.updateValue(option3.text! as AnyObject, forKey: "op3")
                 self.store.updateValue(option4.text! as AnyObject, forKey: "op4")
             }
             
-            if (store["op1"] as? String != "") && (store["op2"] as? String != "") &&   (store["op3"] as? String != "") && (store["op4"] as? String != ""){
+            if (store["op1"] as? String != "") && (store["op2"] as? String != "") && (store["op3"] as? String != "") && (store["op4"] as? String != "") {
             
                 let alert = UIAlertController(title: "确定用这些选项吗?", message: "", preferredStyle: .alert)
             
@@ -408,9 +408,9 @@ extension ButtonViewController: UITextFieldDelegate{
             self.present(alert, animated: true)
         }
         
-        if textField.text!.count > 6{
+        if textField.text!.count > 8{
             
-            let alert = UIAlertController(title: "选项长度不能大于6!", message: "", preferredStyle: .alert)
+            let alert = UIAlertController(title: "选项长度不能大于8!", message: "", preferredStyle: .alert)
             
             alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
             

@@ -20,7 +20,7 @@ class TableViewController: UIViewController, avatarDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationItem.hidesBackButton = true
-        
+       
         if first {
             let alert = UIAlertController(title: "稍等片刻，数据加载中......", message: "", preferredStyle: .alert)
             self.present(alert, animated: true)
@@ -55,6 +55,7 @@ class TableViewController: UIViewController, avatarDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        appendArray()
         self.navigationController!.navigationBar.setBackgroundImage(UIImage(named: "wood2"), for: .default)
     }
     
@@ -99,29 +100,51 @@ class TableViewController: UIViewController, avatarDelegate {
         let username = target!["username"]
         var img: UIImage!
         var ziji: Avatar!
-      
         let group = DispatchGroup()
-        group.enter()
         
+        group.enter()
         (file as! PFFileObject).getDataInBackground {
             (data: Data?, error: Error?) -> Void in
             img = UIImage(data: data!)!
-           
+            group.leave()
+        }
+        
+        group.notify(queue: .main){
+            
             ziji = Avatar(image: img, title: (username as! String) + "的好友列表")
             self.profile.append(ziji)
             self.tableView.reloadData()
+        
+        }
             
-            //let nowDate = DispatchTime.now()
-            //print(nowDate)
+    }
+    
+    func appendArray() {
+      
+        //let nowDate = DispatchTime.now()
+        //print(nowDate)
+        
+        let qe = PFQuery(className: "JoinTable")
+        qe.whereKey("to", equalTo: PFUser.current()!)
+        qe.findObjectsInBackground{ (objs:[PFObject]?, err:Error?) in
             
-            let qe = PFQuery(className: "JoinTable")
-            qe.whereKey("to", equalTo: PFUser.current()!)
-            qe.findObjectsInBackground{ (objs:[PFObject]?, err:Error?) in
-                
-                print(err?.localizedDescription)
-                
-                if let objs = objs {
+            print(err?.localizedDescription)
+            
+            if let objs = objs {
+                if self.profile.count == 0 {
+                   
+                    let alert = UIAlertController(title: "稍等片刻，数据加载中......", message: "", preferredStyle: .alert)
+                    self.present(alert, animated: true)
+                    let when = DispatchTime.now() + 3
+                    DispatchQueue.main.asyncAfter(deadline: when){
+                        alert.dismiss(animated: true)
+                    }
                     
+                } else {
+                
+                    let first = self.profile[0]
+                    self.profile.removeAll()
+                    self.profile.append(first)
                     for o in objs{
                         print("pao")
                         let dic = o["question"] as! [String : String]
@@ -150,25 +173,19 @@ class TableViewController: UIViewController, avatarDelegate {
                         //}
                         
                         //group.notify(queue: .main) {
-                          //  print("add")
-                          //  ziji = Avatar(image: img, title: title)
-                          //  self.profile.append(ziji)
+                        //  print("add")
+                        //  ziji = Avatar(image: img, title: title)
+                        //  self.profile.append(ziji)
+                        
                         self.profile.append(Avatar(image: tou!, title: title))
                         self.tableView.reloadData()
                         //}
-                        
                     }
                     
                 }
-               
+                
             }
-            
-            group.leave()
-            
-        }
-        
-        group.notify(queue: .main) {
-            print(self.profile.count)
+               
         }
             
     }
