@@ -8,18 +8,21 @@
 
 import UIKit
 import Parse
+import Foundation
 
 var first = true
 
 class TableViewController: UIViewController, avatarDelegate {
 
     @IBOutlet weak var tableView: UITableView!
-    var profile : [Avatar] = []
-    //var rxquestions = [Avatar]()
-
+    var profile: [Avatar] = []
+    var wentidic: [String : Any] = [ : ]
+    var sender: String!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.hidesBackButton = true
+        
+        navigationItem.hidesBackButton = true
        
         if first {
             let alert = UIAlertController(title: "稍等片刻，数据加载中......", message: "", preferredStyle: .alert)
@@ -43,9 +46,9 @@ class TableViewController: UIViewController, avatarDelegate {
         
         navigationItem.rightBarButtonItems = [logout, add, search]
         
-        search.imageInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: 0, right: -70);
-        add.imageInsets = UIEdgeInsets(top: 0.0, left: 35, bottom: 0, right: 25);
-        logout.imageInsets = UIEdgeInsets(top: 0.0, left: -55, bottom: 0, right: 0);
+        search.imageInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: 0, right: -70)
+        add.imageInsets = UIEdgeInsets(top: 0.0, left: 35, bottom: 0, right: 25)
+        logout.imageInsets = UIEdgeInsets(top: 0.0, left: -55, bottom: 0, right: 0)
         
         createArray()
         
@@ -54,13 +57,14 @@ class TableViewController: UIViewController, avatarDelegate {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        appendArray()
         self.navigationController!.navigationBar.setBackgroundImage(UIImage(named: "wood2"), for: .default)
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        appendArray()
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
         self.navigationController!.navigationBar.setBackgroundImage(UIImage(named: "white"), for: .default)
     }
     
@@ -111,7 +115,7 @@ class TableViewController: UIViewController, avatarDelegate {
         
         group.notify(queue: .main){
             
-            ziji = Avatar(image: img, title: (username as! String) + "的好友列表")
+            ziji = Avatar(image: img, title: (username as! String) + "的好友列表", id: "")
             self.profile.append(ziji)
             self.tableView.reloadData()
         
@@ -123,12 +127,12 @@ class TableViewController: UIViewController, avatarDelegate {
       
         //let nowDate = DispatchTime.now()
         //print(nowDate)
-        
+        print("appendArray")
         let qe = PFQuery(className: "JoinTable")
         qe.whereKey("to", equalTo: PFUser.current()!)
         qe.findObjectsInBackground{ (objs:[PFObject]?, err:Error?) in
             
-            print(err?.localizedDescription)
+            print(err?.localizedDescription as Any)
             
             if let objs = objs {
                 if self.profile.count == 0 {
@@ -145,10 +149,12 @@ class TableViewController: UIViewController, avatarDelegate {
                     let first = self.profile[0]
                     self.profile.removeAll()
                     self.profile.append(first)
-                    for o in objs{
-                        print("pao")
+                    for o in objs {
+                       
                         let dic = o["question"] as! [String : String]
                         let sender_name = dic["self_name"]
+                        let idd = o.objectId
+                        self.wentidic.updateValue(dic, forKey: idd!)
                         //let sender = o["from"] as! PFUser
                         //let id = sender.objectId
                         //let qq = PFUser.query()
@@ -160,7 +166,7 @@ class TableViewController: UIViewController, avatarDelegate {
                         let title = sender_name! + " : " + op1! + "......"
                         let self_icon = dic["self_icon"]
                         let pic_data = NSData(base64Encoded: self_icon!, options: [])
-                        let tou = UIImage(data: pic_data as! Data)
+                        let tou = UIImage(data: pic_data! as Data)
                         
                         //let file = user!["avatar"]
                         //let group = DispatchGroup()
@@ -177,7 +183,7 @@ class TableViewController: UIViewController, avatarDelegate {
                         //  ziji = Avatar(image: img, title: title)
                         //  self.profile.append(ziji)
                         
-                        self.profile.append(Avatar(image: tou!, title: title))
+                        self.profile.append(Avatar(image: tou!, title: title, id: idd as! String))
                         self.tableView.reloadData()
                         //}
                     }
@@ -209,7 +215,7 @@ extension TableViewController: UITableViewDataSource, UITableViewDelegate {
         let ziji = PFUser.current()
         let str = ziji!["username"]
         
-        if (profilerx.title as! String) == (str as! String) + "的好友列表" {
+        if (profilerx.title) == (str as! String) + "的好友列表" {
 
             cell.setAvatar1(profile: profilerx)
         
@@ -222,12 +228,15 @@ extension TableViewController: UITableViewDataSource, UITableViewDelegate {
         return cell
     }
     
-    func avatarDelegate(title: String) {
+    func avatarDelegate(title: String, id: String) {
         
         let ziji = PFUser.current()
         let str = ziji!["username"] as! String
         if title == str + "的好友列表" {
             performSegue(withIdentifier: "friendList", sender: self)
+        } else {
+            sender = id
+            performSegue(withIdentifier: "answerSegue", sender: self)
         }
         
     }
@@ -238,6 +247,15 @@ extension TableViewController: UITableViewDataSource, UITableViewDelegate {
         {
             let vc = segue.destination as? FriendViewController
             vc?.cond = true
+        }
+        
+        if segue.destination is AnswerViewController
+        {
+            let vc = segue.destination as? AnswerViewController
+            let objectId = self.sender
+            print("1: " + objectId!)
+            vc?.dict = wentidic[objectId!] as! [String : String]
+            vc?.objectId = objectId
         }
     }
     

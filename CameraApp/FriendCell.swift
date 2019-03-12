@@ -32,11 +32,12 @@ class FriendCell: UITableViewCell {
         super.awakeFromNib()
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapEdit(sender:)))
         addGestureRecognizer(tapGesture)
-        
+       
     }
     
     @objc func tapEdit(sender: UITapGestureRecognizer) {
         delegate?.myTableDelegate(id: friendName.text!,icon: friendIcon.image!)
     }
+    
     
 }

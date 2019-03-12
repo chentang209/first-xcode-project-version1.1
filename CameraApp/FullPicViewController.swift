@@ -11,14 +11,15 @@ import UIKit
 class FullPicViewController: UIViewController {
 
     @IBOutlet weak var mainView: UIImageView!
-    var image: UIImage!
-    
+    var image: UIImage = UIImage(named: "user")!
+    var dic: [String : String] = [ : ]
+    var objectId : String!
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         mainView.image = self.image
-        self.navigationController?.setNavigationBarHidden(true, animated: true)
-        
+    
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapHandler(sender:)))
         
         self.mainView.addGestureRecognizer(tapGestureRecognizer)
@@ -30,11 +31,29 @@ class FullPicViewController: UIViewController {
         return true
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
+    
     @objc func tapHandler(sender: UITapGestureRecognizer) {
         self.performSegue(withIdentifier: "backSegue", sender: self)
-        
     }
 
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?)
+    {
+        if segue.destination is AnswerViewController
+        {
+            let vc = segue.destination as? AnswerViewController
+            vc?.dict = dic
+            vc?.objectId = objectId
+            let trans = CATransition()
+            trans.type = CATransitionType.moveIn
+            trans.subtype = CATransitionSubtype.fromLeft
+            trans.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+            trans.duration = 0.35
+            self.navigationController?.view.layer.add(trans, forKey: nil)
+        }
+    }
     
-
 }

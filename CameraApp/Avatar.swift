@@ -13,10 +13,12 @@ class Avatar {
     
     var image: UIImage
     var title: String
+    var id: String
     
-    init(image: UIImage, title: String) {
+    init(image: UIImage, title: String, id: String) {
         self.image = image
         self.title = title
+        self.id = id
     }
 
 }

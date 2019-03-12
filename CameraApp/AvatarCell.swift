@@ -7,7 +7,7 @@
 //
 
 protocol avatarDelegate {
-    func avatarDelegate(title: String)
+    func avatarDelegate(title: String, id: String)
 }
 
 import UIKit
@@ -17,11 +17,13 @@ class AvatarCell: UITableViewCell {
     @IBOutlet weak var avatarImageView: UIImageView!
     @IBOutlet weak var questionTitleLabel: UILabel!
     var delegate: avatarDelegate?
+    var id: String!
     
     func setAvatar1(profile: Avatar) {
         
         avatarImageView.image = profile.image
         questionTitleLabel.text = profile.title
+        self.id = ""
         
         self.backgroundView = UIImageView(image: UIImage(named: "wood2")!)
         
@@ -31,6 +33,7 @@ class AvatarCell: UITableViewCell {
         
         avatarImageView.image = rx.image
         questionTitleLabel.text = rx.title
+        self.id = rx.id
         
         avatarImageView.clipsToBounds = true
         avatarImageView.layer.cornerRadius = avatarImageView.layer.frame.size.width/2
@@ -47,7 +50,7 @@ class AvatarCell: UITableViewCell {
     }
     
     @objc func tapEdit(sender: UITapGestureRecognizer) {
-        delegate?.avatarDelegate(title: questionTitleLabel.text!)
+        delegate?.avatarDelegate(title: questionTitleLabel.text!, id: id)
     }
     
 }

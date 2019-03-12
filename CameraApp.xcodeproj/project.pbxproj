@@ -12,6 +12,11 @@
 		C20DE6282228BB09005F1267 /* CustomAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20DE6272228BB09005F1267 /* CustomAlert.swift */; };
 		C20DE62A22295AA3005F1267 /* FriendViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20DE62922295AA3005F1267 /* FriendViewController.swift */; };
 		C2114C752229657600A01EE2 /* FriendCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2114C742229657600A01EE2 /* FriendCell.swift */; };
+		C211CB3B223481B600CA0D8F /* jinguanzhang.gif in Resources */ = {isa = PBXBuildFile; fileRef = C211CB3A223481B500CA0D8F /* jinguanzhang.gif */; };
+		C21C12A5223166110056CBB3 /* AnswerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C21C12A4223166100056CBB3 /* AnswerViewController.swift */; };
+		C21C12A72231D14A0056CBB3 /* ResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C21C12A62231D14A0056CBB3 /* ResultViewController.swift */; };
+		C22F62C622359F650062745E /* yanhua.gif in Resources */ = {isa = PBXBuildFile; fileRef = C22F62C522359F650062745E /* yanhua.gif */; };
+		C22F62C82235A4EC0062745E /* zhanghan.gif in Resources */ = {isa = PBXBuildFile; fileRef = C22F62C72235A4EC0062745E /* zhanghan.gif */; };
 		C2E400172204E8B200DA2F80 /* ShowViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E400162204E8B200DA2F80 /* ShowViewController.swift */; };
 		C2E4001B22052EED00DA2F80 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2E4001A22052EED00DA2F80 /* ExternalAccessory.framework */; };
 		C2E4001D22054C6E00DA2F80 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2E4001C22054C6E00DA2F80 /* CloudKit.framework */; };
@@ -63,6 +68,11 @@
 		C20DE6272228BB09005F1267 /* CustomAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlert.swift; sourceTree = "<group>"; };
 		C20DE62922295AA3005F1267 /* FriendViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendViewController.swift; sourceTree = "<group>"; };
 		C2114C742229657600A01EE2 /* FriendCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendCell.swift; sourceTree = "<group>"; };
+		C211CB3A223481B500CA0D8F /* jinguanzhang.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = jinguanzhang.gif; sourceTree = "<group>"; };
+		C21C12A4223166100056CBB3 /* AnswerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnswerViewController.swift; sourceTree = "<group>"; };
+		C21C12A62231D14A0056CBB3 /* ResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultViewController.swift; sourceTree = "<group>"; };
+		C22F62C522359F650062745E /* yanhua.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = yanhua.gif; path = ../../image/yanhua.gif; sourceTree = "<group>"; };
+		C22F62C72235A4EC0062745E /* zhanghan.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = zhanghan.gif; sourceTree = "<group>"; };
 		C25CDAB921F8B19A00BFDCDA /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
 		C25CDABA21F8B19B00BFDCDA /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		C2E400162204E8B200DA2F80 /* ShowViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowViewController.swift; sourceTree = "<group>"; };
@@ -185,6 +195,8 @@
 				C2F6F97D221F7E0C002E67E2 /* Bolts.framework */,
 				C2F6F97C221F7E0B002E67E2 /* Parse.framework */,
 				C2E7818E21F677DD0023F4FB /* Main.storyboard */,
+				C21C12A62231D14A0056CBB3 /* ResultViewController.swift */,
+				C21C12A4223166100056CBB3 /* AnswerViewController.swift */,
 				C20DE62922295AA3005F1267 /* FriendViewController.swift */,
 				C2F6F99822253C4A002E67E2 /* IconCell.swift */,
 				C2114C742229657600A01EE2 /* FriendCell.swift */,
@@ -201,6 +213,9 @@
 				C2F6F98422200205002E67E2 /* SignupViewController.swift */,
 				C2E781BA21F760680023F4FB /* PhotoViewController.swift */,
 				C2F6F98622224D8D002E67E2 /* FullPicViewController.swift */,
+				C22F62C72235A4EC0062745E /* zhanghan.gif */,
+				C22F62C522359F650062745E /* yanhua.gif */,
+				C211CB3A223481B500CA0D8F /* jinguanzhang.gif */,
 				C2E7819121F677E00023F4FB /* Assets.xcassets */,
 				C2E7819321F677E00023F4FB /* LaunchScreen.storyboard */,
 				C2E7819621F677E00023F4FB /* Info.plist */,
@@ -346,8 +361,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C211CB3B223481B600CA0D8F /* jinguanzhang.gif in Resources */,
+				C22F62C82235A4EC0062745E /* zhanghan.gif in Resources */,
 				C2E7819521F677E00023F4FB /* LaunchScreen.storyboard in Resources */,
 				C2E7819221F677E00023F4FB /* Assets.xcassets in Resources */,
+				C22F62C622359F650062745E /* yanhua.gif in Resources */,
 				C2E7819021F677DD0023F4FB /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -380,6 +398,7 @@
 				"${PODS_ROOT}/Target Support Files/Pods-CameraApp/Pods-CameraApp-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Bolts/Bolts.framework",
 				"${BUILT_PRODUCTS_DIR}/Parse/Parse.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftGifOrigin/SwiftGifOrigin.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
@@ -387,6 +406,7 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Bolts.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Parse.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftGifOrigin.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -423,6 +443,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C2F6F98522200205002E67E2 /* SignupViewController.swift in Sources */,
+				C21C12A72231D14A0056CBB3 /* ResultViewController.swift in Sources */,
 				C2E7818D21F677DD0023F4FB /* ButtonViewController.swift in Sources */,
 				C2E7818B21F677DD0023F4FB /* AppDelegate.swift in Sources */,
 				C2F6F9912223D5EC002E67E2 /* TableViewController.swift in Sources */,
@@ -434,6 +455,7 @@
 				C20DE6282228BB09005F1267 /* CustomAlert.swift in Sources */,
 				C2E400172204E8B200DA2F80 /* ShowViewController.swift in Sources */,
 				C2F6F9952224CF9B002E67E2 /* Avatar.swift in Sources */,
+				C21C12A5223166110056CBB3 /* AnswerViewController.swift in Sources */,
 				C20DE62A22295AA3005F1267 /* FriendViewController.swift in Sources */,
 				C20DE6262228BAC0005F1267 /* Modal.swift in Sources */,
 				C2F6F98922238207002E67E2 /* ViewController.swift in Sources */,

@@ -151,25 +151,78 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
                     let alert = UIAlertController(title: "是否添加该用户为好友", message: "", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "是", style: .cancel, handler: {action in
                         
+                        let alert = UIAlertController(title: "添加成功！", message: "", preferredStyle: .alert)
+                        self.present(alert, animated: true)
+                        
+                        let gp1 = DispatchGroup()
                         let current = PFUser.current()
                         let friendList = current!["friendList"] as! [PFObject]
                         self.arrayUserObj = friendList
                         self.arrayUserObj.append(self.userObj)
-                        let user = PFUser.current()!
-                        user.setObject(self.arrayUserObj, forKey: "friendList")
                         
-                        user.saveInBackground{(success, error) in
+                        current!.setObject(self.arrayUserObj, forKey: "friendList")
+                    
+                        gp1.enter()
+                        current!.saveInBackground{(success, error) in
                             if success {
-                                let alert = UIAlertController(title: "添加成功！", message: "", preferredStyle: .alert)
-                                alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
-                                self.present(alert, animated: true)
                                 print("friendlist saved")
+                                gp1.leave()
                             } else {
                                 if let error = error {
                                     print(error)
+                                    alert.dismiss(animated: true)
+                                    let alert = UIAlertController(title: "发生内部错误，请稍后再试", message: "", preferredStyle: .alert)
+                                    alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
+                                    self.present(alert, animated: true)
                                 } else {
                                     print("Error")
+                                    alert.dismiss(animated: true)
+                                    let alert = UIAlertController(title: "发生内部错误，请稍后再试", message: "", preferredStyle: .alert)
+                                    alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
+                                    self.present(alert, animated: true)
                                 }
+                            }
+                        }
+                        
+                        gp1.notify(queue: .main) {
+                            let gp2 = DispatchGroup()
+                            let groupACL = PFACL()
+                            groupACL.hasPublicReadAccess = true
+                            groupACL.hasPublicWriteAccess = true
+                            
+                            let rapport = PFObject(className: "Rapport")
+                            rapport.setObject([self.userObj.objectId : 0], forKey: "numOfQuestionToHim")
+                            rapport.setObject([self.userObj.objectId : 0], forKey: "numHisCorrect")
+                            rapport.acl = groupACL
+                            
+                            rapport.setObject(self.userObj as Any, forKey: "to")
+                            rapport.setObject(current as Any, forKey: "from")
+                            gp2.enter()
+                            rapport.saveInBackground{(success, error) in
+                                if success {
+                                    print("numOfQuestionToHim saved")
+                                    gp2.leave()
+                                } else {
+                                    if let error = error {
+                                        print(error)
+                                        alert.dismiss(animated: true)
+                                        let alert = UIAlertController(title: "发生内部错误，请稍后再试", message: "", preferredStyle: .alert)
+                                        alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
+                                        self.present(alert, animated: true)
+                                    } else {
+                                        print("numOfQuestionToHim error")
+                                        alert.dismiss(animated: true)
+                                        let alert = UIAlertController(title: "发生内部错误，请稍后再试", message: "", preferredStyle: .alert)
+                                        alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
+                                        self.present(alert, animated: true)
+                                    }
+                                }
+                            }
+                            gp2.notify(queue: .main) {
+                                alert.dismiss(animated: true)
+                                let alert = UIAlertController(title: "添加成功！", message: "", preferredStyle: .alert)
+                                alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
+                                self.present(alert, animated: true)
                             }
                         }
                         

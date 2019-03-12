@@ -29,6 +29,7 @@ class LoginViewController: UIViewController{
             
             let alert = CustomAlert(title: "", image: UIImage(named: "enter")!)
             alert.show(animated: true)
+            
             let when = DispatchTime.now() + 3
             DispatchQueue.main.asyncAfter(deadline: when){
                 alert.dismiss(animated: true)

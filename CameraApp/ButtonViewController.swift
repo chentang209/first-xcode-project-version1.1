@@ -263,7 +263,7 @@ extension ButtonViewController: UITextFieldDelegate{
                     }
                 }
                 
-            }else if textField.text == store["op2"] as? String{
+            } else if textField.text == store["op2"] as? String {
                 option2.resignFirstResponder()
                 self.option2.layer.borderWidth = 2.0
                 let alert = UIAlertController(title: "确定是这个答案吗?", message: "", preferredStyle: .alert)
@@ -289,7 +289,7 @@ extension ButtonViewController: UITextFieldDelegate{
                     }
                 }
                 
-            }else if textField.text == store["op3"] as? String{
+            } else if textField.text == store["op3"] as? String {
                 option3.resignFirstResponder()
                 self.option3.layer.borderWidth = 2.0
                 let alert = UIAlertController(title: "确定是这个答案吗?", message: "", preferredStyle: .alert)
@@ -315,7 +315,7 @@ extension ButtonViewController: UITextFieldDelegate{
                     }
                 }
                 
-            }else if textField.text == store["op4"] as? String{
+            } else if textField.text == store["op4"] as? String {
                 option4.resignFirstResponder()
                 self.option4.layer.borderWidth = 2.0
                 let alert = UIAlertController(title: "确定是这个答案吗?", message: "", preferredStyle: .alert)
@@ -349,11 +349,11 @@ extension ButtonViewController: UITextFieldDelegate{
         
         if textField == option1{
             cur = 1
-        }else if textField == option2{
+        } else if textField == option2 {
             cur = 2
-        }else if textField == option3{
+        } else if textField == option3 {
             cur = 3
-        }else if textField == option4{
+        } else if textField == option4 {
             cur = 4
         }
         
