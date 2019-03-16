@@ -220,9 +220,6 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
                             }
                             gp2.notify(queue: .main) {
                                 alert.dismiss(animated: true)
-                                let alert = UIAlertController(title: "添加成功！", message: "", preferredStyle: .alert)
-                                alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
-                                self.present(alert, animated: true)
                             }
                         }
                         

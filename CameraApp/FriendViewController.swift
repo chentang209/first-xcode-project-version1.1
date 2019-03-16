@@ -274,6 +274,18 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                     that.saveInBackground{ (success, error) in
                         if success {
                             print("numOfQuestionToHim saved")
+                        
+//                            let pushQuery = PFInstallation.query()
+//                            pushQuery?.whereKey("user", equalTo: user)
+//
+//                            let push = PFPush()
+//                            push.setQuery(pushQuery as! PFQuery<PFInstallation>)
+//                            let pushDictionary = ["alert": PFUser.current()!.value(forKey: "username") as! String + "给你出了一道题", "badge": "increment", "sound":"default"]
+//                        
+//                            push.setData(pushDictionary)
+//                            push.sendInBackground(block: nil)
+                            PFCloud.callFunction(inBackground: "SendPush", withParameters: ["someId": user.objectId , "someName": PFUser.current()!["username"]])
+                                
                             gp2.leave()
                         } else {
                             if let error = error {

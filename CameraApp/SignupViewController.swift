@@ -28,6 +28,7 @@ class SignupViewController: UIViewController {
     override func viewDidLoad() {
         
         super.viewDidLoad()
+        
         tapToChange.clipsToBounds = true;
         tapToChange.layer.cornerRadius = tapToChange.layer.frame.size.width/2;
         
@@ -41,13 +42,15 @@ class SignupViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+        
         navigationController?.setNavigationBarHidden(true, animated: animated)
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+        
         navigationController?.setNavigationBarHidden(false, animated: animated)
+    
     }
     
     @IBAction func changeAvatar(_ sender: UIButton) {
@@ -84,47 +87,72 @@ class SignupViewController: UIViewController {
         }
         
         if usernameTextField.text != "" && passwordTextField.text != "" && confirmTextField.text != "" {
-            let user = PFUser()
-            user.username = usernameTextField.text!
-            user.password = passwordTextField.text!
             
-            var avatar3: UIImage
-            var avatar: Data
-            if self.avatar2.size.equalTo(CGSize.zero) {
-                avatar3 = UIImage(named: "user")!
-                avatar = avatar3.jpegData(compressionQuality: 0.5)!
-            } else {
-                avatar = avatar2.jpegData(compressionQuality: 0.5)!
-            }
-            
-            let file:PFFileObject = PFFileObject(data: avatar)!
-            user.setObject(file, forKey:"avatar")
-            user.setObject([], forKey: "friendList")
-            user.setObject([], forKey: "receivedQuestions")
-            user.signUpInBackground{
-                (result,error) -> Void in
-            
-                if error == nil && result == true {
+            if confirmTextField.text == passwordTextField.text {
+                
+                let user = PFUser()
+                user.username = usernameTextField.text!
+                user.password = passwordTextField.text!
+                
+                var avatar3: UIImage
+                var avatar: Data
+                
+                if self.avatar2.size.equalTo(CGSize.zero) {
                     
-                    let alert = CustomAlert(title: "", image: UIImage(named: "enter")!)
-                    alert.show(animated: true)
-                    let when = DispatchTime.now() + 3
-                    DispatchQueue.main.asyncAfter(deadline: when){
-                        alert.dismiss(animated: true)
-                        self.performSegue(withIdentifier: "signupSuccess", sender: self)
+                    avatar3 = UIImage(named: "user")!
+                    avatar = avatar3.jpegData(compressionQuality: 0.5)!
+                
+                } else {
+                    
+                    avatar = avatar2.jpegData(compressionQuality: 0.5)!
+                
+                }
+                
+                let file:PFFileObject = PFFileObject(data: avatar)!
+                user.setObject(file, forKey:"avatar")
+                user.setObject([], forKey: "friendList")
+                user.setObject([], forKey: "receivedQuestions")
+                
+                
+                
+                user.signUpInBackground {
+                    (result,error) -> Void in
+                    
+                    if error == nil && result == true {
+                        
+                        let alert = CustomAlert(title: "", image: UIImage(named: "enter")!)
+                        alert.show(animated: true)
+                        
+                        let when = DispatchTime.now() + 3
+                        DispatchQueue.main.asyncAfter(deadline: when){
+                            alert.dismiss(animated: true)
+                            self.performSegue(withIdentifier: "signupSuccess", sender: self)
+                        }
+                        
+                    } else {
+                        
+                        let alert = UIAlertController(title: error!.localizedDescription, message: "", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
+                        self.present(alert, animated: true)
+                        
                     }
                     
-                } else {
-                    let alert = UIAlertController(title: error!.localizedDescription, message: "", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
-                    self.present(alert, animated: true)
                 }
+                
+            } else {
+                
+                let alert = UIAlertController(title: "密码不一致", message: "", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
+                self.present(alert, animated: true)
+                
             }
             
         } else {
+            
             let alert = UIAlertController(title: "横线不能为空", message: "", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
             self.present(alert, animated: true)
+        
         }
         
     }

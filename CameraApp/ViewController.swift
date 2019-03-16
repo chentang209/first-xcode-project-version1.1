@@ -17,7 +17,14 @@ class ViewController: UIViewController{
         super.viewDidLoad()
 
         self.navigationItem.hidesBackButton = true
-       
+        
+        user = PFUser.current()
+        
+        let pfi = PFInstallation.current()
+        pfi?.setObject(user, forKey: "user")
+        try! pfi?.save()
+        //PFCloud.callFunction(inBackground: "Installation", withParameters: ["someKey": user.objectId as! String])
+        
     }
     
 }

@@ -27,6 +27,7 @@ class ResultViewController: UIViewController {
     @IBOutlet weak var yun3: UIImageView!
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         
         view.backgroundColor = UIColor(patternImage: UIImage(named: "yunhai")!)
@@ -58,6 +59,7 @@ class ResultViewController: UIViewController {
         
         doStuff()
         calculate()
+        
     }
     
     func calculate() {
@@ -104,8 +106,11 @@ class ResultViewController: UIViewController {
                         let y = x[sender.objectId!]!
                         
                         if y == 0 {
+                            
                             self.text3.text = "快给TA出道题看看你们的默契度吧～"
+                            
                         } else {
+                            
                             let z = obj!["numHisCorrect"] as! [String : Int]
                             let t = z[sender.objectId!]!
                             let r: Double = Double(t) / Double(y)
@@ -113,17 +118,40 @@ class ResultViewController: UIViewController {
                             let n = Double(round(1000 * ratio)/1000)
                             let g = m * n
                             let h = Double(round(100000 * g)/1000)
-                            self.text3.text = "天作之合: 你俩的默契度为" + "\(h)" + "%"
+                            var level: String!
+                            
+                            switch h {
+                                
+                            case 0...7.5:
+                                level = "云泥之别"
+                                
+                            case 7.5...15:
+                                level = "人鬼殊途"
+                                
+                            case 15...25:
+                                level = "伯牙绝弦"
+                                
+                            case 25...40:
+                                level = "点头之交"
+                                
+                            case 40...60:
+                                level = "酒逢知己"
+                                
+                            case 60...80:
+                                level = "心有灵犀"
+                                
+                            default:
+                                level = "天造地设"
+                                
+                            }
+                            
+                            self.text3.text = level + ": 你俩的默契度为" + "\(h)" + "%"
                             
                         }
-                    
                     }
-                    
                 }
             }
-            
         }
-        
     }
     
     func doStuff() {
@@ -147,6 +175,7 @@ class ResultViewController: UIViewController {
                     }
                     
                 }
+            
             }
             gp.leave()
         }

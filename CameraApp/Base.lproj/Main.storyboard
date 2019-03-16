@@ -319,15 +319,15 @@
                             </textField>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="htP-pp-9aZ">
                                 <rect key="frame" x="131" y="409" width="149" height="46"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YMR-yq-X9I">
                                 <rect key="frame" x="0.0" y="397" width="140" height="58"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KHr-Ad-5yV">
                                 <rect key="frame" x="201" y="384" width="174" height="71"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="0.5409764051" blue="0.84731429820000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -598,15 +598,15 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="scaleToFill" fixedFrame="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="hrm-PS-v0T">
-                                <rect key="frame" x="41" y="114" width="292" height="202"/>
+                                <rect key="frame" x="41" y="84" width="292" height="258"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <string key="text">                            游戏说明                                                                              减肥都是解放军队手机费管理技术；过了犄角旮旯；时间管理的技术管理技术机构；老实交代了各级领导机关领导介绍了各级领导说；极光绿；激动死了过街老鼠大驾光临；短时间管理；简单来说；极光绿；冬季恋歌；激动了感觉；老实的结果了；绝世独立结果</string>
+                                <mutableString key="text">                             游戏说明                               欢迎来到看图猜词，下面为你简单介绍游戏玩法。在个人首页点击左上角添加好友（之后可在好友列表中左滑删除），中间加号出题给好友，右上角退出账号。当收到好友发来的题目系统会进行通知。首页点击好友题目开始作答。玩家需根据题目中的四张图片在下面的四个选项中选出好友设置的正确答案方才算答题成功，否则答题失败。答题结束后会出现你对当前好友的了解度以及你们之间的默契值。还等什么？赶紧开始游戏吧！                                                                                                                                                                      </mutableString>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sS8-vx-zVI">
-                                <rect key="frame" x="118" y="416" width="138" height="30"/>
+                                <rect key="frame" x="118" y="404" width="138" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="开始游戏"/>
                                 <connections>
@@ -944,7 +944,7 @@
     <inferredMetricsTieBreakers>
         <segue reference="weU-wb-Gd7"/>
         <segue reference="gPw-Kh-Rf9"/>
-        <segue reference="bJg-3i-Nd7"/>
+        <segue reference="Xet-MK-SmY"/>
         <segue reference="hYI-hF-d1i"/>
         <segue reference="ts0-aK-8r9"/>
         <segue reference="3AQ-nG-ZCf"/>

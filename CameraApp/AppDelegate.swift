@@ -94,9 +94,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         
         let configuration = ParseClientConfiguration {
-            $0.applicationId = "dfc5ea4ec7fe93f674626930fa8e92560195edf7"
+            $0.applicationId = "f4d64f96889116c7a911c11f2dbc7a3492973645"
             $0.clientKey = ""
-            $0.server = "http://ec2-3-85-15-218.compute-1.amazonaws.com/parse"
+            $0.server = "http://ec2-3-86-233-4.compute-1.amazonaws.com/parse"
         }
         Parse.initialize(with: configuration)
         
@@ -181,6 +181,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if application.applicationState == UIApplication.State.inactive {
             PFAnalytics.trackAppOpened(withRemoteNotificationPayload: userInfo)
         }
+    }
+    
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        UIApplication.shared.applicationIconBadgeNumber = 0
     }
     
     ///////////////////////////////////////////////////////////
