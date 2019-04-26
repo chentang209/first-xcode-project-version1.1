@@ -41,8 +41,8 @@ class TableViewController: UIViewController, avatarDelegate {
         self.tableView.backgroundView = tempImageView
         
         let add = UIBarButtonItem(image: UIImage(named: "givequestion")!.withRenderingMode(.alwaysOriginal), landscapeImagePhone: UIImage(named: "givequestion")!.withRenderingMode(.alwaysOriginal), style: .plain,  target: self, action: #selector(addTapped))
-        let search = UIBarButtonItem(title: "Search", style: .plain, target: self, action: #selector(searchTapped))
-        let logout = UIBarButtonItem(title: "Log out", style: .plain, target: self, action: #selector(logoutTapped))
+        let search = UIBarButtonItem(title: "搜索🔍", style: .plain, target: self, action: #selector(searchTapped))
+        let logout = UIBarButtonItem(title: "登出", style: .plain, target: self, action: #selector(logoutTapped))
         
         navigationItem.rightBarButtonItems = [logout, add, search]
         
@@ -247,6 +247,9 @@ extension TableViewController: UITableViewDataSource, UITableViewDelegate {
         {
             let vc = segue.destination as? FriendViewController
             vc?.cond = true
+            let backItem = UIBarButtonItem()
+            backItem.title = "返回"
+            navigationItem.backBarButtonItem = backItem
         }
         
         if segue.destination is AnswerViewController
@@ -256,6 +259,13 @@ extension TableViewController: UITableViewDataSource, UITableViewDelegate {
             print("1: " + objectId!)
             vc?.dict = wentidic[objectId!] as! [String : String]
             vc?.objectId = objectId
+        }
+        
+        if segue.destination is ButtonViewController
+        {
+            let backItem = UIBarButtonItem()
+            backItem.title = "返回"
+            navigationItem.backBarButtonItem = backItem
         }
     }
     

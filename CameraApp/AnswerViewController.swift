@@ -156,7 +156,6 @@ extension AnswerViewController: UITextFieldDelegate {
                 self.result = false
             }
             
-            //print("q: " + self.objectId)
             self.performSegue(withIdentifier: "resultSegue", sender: self)
         }))
         

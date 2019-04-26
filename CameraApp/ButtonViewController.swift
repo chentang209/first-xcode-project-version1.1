@@ -29,6 +29,7 @@ class ButtonViewController: UIViewController{
     var green: Bool = true
     var cur: Int = 0
     var correct: String = "nil"
+    var alertw: UIAlertController!
     
     //override func viewWillAppear(_ animated: Bool) {
       //  super.viewWillAppear(animated)
@@ -237,24 +238,26 @@ extension ButtonViewController: UITextFieldDelegate{
         
         if hao {
             
+            green = false
+            
             if textField.text == store["op1"] as? String{
                 option1.resignFirstResponder()
                 self.option1.layer.borderWidth = 2.0
                 let alert = UIAlertController(title: "确定是这个答案吗?", message: "", preferredStyle: .alert)
-                
+
                 alert.addAction(UIAlertAction(title: "确定", style: .default, handler: { action in
                     self.correct = textField.text!
                     self.store.updateValue(self.correct as AnyObject, forKey: "correct")
                     self.performSegue(withIdentifier: "showSegue", sender: self)
                 }))
-                
+
                 alert.addAction(UIAlertAction(title: "再改改", style: .cancel, handler: { action in
                     self.option1.layer.borderWidth = 0.0
                     self.option2.layer.borderWidth = 0.0
                     self.option3.layer.borderWidth = 0.0
                     self.option4.layer.borderWidth = 0.0
                 }))
-                
+
                 if presentedViewController == nil {
                     self.present(alert, animated: true, completion: nil)
                 } else {
@@ -343,7 +346,7 @@ extension ButtonViewController: UITextFieldDelegate{
                 }
             }
             
-            green = false
+            
         
         }
         
@@ -361,7 +364,7 @@ extension ButtonViewController: UITextFieldDelegate{
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-    
+       
         if green{
             
             if textField.text!.count <= 8{
@@ -372,27 +375,24 @@ extension ButtonViewController: UITextFieldDelegate{
             }
             
             if (store["op1"] as? String != "") && (store["op2"] as? String != "") && (store["op3"] as? String != "") && (store["op4"] as? String != "") {
+          
+                alertw = UIAlertController(title: "确定用这些选项吗?", message: "", preferredStyle: .alert)
             
-                let alert = UIAlertController(title: "确定用这些选项吗?", message: "", preferredStyle: .alert)
-            
-                alert.addAction(UIAlertAction(title: "确定", style: .default, handler: { action in
-                
+                alertw.addAction(UIAlertAction(title: "确定", style: .default, handler: { action in
+                   
                     let alert = UIAlertController(title: "选择一个正确答案", message: "", preferredStyle: .alert)
-                
-                    alert.addAction(UIAlertAction(title: "好", style: .default, handler: nil
-                    ))
-                
+                    alert.addAction(UIAlertAction(title: "好", style: .default, handler: nil))
                     self.present(alert, animated: true)
-                
-                    self.hao = true
                     
+                    self.hao = true
+                
                 }))
             
-                alert.addAction(UIAlertAction(title: "再改改", style: .cancel, handler: nil
+                alertw.addAction(UIAlertAction(title: "再改改", style: .cancel, handler: nil
                 ))
             
-                self.present(alert, animated: true)
-                
+                self.present(alertw, animated: true)
+            
             }
         }
     }

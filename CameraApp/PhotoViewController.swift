@@ -97,6 +97,9 @@ class PhotoViewController: UIViewController, UIImagePickerControllerDelegate, UI
             default: break
             }
             
+            let backItem = UIBarButtonItem()
+            backItem.title = "返回"
+            navigationItem.backBarButtonItem = backItem
         }
     }
     

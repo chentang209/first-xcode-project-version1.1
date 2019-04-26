@@ -163,8 +163,8 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
             
             alert.addAction(UIAlertAction(title: "确定", style: .default, handler: { action in
                 
-                let alert = UIAlertController(title: "数据传送中......", message: "", preferredStyle: .alert)
-                self.present(alert, animated: true)
+                var alertt = UIAlertController(title: "数据传送中......", message: "", preferredStyle: .alert)
+                self.present(alertt, animated: true)
                
                 var imageData:NSData = (self.store["pic1"] as! UIImage).jpegData(compressionQuality: 0)! as NSData
                 var strBase64 = imageData.base64EncodedString(options: [])
@@ -305,12 +305,15 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                     }
                     
                     gp2.notify(queue: .main) {
-                        alert.dismiss(animated: true)
-                        let alert = UIAlertController(title: "发送完毕！", message: "", preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "好👌", style: .default, handler: { action in
-                            self.performSegue(withIdentifier: "finishSendTi", sender: self)
-                        }))
-                        self.present(alert, animated: true)
+                        alertt.dismiss(animated: true){
+                            OperationQueue.main.addOperation {
+                                let alert = UIAlertController(title: "发送完毕！", message: "", preferredStyle: .alert)
+                                alert.addAction(UIAlertAction(title: "好👌", style: .default, handler: { action in
+                                    self.performSegue(withIdentifier: "finishSendTi", sender: self)
+                                }))
+                                self.present(alert, animated: true)
+                            }
+                        }
                     }
                 }
             })

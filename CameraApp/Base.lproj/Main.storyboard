@@ -82,7 +82,9 @@
                         <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
-                    <navigationItem key="navigationItem" id="mna-Nz-gkv"/>
+                    <navigationItem key="navigationItem" id="mna-Nz-gkv">
+                        <barButtonItem key="backBarButtonItem" title="返回" id="Gp4-QL-rMV"/>
+                    </navigationItem>
                     <connections>
                         <outlet property="button" destination="QwX-bM-e7t" id="iZh-Yd-JyM"/>
                         <outlet property="button2" destination="1qZ-f0-zya" id="Dak-bd-Yih"/>
@@ -601,7 +603,7 @@
                                 <rect key="frame" x="41" y="84" width="292" height="258"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <mutableString key="text">                             游戏说明                               欢迎来到看图猜词，下面为你简单介绍游戏玩法。在个人首页点击左上角添加好友（之后可在好友列表中左滑删除），中间加号出题给好友，右上角退出账号。当收到好友发来的题目系统会进行通知。首页点击好友题目开始作答。玩家需根据题目中的四张图片在下面的四个选项中选出好友设置的正确答案方才算答题成功，否则答题失败。答题结束后会出现你对当前好友的了解度以及你们之间的默契值。还等什么？赶紧开始游戏吧！                                                                                                                                                                      </mutableString>
+                                <string key="text">                             游戏说明                               欢迎来到看图猜词，下面为你简单介绍游戏玩法。在个人首页点击左上角添加好友（之后可在好友列表中左滑删除），中间加号出题给好友，右上角退出账号。当收到好友发来的题目系统会进行通知。首页点击好友题目开始作答。玩家需根据题目中的四张图片在下面的四个选项中选出好友设置的正确答案方才算答题成功，否则答题失败。答题结束后会出现你对当前好友的了解度以及你们之间的默契值。还等什么？赶紧开始游戏吧！                                                                                                                                                                      </string>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
@@ -617,7 +619,9 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="gJe-aN-dcS"/>
                     </view>
-                    <navigationItem key="navigationItem" id="C8S-7f-R6g"/>
+                    <navigationItem key="navigationItem" id="C8S-7f-R6g">
+                        <barButtonItem key="backBarButtonItem" title="返回" id="fbi-22-jhv"/>
+                    </navigationItem>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="CC6-Ih-J5F" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -766,7 +770,9 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="gSF-pZ-Mkm"/>
                     </view>
-                    <navigationItem key="navigationItem" id="DHP-ox-gpE"/>
+                    <navigationItem key="navigationItem" id="DHP-ox-gpE">
+                        <barButtonItem key="backBarButtonItem" title="返回" id="bpy-hZ-Pkm"/>
+                    </navigationItem>
                     <connections>
                         <outlet property="Login" destination="JOM-B6-8GX" id="eC4-Fi-490"/>
                         <outlet property="createNew" destination="MQ5-AE-4Io" id="aey-2h-IBD"/>
@@ -913,7 +919,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="L3c-fc-Tly" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="c1j-Rc-nx7">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" backIndicatorImage="返回" id="c1j-Rc-nx7">
                         <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -940,13 +946,14 @@
         <image name="plus" width="312" height="312"/>
         <image name="user" width="224" height="201"/>
         <image name="white" width="326" height="132"/>
+        <image name="返回" width="16" height="16"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="weU-wb-Gd7"/>
-        <segue reference="gPw-Kh-Rf9"/>
-        <segue reference="Xet-MK-SmY"/>
+        <segue reference="dKK-jz-gPm"/>
+        <segue reference="msc-TX-eu2"/>
         <segue reference="hYI-hF-d1i"/>
-        <segue reference="ts0-aK-8r9"/>
+        <segue reference="O3q-Eg-Bb5"/>
         <segue reference="3AQ-nG-ZCf"/>
     </inferredMetricsTieBreakers>
 </document>
