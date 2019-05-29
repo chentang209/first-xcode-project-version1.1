@@ -947,7 +947,7 @@
         <image name="line" width="196" height="64"/>
         <image name="login" width="250" height="117"/>
         <image name="login_bg" width="1022" height="541"/>
-        <image name="logo" width="16" height="16"/>
+        <image name="logo" width="172" height="239"/>
         <image name="plus" width="312" height="312"/>
         <image name="user" width="224" height="201"/>
         <image name="white" width="326" height="132"/>
