@@ -82,6 +82,7 @@ class LoginViewController: UIViewController{
                 
                 }
             }
+            
         } else {
             
             let alert = UIAlertController(title: "用户名和密码不能为空", message: "", preferredStyle: .alert)
@@ -94,11 +95,11 @@ class LoginViewController: UIViewController{
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
     {
-        if segue.destination is ViewController
-        {
-            let vc = segue.destination as? ViewController
-            vc?.user = self.user
-        }
+//        if segue.destination is ViewController
+//        {
+//            let vc = segue.destination as? ViewController
+//            vc?.user = self.user
+//        }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

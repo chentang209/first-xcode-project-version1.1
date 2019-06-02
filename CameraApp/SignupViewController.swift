@@ -29,8 +29,8 @@ class SignupViewController: UIViewController {
         
         super.viewDidLoad()
         
-        tapToChange.clipsToBounds = true;
-        tapToChange.layer.cornerRadius = tapToChange.layer.frame.size.width/2;
+        tapToChange.clipsToBounds = true
+        tapToChange.layer.cornerRadius = tapToChange.layer.frame.size.width/2
         
         submit.layer.cornerRadius = 30
         submit.clipsToBounds = true
@@ -80,7 +80,7 @@ class SignupViewController: UIViewController {
     
     @IBAction func signupTapped(_ sender: UIButton) {
 
-        print(" continue tapped")
+        print("continue tapped")
         let currentUser = PFUser.current();
         if (currentUser != nil) {
             PFUser.logOut();
@@ -110,12 +110,12 @@ class SignupViewController: UIViewController {
                 
                 let file:PFFileObject = PFFileObject(data: avatar)!
                 user.setObject(file, forKey:"avatar")
+                user.setObject([], forKey: "friendReqList")
                 user.setObject([], forKey: "friendList")
                 user.setObject([], forKey: "receivedQuestions")
                 
-                
-                
                 user.signUpInBackground {
+                    
                     (result,error) -> Void in
                     
                     if error == nil && result == true {

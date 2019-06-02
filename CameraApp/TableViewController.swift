@@ -11,20 +11,35 @@ import Parse
 import Foundation
 
 var first = true
+var bool = true
 
-class TableViewController: UIViewController, avatarDelegate {
-
+class TableViewController: UIViewController, avatarDelegate, friendDelegate, viewDelegate {
+    
     @IBOutlet weak var tableView: UITableView!
+    
     var profile: [Avatar] = []
     var wentidic: [String : Any] = [ : ]
     var sender: String!
     
+    func reactFriendRequest(bol: Bool) {
+        
+        bool = bol
+        print("\(bool)666")
+        //viewDidLoad()
+        
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+//        let getfBook = storyboard?.instantiateViewController(withIdentifier: "FriendViewController") as! FriendViewController
+//        let getfBook = FriendViewController()
+//        getfBook.friendDelegate = self
         
         navigationItem.hidesBackButton = true
        
         if first {
+            
             let alert = UIAlertController(title: "稍等片刻，数据加载中......", message: "", preferredStyle: .alert)
             self.present(alert, animated: true)
             let when = DispatchTime.now() + 3
@@ -32,6 +47,7 @@ class TableViewController: UIViewController, avatarDelegate {
                 alert.dismiss(animated: true)
             }
             first = false
+            
         }
         
         let tu = UIImage(named: "woodbackground")
@@ -41,7 +57,7 @@ class TableViewController: UIViewController, avatarDelegate {
         self.tableView.backgroundView = tempImageView
         
         let add = UIBarButtonItem(image: UIImage(named: "givequestion")!.withRenderingMode(.alwaysOriginal), landscapeImagePhone: UIImage(named: "givequestion")!.withRenderingMode(.alwaysOriginal), style: .plain,  target: self, action: #selector(addTapped))
-        let search = UIBarButtonItem(title: "搜索🔍", style: .plain, target: self, action: #selector(searchTapped))
+        let search = UIBarButtonItem(title: "🔍好友", style: .plain, target: self, action: #selector(searchTapped))
         let logout = UIBarButtonItem(title: "登出", style: .plain, target: self, action: #selector(logoutTapped))
         
         navigationItem.rightBarButtonItems = [logout, add, search]
@@ -57,10 +73,14 @@ class TableViewController: UIViewController, avatarDelegate {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        print("will")
+        self.tableView.reloadData()
         self.navigationController!.navigationBar.setBackgroundImage(UIImage(named: "wood2"), for: .default)
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        print("did")
+        //self.tableView.reloadData()
         appendArray()
     }
     
@@ -73,7 +93,22 @@ class TableViewController: UIViewController, avatarDelegate {
     }
     
     @objc func addTapped(sender: UITapGestureRecognizer) {
-        performSegue(withIdentifier: "chutiSegue", sender: self)
+        
+        let current = PFUser.current()
+        let friendList = current!["friendList"] as! [PFObject]
+        
+        if friendList.count == 0 {
+            let alert = UIAlertController(title: "请添加好友", message: "", preferredStyle: .alert)
+            self.present(alert, animated: true)
+            let when = DispatchTime.now() + 1
+            DispatchQueue.main.asyncAfter(deadline: when){
+                alert.dismiss(animated: true)
+            }
+        }
+        else {
+            performSegue(withIdentifier: "chutiSegue", sender: self)
+        }
+        
     }
     
     @objc func searchTapped(sender: UITapGestureRecognizer) {
@@ -100,22 +135,38 @@ class TableViewController: UIViewController, avatarDelegate {
     func createArray() {
         
         let target = PFUser.current()
-        let file = target!["avatar"]
+        //print(target!["username"])
+        //let file = target!["avatar"]
         let username = target!["username"]
         var img: UIImage!
         var ziji: Avatar!
         let group = DispatchGroup()
         
+//        group.enter()
+//        (file as! PFFileObject).getDataInBackground {
+//            (data: Data?, error: Error?) -> Void in
+//            print(error?.localizedDescription)
+//            img = UIImage(data: data!)!
+//            group.leave()
+//        }
+        
         group.enter()
-        (file as! PFFileObject).getDataInBackground {
-            (data: Data?, error: Error?) -> Void in
-            img = UIImage(data: data!)!
-            group.leave()
+        if let userPicture = target!.value(forKey: "avatar")! as? PFFileObject {
+            userPicture.getDataInBackground(block: {
+                (imageData, error) -> Void in
+                if (error == nil) {
+                    img = UIImage(data:imageData!)
+                } else {
+                    print(error?.localizedDescription)
+                    print("wawawwawaw")
+                }
+                group.leave()
+            })
         }
         
         group.notify(queue: .main){
             
-            ziji = Avatar(image: img, title: (username as! String) + "的好友列表", id: "")
+            ziji = Avatar(image: img, title: (username as! String) + "的好友列表", id: "", bool: bool)
             self.profile.append(ziji)
             self.tableView.reloadData()
         
@@ -125,8 +176,6 @@ class TableViewController: UIViewController, avatarDelegate {
     
     func appendArray() {
       
-        //let nowDate = DispatchTime.now()
-        //print(nowDate)
         print("appendArray")
         let qe = PFQuery(className: "JoinTable")
         qe.whereKey("to", equalTo: PFUser.current()!)
@@ -135,6 +184,7 @@ class TableViewController: UIViewController, avatarDelegate {
             print(err?.localizedDescription as Any)
             
             if let objs = objs {
+                
                 if self.profile.count == 0 {
                    
                     let alert = UIAlertController(title: "稍等片刻，数据加载中......", message: "", preferredStyle: .alert)
@@ -145,47 +195,32 @@ class TableViewController: UIViewController, avatarDelegate {
                     }
                     
                 } else {
-                
+                    
+                    self.profile[0].bool = bool
                     let first = self.profile[0]
                     self.profile.removeAll()
                     self.profile.append(first)
+                    
                     for o in objs {
                        
-                        let dic = o["question"] as! [String : String]
-                        let sender_name = dic["self_name"]
-                        let idd = o.objectId
-                        self.wentidic.updateValue(dic, forKey: idd!)
-                        //let sender = o["from"] as! PFUser
-                        //let id = sender.objectId
-                        //let qq = PFUser.query()
-                        //qq?.whereKey("objectId", equalTo: id)
-                        //let user = try! qq?.getFirstObject()
-                        //let name = user!["username"] as! String
-                        //print(name)
-                        let op1 = dic["op1"]
-                        let title = sender_name! + " : " + op1! + "......"
-                        let self_icon = dic["self_icon"]
-                        let pic_data = NSData(base64Encoded: self_icon!, options: [])
-                        let tou = UIImage(data: pic_data! as Data)
+                        if o["request"] == nil {
+                            
+                            let dic = o["question"] as! [String : String]
+                            let sender_name = dic["self_name"]
+                            let idd = o.objectId
+                            self.wentidic.updateValue(dic, forKey: idd!)
                         
-                        //let file = user!["avatar"]
-                        //let group = DispatchGroup()
-                        //group.enter()
+                            let op1 = dic["op1"]
+                            let title = sender_name! + " : " + op1! + "......"
+                            let self_icon = dic["self_icon"]
+                            let pic_data = NSData(base64Encoded: self_icon!, options: [])
+                            let tou = UIImage(data: pic_data! as Data)
                         
-                        //(file as! PFFileObject).getDataInBackground {
-                        //    (data: Data?, error: Error?) -> Void in
-                        //    img = UIImage(data: data!)!
-                        //    group.leave()
-                        //}
+                            self.profile.append(Avatar(image: tou!, title: title, id: idd as! String, bool: bool))
+                            self.tableView.reloadData()
+                
+                        }
                         
-                        //group.notify(queue: .main) {
-                        //  print("add")
-                        //  ziji = Avatar(image: img, title: title)
-                        //  self.profile.append(ziji)
-                        
-                        self.profile.append(Avatar(image: tou!, title: title, id: idd as! String))
-                        self.tableView.reloadData()
-                        //}
                     }
                     
                 }
@@ -193,7 +228,9 @@ class TableViewController: UIViewController, avatarDelegate {
             }
                
         }
-            
+        
+        self.tableView.reloadData()
+    
     }
    
 }
@@ -228,8 +265,36 @@ extension TableViewController: UITableViewDataSource, UITableViewDelegate {
         return cell
     }
     
-    func avatarDelegate(title: String, id: String) {
+    func reddot(bol: String) {
+
+        print("0000000000000")
+
+        if bol != "false" {
+            bool = false
+            print(bool)
+        } else {
+            bool = true
+            print(bool)
+        }
+
+    }
+    
+    func redot(bol: String) {
         
+        print("1111111111111111g")
+        
+        if bol != "false" {
+            bool = false
+            print(bool)
+        } else {
+            bool = true
+            print(bool)
+        }
+        
+    }
+    
+    func avatarDelegate(title: String, id: String) {
+       
         let ziji = PFUser.current()
         let str = ziji!["username"] as! String
         if title == str + "的好友列表" {
@@ -247,6 +312,7 @@ extension TableViewController: UITableViewDataSource, UITableViewDelegate {
         {
             let vc = segue.destination as? FriendViewController
             vc?.cond = true
+            vc?.friendDelegate = self
             let backItem = UIBarButtonItem()
             backItem.title = "返回"
             navigationItem.backBarButtonItem = backItem

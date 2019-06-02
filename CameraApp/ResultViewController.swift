@@ -13,7 +13,9 @@ import SwiftGifOrigin
 class ResultViewController: UIViewController {
 
     var result = false
-    var objectId : String!
+    var objectId: String!
+    var ratio: Double!
+    var flag: Bool!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var crowView: UIImageView!
     @IBOutlet weak var yanhuaView: UIImageView!
@@ -30,6 +32,8 @@ class ResultViewController: UIViewController {
         
         super.viewDidLoad()
         
+        flag = false
+        
         view.backgroundColor = UIColor(patternImage: UIImage(named: "yunhai")!)
         
         fanhui.layer.cornerRadius = 15
@@ -42,6 +46,7 @@ class ResultViewController: UIViewController {
         fanhui.isUserInteractionEnabled = false
         
         if result {
+            
             imageView.loadGif(name: "zhanghan")
             yanhuaView.loadGif(name: "yanhua")
             text2.text = "Congratulations!"
@@ -49,12 +54,15 @@ class ResultViewController: UIViewController {
             DispatchQueue.main.asyncAfter(deadline: when){
                 self.yanView.loadGif(name: "yanhua")
             }
+            
         } else {
+            
             imageView.loadGif(name: "jinguanzhang")
             text2.text = "Sorry, you're wrong"
             text2.textColor = UIColor.red
             let images = createImageArray(total: 5)
             animate(imageView: crowView, images: images)
+        
         }
         
         doStuff()
@@ -67,92 +75,152 @@ class ResultViewController: UIViewController {
         let pfq = PFQuery(className: "JoinTable")
         pfq.whereKey("objectId", equalTo: objectId)
         pfq.getFirstObjectInBackground { (object, err) in
+            
             let sender = object!["from"] as! PFUser
             let pfq = PFQuery(className: "Rapport")
+            let gp = DispatchGroup()
             pfq.whereKey("to", equalTo: PFUser.current()!)
             pfq.whereKey("from", equalTo: sender)
-            let rapport = try! pfq.getFirstObject()
-            let numqmap = rapport["numOfQuestionToHim"] as! [String : Int]
-            var correctmap = rapport["numHisCorrect"] as! [String : Int]
-            let numq = numqmap[PFUser.current()!.objectId!]!
-            var correct = correctmap[PFUser.current()!.objectId!]!
-            if self.result {
-                correct = correct + 1
-                correctmap.updateValue(correct, forKey: PFUser.current()!.objectId!)
-                rapport.setObject(correctmap, forKey: "numHisCorrect")
-                try! rapport.save()
-            }
-            let ratio: Double = Double(correct) / Double(numq)
-            let y = Double(round(100000 * ratio)/1000)
-            self.text1.text = "你对TA的了解: " + "\(y)" + "%"
             
-            let pq = PFQuery(className: "Rapport")
-            pq.whereKey("from", equalTo: PFUser.current()!)
-            pq.whereKey("to", equalTo: sender)
-            pq.getFirstObjectInBackground { (obj, err) in
-                if obj == nil {
-                    self.text3.text = "快添加对方为好友进行游戏吧～"
+            gp.enter()
+            
+            let rapport = pfq.findObjectsInBackground { (objs, error) in
+                
+                let obj = objs?.first
+                
+                if  obj == nil {
+                    
+                    self.text1.text = "你对TA的了解: N/A"
+                    self.text3.text = "你还不是TA的好友，请发送好友请求"
+                    self.flag = true
+                    
                 } else {
-                    if let error = err {
+                    
+                    let numqmap = obj!["numOfQuestionToHim"] as! [String : Int]
+                    var correctmap = obj!["numHisCorrect"] as! [String : Int]
+                    let numq = numqmap[PFUser.current()!.objectId!]!
+                    var correct = correctmap[PFUser.current()!.objectId!]!
+                    
+                    if self.result {
                         
-                        print(error)
-                        let alert = UIAlertController(title: "发生内部错误，请稍后再试", message: "", preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
-                        self.present(alert, animated: true)
+                        correct = correct + 1
+                        correctmap.updateValue(correct, forKey: PFUser.current()!.objectId!)
+                        obj!.setObject(correctmap, forKey: "numHisCorrect")
+                        try! obj!.save()
                         
-                    } else {
+                    }
+                    
+                    self.ratio = Double(correct) / Double(numq)
+                    let y = Double(round(100000 * self.ratio)/1000)
+                    self.text1.text = "你对TA的了解: " + "\(y)" + "%"
+                    
+                }
+                
+                gp.leave()
+                
+            }
+            
+            gp.notify(queue: .main) {
+                
+                let pq = PFQuery(className: "Rapport")
+                pq.whereKey("from", equalTo: PFUser.current()!)
+                pq.whereKey("to", equalTo: sender)
+                pq.getFirstObjectInBackground { (obj, err) in
+                    
+                    if obj == nil {
                         
-                        let x = obj!["numOfQuestionToHim"] as! [String : Int]
-                        let y = x[sender.objectId!]!
-                        
-                        if y == 0 {
+                        if self.flag == false {
                             
-                            self.text3.text = "快给TA出道题看看你们的默契度吧～"
+                            self.text3.text = "快添加对方为好友进行游戏吧～"
                             
                         } else {
                             
-                            let z = obj!["numHisCorrect"] as! [String : Int]
-                            let t = z[sender.objectId!]!
-                            let r: Double = Double(t) / Double(y)
-                            let m = Double(round(1000 * r)/1000)
-                            let n = Double(round(1000 * ratio)/1000)
-                            let g = m * n
-                            let h = Double(round(100000 * g)/1000)
-                            var level: String!
+                            self.text3.text = "你还不是TA的好友，请发送好友请求"
                             
-                            switch h {
+                        }
+                        
+                    } else {
+                        
+                        if let error = err {
+                            
+                            print(error)
+                            let alert = UIAlertController(title: "发生内部错误，请稍后再试", message: "", preferredStyle: .alert)
+                            alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
+                            self.present(alert, animated: true)
+                            
+                        } else {
+                            
+                            let x = obj!["numOfQuestionToHim"] as! [String : Int]
+                            let y = x[sender.objectId!]!
+                            
+                            if y == 0 {
                                 
-                            case 0...7.5:
-                                level = "云泥之别"
+                                if self.flag == false {
+                                    
+                                    self.text3.text = "快给TA出道题看看你们的默契度吧～"
+                                    
+                                } else {
+                                    
+                                    self.text3.text = "你还不是TA的好友，请发送好友请求"
+                                    
+                                }
                                 
-                            case 7.5...15:
-                                level = "人鬼殊途"
+                            } else {
                                 
-                            case 15...25:
-                                level = "伯牙绝弦"
-                                
-                            case 25...40:
-                                level = "点头之交"
-                                
-                            case 40...60:
-                                level = "酒逢知己"
-                                
-                            case 60...80:
-                                level = "心有灵犀"
-                                
-                            default:
-                                level = "天造地设"
+                                if self.flag == false {
+                                    
+                                    let z = obj!["numHisCorrect"] as! [String : Int]
+                                    let t = z[sender.objectId!]!
+                                    let r: Double = Double(t) / Double(y)
+                                    let m = Double(round(1000 * r)/1000)
+                                    let n = Double(round(1000 * self.ratio)/1000)
+                                    let g = m * n
+                                    let h = Double(round(100000 * g)/1000)
+                                    var level: String!
+                                    
+                                    switch h {
+                                        
+                                    case 0...7.5:
+                                        level = "云泥之别"
+                                        
+                                    case 7.5...15:
+                                        level = "人鬼殊途"
+                                        
+                                    case 15...25:
+                                        level = "伯牙绝弦"
+                                        
+                                    case 25...40:
+                                        level = "点头之交"
+                                        
+                                    case 40...60:
+                                        level = "酒逢知己"
+                                        
+                                    case 60...80:
+                                        level = "心有灵犀"
+                                        
+                                    default:
+                                        level = "天造地设"
+                                        
+                                    }
+                                    
+                                    self.text3.text = level + ": 你俩的默契度为" + "\(h)" + "%"
+                                    
+                                }
                                 
                             }
                             
-                            self.text3.text = level + ": 你俩的默契度为" + "\(h)" + "%"
-                            
                         }
+                        
                     }
+                    
                 }
+                
             }
+            
         }
+        
     }
+        
     
     func doStuff() {
         

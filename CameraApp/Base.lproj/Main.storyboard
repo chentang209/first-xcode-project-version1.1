@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="L3c-fc-Tly">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="L3c-fc-Tly">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -105,7 +105,7 @@
         <!--Friend View Controller-->
         <scene sceneID="lBg-5j-g1N">
             <objects>
-                <viewController id="B8J-yc-wE8" customClass="FriendViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="FriendViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="B8J-yc-wE8" customClass="FriendViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="lBM-U0-5ex">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -551,6 +551,10 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RTN-5O-ZNe">
+                                                    <rect key="frame" x="87" y="3" width="13" height="13"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                                </button>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstAttribute="trailingMargin" secondItem="Rmw-5s-YFd" secondAttribute="trailing" constant="12" id="DJx-VW-zDv"/>
@@ -563,6 +567,7 @@
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="avatarImageView" destination="s8f-EQ-EeT" id="P3x-0T-dIG"/>
+                                            <outlet property="dot" destination="RTN-5O-ZNe" id="Lp4-0b-ffJ"/>
                                             <outlet property="questionTitleLabel" destination="Rmw-5s-YFd" id="Ygw-wM-Kt3"/>
                                         </connections>
                                     </tableViewCell>
@@ -603,7 +608,7 @@
                                 <rect key="frame" x="41" y="84" width="292" height="258"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <string key="text">                             游戏说明                               欢迎来到看图猜词，下面为你简单介绍游戏玩法。在个人首页点击左上角添加好友（之后可在好友列表中左滑删除），中间加号出题给好友，右上角退出账号。当收到好友发来的题目系统会进行通知。首页点击好友题目开始作答。玩家需根据题目中的四张图片在下面的四个选项中选出好友设置的正确答案方才算答题成功，否则答题失败。答题结束后会出现你对当前好友的了解度以及你们之间的默契值。还等什么？赶紧开始游戏吧！                                                                                                                                                                      </string>
+                                <mutableString key="text">                             游戏说明                               欢迎来到友谊小船，下面为你简单介绍游戏玩法。在个人首页点击左上角添加好友（之后可在好友列表中左滑删除），中间加号出题给好友，右上角退出账号。当收到好友发来的题目系统会进行通知。首页点击好友题目开始作答。玩家需根据题目中的四张图片在下面的四个选项中选出好友设置的正确答案方才算答题成功，否则答题失败。答题结束后会出现你对当前好友的了解度以及你们之间的默契值。还等什么？赶紧开始游戏吧！                                                                                                                                                                      </mutableString>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
@@ -799,7 +804,7 @@
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qjl-t6-k8v">
                                 <rect key="frame" x="143" y="92" width="88" height="88"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                 <state key="normal" backgroundImage="user"/>
                                 <connections>
                                     <action selector="changeAvatar:" destination="NKb-GC-VY5" eventType="touchUpInside" id="H4t-p7-3ef"/>
@@ -943,17 +948,17 @@
         <image name="login" width="250" height="117"/>
         <image name="login_bg" width="1022" height="541"/>
         <image name="logo" width="172" height="239"/>
-        <image name="plus" width="312" height="312"/>
+        <image name="plus" width="1300" height="1300"/>
         <image name="user" width="224" height="201"/>
         <image name="white" width="326" height="132"/>
         <image name="返回" width="16" height="16"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="weU-wb-Gd7"/>
-        <segue reference="dKK-jz-gPm"/>
-        <segue reference="msc-TX-eu2"/>
+        <segue reference="gPw-Kh-Rf9"/>
+        <segue reference="Xet-MK-SmY"/>
         <segue reference="hYI-hF-d1i"/>
-        <segue reference="O3q-Eg-Bb5"/>
+        <segue reference="ts0-aK-8r9"/>
         <segue reference="3AQ-nG-ZCf"/>
     </inferredMetricsTieBreakers>
 </document>

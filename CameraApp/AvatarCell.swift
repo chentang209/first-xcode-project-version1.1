@@ -13,7 +13,8 @@ protocol avatarDelegate {
 import UIKit
 
 class AvatarCell: UITableViewCell {
-
+   
+    @IBOutlet weak var dot: UIButton!
     @IBOutlet weak var avatarImageView: UIImageView!
     @IBOutlet weak var questionTitleLabel: UILabel!
     var delegate: avatarDelegate?
@@ -23,10 +24,19 @@ class AvatarCell: UITableViewCell {
         
         avatarImageView.image = profile.image
         questionTitleLabel.text = profile.title
+        
         self.id = ""
         
         self.backgroundView = UIImageView(image: UIImage(named: "wood2")!)
         
+        dot.isUserInteractionEnabled = false
+        dot.setImage(UIImage(named: "red"), for: [])
+        dot.clipsToBounds = true
+        dot.layer.cornerRadius = dot.layer.frame.size.width/2
+        dot.isHidden = profile.bool
+        print("VVVVVV")
+        print(dot.isHidden)
+   
     }
     
     func setAvatar2(rx: Avatar) {

@@ -63,7 +63,7 @@ import Parse
 // import ParseUI
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     
     var window: UIWindow?
     
@@ -94,13 +94,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         
         let configuration = ParseClientConfiguration {
-            $0.applicationId = "f4d64f96889116c7a911c11f2dbc7a3492973645"
+            $0.applicationId = "e9fbaa7fe3121203cf5e630d73b65b1383485e61"
             $0.clientKey = ""
-            $0.server = "http://ec2-3-86-233-4.compute-1.amazonaws.com/parse"
+            $0.server = "http://ec2-52-72-76-183.compute-1.amazonaws.com/parse"
         }
         Parse.initialize(with: configuration)
         
-        
+        UNUserNotificationCenter.current().delegate = self
         
         // ****************************************************************************
         // If you are using Facebook, uncomment and add your FacebookAppID to your bundle's plist as
@@ -177,14 +177,43 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
+        
         PFPush.handle(userInfo)
         if application.applicationState == UIApplication.State.inactive {
             PFAnalytics.trackAppOpened(withRemoteNotificationPayload: userInfo)
         }
+        
+        let tableViewController = TableViewController()
+        
+        if (((userInfo["aps"] as! NSDictionary)["alert"]) as! String).contains("请求添加你为好友") {
+            
+            print("execute")
+            tableViewController.reactFriendRequest(bol: false)
+        
+        }
+        
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
+        
         UIApplication.shared.applicationIconBadgeNumber = 0
+        let pfi = PFInstallation.current()
+        pfi?.setObject(0, forKey: "badge")
+        try! pfi?.save()
+
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        
+        let tableViewController = TableViewController()
+        print("original identifier was : \(response.notification.request.identifier)")
+        print("original body was : \(response.notification.request.content.body)")
+        print("Tapped in notification")
+        
+        if (response.notification.request.content.body).contains("\\U8bf7\\U6c42\\U6dfb\\U52a0\\U4f60\\U4e3a\\U597d\\U53cb") {
+            tableViewController.reactFriendRequest(bol: false)
+        }
+            
     }
     
     ///////////////////////////////////////////////////////////
