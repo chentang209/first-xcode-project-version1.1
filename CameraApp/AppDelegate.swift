@@ -94,7 +94,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         
         
         let configuration = ParseClientConfiguration {
-            $0.applicationId = "e9fbaa7fe3121203cf5e630d73b65b1383485e61"
+            $0.applicationId = "9cb653153a25de700fb6472c96b6dc3b4b3e8dfa"
             $0.clientKey = ""
             $0.server = "http://ec2-52-72-76-183.compute-1.amazonaws.com/parse"
         }
