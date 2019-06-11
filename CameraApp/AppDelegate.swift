@@ -76,23 +76,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         // Initialize Parse SDK
         // ****************************************************************************
         
-        /*let configuration = ParseClientConfiguration {
-            // Add your Parse applicationId:
-            $0.applicationId = "your_application_id"
-            // Uncomment and add your clientKey (it's not required if you are using Parse Server):
-            $0.clientKey = "your_client_key"
-            
-            // Uncomment the following line and change to your Parse Server address;
-            $0.server = "http://ec2-3-86-52-13.compute-1.amazonaws.com/parse"
-            
-            // Enable storing and querying data from Local Datastore.
-            // Remove this line if you don't want to use Local Datastore features or want to use cachePolicy.
-            //$0.isLocalDatastoreEnabled = true
-        }
-        Parse.initialize(with: configuration)
-        */
-        
-        
         let configuration = ParseClientConfiguration {
             $0.applicationId = "9cb653153a25de700fb6472c96b6dc3b4b3e8dfa"
             $0.clientKey = ""
