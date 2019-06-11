@@ -8,7 +8,6 @@
 
 import UIKit
 import Parse
-//import SwiftGifOrigin
 
 class SearchViewController: UIViewController, UIGestureRecognizerDelegate, myTableDelegate {
 
