@@ -9,6 +9,7 @@
 import UIKit
 import Parse
 import SwiftGifOrigin
+//import SwiftGifOrigin
 
 class ResultViewController: UIViewController {
 
