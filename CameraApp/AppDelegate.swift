@@ -182,7 +182,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         UIApplication.shared.applicationIconBadgeNumber = 0
         let pfi = PFInstallation.current()
         pfi?.setObject(0, forKey: "badge")
-        try! pfi?.save()
+        do {
+    try pfi?.save()
+} catch {
+    print("保存安装信息失败: \(error.localizedDescription)")
+    // 可以添加UIAlertController向用户显示错误信息
+}
 
     }
     
