@@ -10,23 +10,27 @@ PODS:
   - Parse/Core (1.19.4):
     - Bolts/Tasks (= 1.9.1)
   - SwiftGifOrigin (1.7.0)
+  - Toast-Swift (5.1.1)
 
 DEPENDENCIES:
   - Bolts (~> 1.9.0)
   - Parse (~> 1.19.0)
   - SwiftGifOrigin (~> 1.7.0)
+  - Toast-Swift
 
 SPEC REPOS:
   trunk:
     - Bolts
     - Parse
     - SwiftGifOrigin
+    - Toast-Swift
 
 SPEC CHECKSUMS:
   Bolts: 8c1e8aab2f603387b8b9924f57d1d64f43d3ffdc
   Parse: 6d572042e2c171414c677acabcd9bab7bbf51264
   SwiftGifOrigin: fbd6cf37afcfcf97a5c3db996ddc0492e5c5c145
+  Toast-Swift: 7a03a532afe3a560d4044bc7c237e2864d295173
 
-PODFILE CHECKSUM: 78f4be4945710adea7db5a123700b97736359654
+PODFILE CHECKSUM: abcf389870f17bb99628ef40b82f65b057c1cd6d
 
 COCOAPODS: 1.16.2

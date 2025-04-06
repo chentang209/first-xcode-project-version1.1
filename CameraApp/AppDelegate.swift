@@ -190,23 +190,47 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         UIApplication.shared.applicationIconBadgeNumber = 0
         let pfi = PFInstallation.current()
         pfi?.setObject(0, forKey: "badge")
-        do {
-            try pfi?.save()
-        } catch {
-            print("Parse服务器连接失败: \(error.localizedDescription)")
-            DispatchQueue.main.async {
-                let alert = UIAlertController(
-                    title: "网络连接异常",
-                    message: "无法连接服务器，请检查网络设置",
-                    preferredStyle: .alert
-                )
-                alert.addAction(UIAlertAction(title: "重试", style: .default) { _ in
-                    self.applicationDidBecomeActive(application)
-                })
-                alert.addAction(UIAlertAction(title: "取消", style: .cancel))
-                self.window?.rootViewController?.present(alert, animated: true)
+        var retryCount = 0
+        let maxRetries = 3
+        
+        func saveInstallation() {
+            pfi?.saveInBackground { (success, error) in
+                if let error = error {
+                    print("Parse服务器连接失败: \(error.localizedDescription)")
+                    if retryCount < maxRetries {
+                        retryCount += 1
+                        print("尝试第\(retryCount)次重连...")
+                        saveInstallation()
+                    } else {
+                        DispatchQueue.main.async {
+                            let alert = UIAlertController(
+                                title: "连接超时",
+                                message: "服务器响应超时，请检查网络后重试",
+                                preferredStyle: .alert
+                            )
+                            alert.addAction(UIAlertAction(title: "重试", style: .default) { _ in
+                                retryCount = 0
+                                saveInstallation()
+                            })
+                            alert.addAction(UIAlertAction(title: "取消", style: .cancel))
+                            self.window?.rootViewController?.present(alert, animated: true)
+                        }
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        if let topVC = self.window?.rootViewController {
+                            topVC.view.hideToastActivity()
+                            topVC.view.makeToast("连接恢复成功", duration: 2.0, position: ToastPosition.center)
+                        }
+                    }
+                }
             }
         }
+        
+        DispatchQueue.main.async {
+            self.window?.rootViewController?.view.makeToastActivity(ToastPosition.center)
+        }
+        saveInstallation()
 
     }
     
@@ -243,3 +267,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     //     return FBAppCall.handleOpenURL(url, sourceApplication:sourceApplication, session:PFFacebookUtils.session())
     // }
 }
+
+import UIKit
+import Toast_Swift

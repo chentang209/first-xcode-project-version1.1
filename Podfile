@@ -4,4 +4,5 @@ target 'CameraApp' do
   pod 'Parse', '~> 1.19.0'
   pod 'SwiftGifOrigin', '~> 1.7.0'
   pod 'Bolts', '~> 1.9.0'
+  pod 'Toast-Swift'
 end
