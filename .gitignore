@@ -1,4 +1,29 @@
-Pods/
 build/
 *.xcuserstate
 .DS_Store
+
+# Xcode
+**/xcuserdata
+*.xcworkspace
+
+# CocoaPods
+Podfile.lock
+
+# Swift Package Manager
+.swiftpm
+.build/
+
+# AppCode
+.idea/
+
+# OS X
+.DS_Store
+
+# Local development files
+local.properties
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
