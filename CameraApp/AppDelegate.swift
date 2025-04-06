@@ -83,6 +83,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         }
         Parse.initialize(with: configuration)
         
+        // 初始化主窗口
+        self.window = UIWindow(frame: UIScreen.main.bounds)
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        if let initialVC = storyboard.instantiateInitialViewController() {
+            self.window?.rootViewController = initialVC
+            self.window?.makeKeyAndVisible()
+        }
+        
         UNUserNotificationCenter.current().delegate = self
         
         // ****************************************************************************
