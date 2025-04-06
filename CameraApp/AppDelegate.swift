@@ -183,11 +183,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         let pfi = PFInstallation.current()
         pfi?.setObject(0, forKey: "badge")
         do {
-    try pfi?.save()
-} catch {
-    print("保存安装信息失败: \(error.localizedDescription)")
-    // 可以添加UIAlertController向用户显示错误信息
-}
+            try pfi?.save()
+        } catch {
+            print("Parse服务器连接失败: \(error.localizedDescription)")
+            DispatchQueue.main.async {
+                let alert = UIAlertController(
+                    title: "网络连接异常",
+                    message: "无法连接服务器，请检查网络设置",
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(title: "重试", style: .default) { _ in
+                    self.applicationDidBecomeActive(application)
+                })
+                alert.addAction(UIAlertAction(title: "取消", style: .cancel))
+                window?.rootViewController?.present(alert, animated: true)
+            }
+        }
 
     }
     
