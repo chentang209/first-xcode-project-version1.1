@@ -196,7 +196,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
                     self.applicationDidBecomeActive(application)
                 })
                 alert.addAction(UIAlertAction(title: "取消", style: .cancel))
-                window?.rootViewController?.present(alert, animated: true)
+                self.window?.rootViewController?.present(alert, animated: true)
             }
         }
 
