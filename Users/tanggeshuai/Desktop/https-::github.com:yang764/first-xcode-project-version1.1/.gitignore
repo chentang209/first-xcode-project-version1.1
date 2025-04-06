@@ -1,0 +1,13 @@
+# Xcode
+build/
+*.xcuserstate
+*.xcworkspace
+
+# CocoaPods
+Pods/
+
+# macOS
+.DS_Store
+
+# Local development
+.env
