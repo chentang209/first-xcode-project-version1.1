@@ -25,11 +25,25 @@ class ViewController: UIViewController {
         
         self.navigationItem.hidesBackButton = true
         
-        user = PFUser.current()
+        // 安全获取当前用户，避免强制解包导致的崩溃
+        guard let currentUser = PFUser.current() else {
+            print("错误: 当前无用户登录或Parse服务器连接问题")
+            // 可以在这里添加提示用户登录的代码或返回登录页面
+            return
+        }
+        
+        user = currentUser
         let qe = PFQuery(className: "JoinTable")
-        qe.whereKey("to", equalTo: PFUser.current()!)
+        qe.whereKey("to", equalTo: currentUser)
         qe.whereKey("request", equalTo: "sendrequest")
-        let obj = try! qe.findObjects().first
+        
+        // 使用do-catch处理查询错误，避免强制try导致的崩溃
+        var obj: PFObject? = nil
+        do {
+            obj = try qe.findObjects().first
+        } catch {
+            print("查询失败: \(error.localizedDescription)")
+        }
         
         if obj != nil {
             
@@ -60,10 +74,18 @@ class ViewController: UIViewController {
         
         }
         
-        let pfi = PFInstallation.current()
-        pfi?.setObject(user, forKey: "user")
-        pfi?.setObject(0, forKey: "badge")
-        try! pfi?.save()
+        // 安全获取当前安装信息并保存
+        if let pfi = PFInstallation.current() {
+            pfi.setObject(user, forKey: "user")
+            pfi.setObject(0, forKey: "badge")
+            
+            // 使用do-catch处理保存错误
+            do {
+                try pfi.save()
+            } catch {
+                print("保存安装信息失败: \(error.localizedDescription)")
+            }
+        }
         
     }
     

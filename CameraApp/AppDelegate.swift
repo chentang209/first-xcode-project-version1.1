@@ -76,19 +76,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         // Initialize Parse SDK
         // ****************************************************************************
         
-        let configuration = ParseClientConfiguration {
-            $0.applicationId = "9cb653153a25de700fb6472c96b6dc3b4b3e8dfa"
-            $0.clientKey = ""
-            $0.server = "http://ec2-52-72-76-183.compute-1.amazonaws.com/parse"
-        }
-        Parse.initialize(with: configuration)
-        
-        // 初始化主窗口
-        self.window = UIWindow(frame: UIScreen.main.bounds)
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        if let initialVC = storyboard.instantiateInitialViewController() {
-            self.window?.rootViewController = initialVC
-            self.window?.makeKeyAndVisible()
+        // 在后台线程初始化Parse
+        DispatchQueue.global(qos: .userInitiated).async {
+            let configuration = ParseClientConfiguration {
+                $0.applicationId = "ParseServerMyCameraAppId123"
+                $0.clientKey = ""
+                $0.server = "http://8.138.186.198:1337/parse"
+            }
+            Parse.initialize(with: configuration)
+            
+            // 确保在主线程初始化窗口
+            DispatchQueue.main.async {
+                self.window = UIWindow(frame: UIScreen.main.bounds)
+                let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                // 明确指定要加载的ViewController作为根视图控制器
+                let initialVC = storyboard.instantiateViewController(withIdentifier: "MainViewController")
+                self.window?.rootViewController = initialVC
+
+                self.window?.makeKeyAndVisible()
+            }
         }
         
         UNUserNotificationCenter.current().delegate = self
@@ -102,12 +108,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         
         //PFUser.enableAutomaticUser()
         
-        let defaultACL = PFACL()
-        
-        // If you would like all objects to be private by default, remove this line.
-        //defaultACL.getPublicReadAccess = true
-        
-        PFACL.setDefault(defaultACL, withAccessForCurrentUser: true)
+        // 已被移动到初始化块内的ACL设置
+        // PFACL.setDefault(...)
         
         if application.applicationState != UIApplication.State.background {
             // Track an app open here if we launch with a push, unless
@@ -174,12 +176,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             PFAnalytics.trackAppOpened(withRemoteNotificationPayload: userInfo)
         }
         
-        let tableViewController = TableViewController()
-        
+        // 避免直接创建TableViewController实例，因为这样创建的实例没有从storyboard加载，其UI元素为nil
         if (((userInfo["aps"] as! NSDictionary)["alert"]) as! String).contains("请求添加你为好友") {
             
             print("execute")
-            tableViewController.reactFriendRequest(bol: false)
+            // 设置一个全局标志，在TableViewController的viewDidLoad或viewWillAppear中处理
+            bool = false
         
         }
         
@@ -236,13 +238,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         
-        let tableViewController = TableViewController()
+        // 不直接创建TableViewController实例，避免nil解包崩溃问题
         print("original identifier was : \(response.notification.request.identifier)")
         print("original body was : \(response.notification.request.content.body)")
         print("Tapped in notification")
         
         if (response.notification.request.content.body).contains("\\U8bf7\\U6c42\\U6dfb\\U52a0\\U4f60\\U4e3a\\U597d\\U53cb") {
-            tableViewController.reactFriendRequest(bol: false)
+            // 设置全局变量，让TableViewController在加载时使用
+            bool = false
         }
             
     }

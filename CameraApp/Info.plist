@@ -52,5 +52,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>PARSE_SERVER_URL</key>
+	<string>http://8.138.186.198/parse</string>
 </dict>
 </plist>

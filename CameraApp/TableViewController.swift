@@ -51,7 +51,9 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
         }
         
         let tu = UIImage(named: "woodbackground")
-        self.navigationController!.navigationBar.setBackgroundImage(tu, for: .default)
+        if let nav = self.navigationController {
+    nav.navigationBar.setBackgroundImage(tu, for: .default)
+}
         let tempImageView = UIImageView(image: tu)
         tempImageView.frame = self.tableView.frame
         self.tableView.backgroundView = tempImageView
@@ -75,7 +77,9 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
     override func viewWillAppear(_ animated: Bool) {
         print("will")
         self.tableView.reloadData()
-        self.navigationController!.navigationBar.setBackgroundImage(UIImage(named: "wood2"), for: .default)
+        if let nav = self.navigationController {
+    nav.navigationBar.setBackgroundImage(UIImage(named: "wood2"), for: .default)
+}
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -85,7 +89,9 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        self.navigationController!.navigationBar.setBackgroundImage(UIImage(named: "white"), for: .default)
+        if let nav = self.navigationController {
+    nav.navigationBar.setBackgroundImage(UIImage(named: "white"), for: .default)
+}
     }
     
     override var prefersStatusBarHidden: Bool {
@@ -178,7 +184,13 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
       
         print("appendArray")
         let qe = PFQuery(className: "JoinTable")
-        qe.whereKey("to", equalTo: PFUser.current()!)
+        // 安全获取当前用户，避免强制解包导致的崩溃
+        guard let currentUser = PFUser.current() else {
+            print("错误: 当前无用户登录或Parse服务器连接问题")
+            // 无用户时返回空结果
+            return
+        }
+        qe.whereKey("to", equalTo: currentUser)
         qe.findObjectsInBackground{ (objs:[PFObject]?, err:Error?) in
             
             print(err?.localizedDescription as Any)
