@@ -76,10 +76,10 @@ class LoginViewController: UIViewController{
                         alert.dismiss(animated: true)
                         self.performSegue(withIdentifier: "loginSuccess", sender: self)
                     }
-                    // 添加计时逻辑，5分钟后自动登出
+                    // 添加计时逻辑，1分钟后自动登出
                     print("⏱️ 开始调度延迟登出任务，当前时间:", Date())
                     print("ℹ️ 主线程状态:", Thread.isMainThread ? "主线程" : "后台线程")
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 20) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 60) {
                         print("🔔 延迟任务开始执行，当前线程:", Thread.isMainThread ? "主线程" : "后台线程")
                         print("👤 当前用户状态:", PFUser.current()?.username ?? "未登录")
                         PFUser.logOut()
@@ -130,19 +130,18 @@ class LoginViewController: UIViewController{
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-            //Dismiss the keyboards
-            usernameTextField.resignFirstResponder()
-            passwordTextField.resignFirstResponder()
+        NotificationCenter.default.post(name: .userDidInteract, object: nil)
+        usernameTextField.resignFirstResponder()
+        passwordTextField.resignFirstResponder()
     }
 }
 
 extension LoginViewController: UITextFieldDelegate{
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-    
-            usernameTextField.resignFirstResponder()
-            passwordTextField.resignFirstResponder()
-     
+        NotificationCenter.default.post(name: .userDidInteract, object: nil)
+        usernameTextField.resignFirstResponder()
+        passwordTextField.resignFirstResponder()
         return true
     }
         

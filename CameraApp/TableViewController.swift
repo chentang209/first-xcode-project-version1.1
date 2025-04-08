@@ -28,6 +28,8 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
         //viewDidLoad()
         
     }
+
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,14 +50,20 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
                     self.tableView.reloadData()
                 })
             }
+
+    
             first = false
             
         }
+
+    
         
         let tu = UIImage(named: "woodbackground")
         if let nav = self.navigationController {
     nav.navigationBar.setBackgroundImage(tu, for: .default)
 }
+
+    
         let tempImageView = UIImageView(image: tu)
         tempImageView.frame = self.tableView.frame
         self.tableView.backgroundView = tempImageView
@@ -68,6 +76,8 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
             print("名为givequestion的图片资源未找到")
             return
         }
+
+    
         let add = UIBarButtonItem(image: image.withRenderingMode(.alwaysOriginal), landscapeImagePhone: image.withRenderingMode(.alwaysOriginal), style:.plain, target: self, action: #selector(addTapped))
         //   这样在图片资源不存在时，能更优雅地处理，避免程序崩溃。
 
@@ -85,6 +95,8 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
         tableView.delegate = self
         tableView.dataSource = self
     }
+
+    
     
     override func viewWillAppear(_ animated: Bool) {
         print("will")
@@ -92,23 +104,35 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
         if let nav = self.navigationController {
     nav.navigationBar.setBackgroundImage(UIImage(named: "wood2"), for: .default)
 }
+
+    
     }
+
+    
     
     override func viewDidAppear(_ animated: Bool) {
         print("did")
         //self.tableView.reloadData()
         appendArray()
     }
+
+    
     
     override func viewWillDisappear(_ animated: Bool) {
         if let nav = self.navigationController {
     nav.navigationBar.setBackgroundImage(UIImage(named: "white"), for: .default)
 }
+
+    
     }
+
+    
     
     override var prefersStatusBarHidden: Bool {
         return true
     }
+
+    
     
     @objc func addTapped(sender: UITapGestureRecognizer) {
         
@@ -123,13 +147,19 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
             if self.view.window != nil {
                 self.present(alert, animated: true)
             }
+
+    
             return
         }
+
+    
         
         guard let friendList = current["friendList"] as? [PFObject] else {
             print("获取好友列表失败")
             return
         }
+
+    
         
         if friendList.count == 0 {
             let alert = UIAlertController(title: "请添加好友", message: "", preferredStyle: .alert)
@@ -138,25 +168,41 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
                 self.present(alert, animated: true)
                 alert.dismiss(animated: true) { [weak self] in
                     guard let self = self else { return }
+
+    
                     // 确保在提示消失后正确跳转
                     if friendList.count == 0 {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                             self.performSegue(withIdentifier: "chutiSegue", sender: self)
                         }
+
+    
                     }
+
+    
                     self.profile[0].bool = bool
                     self.tableView.reloadData()
                 }
+
+    
             }
+
+    
         } else {
             performSegue(withIdentifier: "chutiSegue", sender: self)
         }
+
+    
         
     }
+
+    
     
     @objc func searchTapped(sender: UITapGestureRecognizer) {
         self.performSegue(withIdentifier: "searchSegue", sender: self)
     }
+
+    
     
     @objc func logoutTapped(sender: UITapGestureRecognizer) {
         
@@ -176,7 +222,11 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
         if self.view.window != nil {
             self.present(alert, animated: true)
         }
+
+    
     }
+
+    
     
     func createArray() {
         
@@ -192,15 +242,23 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
                 if self.view.window != nil {
                     self.present(alert, animated: true)
                 }
+
+    
             }
+
+    
             return
         }
+
+    
         
         guard let username = target["username"] else {
             // 处理不存在 "username" 键的情况
             print("用户名不存在")
             return
         }
+
+    
         // 在这里使用 username
         
         var img: UIImage!
@@ -214,6 +272,8 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
 //            img = UIImage(data: data!)!
 //            group.leave()
 //        }
+
+    
         
         group.enter()
         // 安全地获取用户头像
@@ -226,25 +286,50 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
                     print(error?.localizedDescription ?? "未知错误")
                     print("wawawwawaw")
                 }
+
+    
                 group.leave()
             })
         } else {
             print("用户头像获取失败")
             group.leave()
         }
+
+    
         
         group.notify(queue: .main){
             // 安全检查，确保img不为nil
-            if let validImg = img, let usernameStr = username as? String {
-                ziji = Avatar(image: validImg, title: usernameStr + "的好友列表", id: "", bool: bool)
-                self.profile.append(ziji)
-                self.tableView.reloadData()
+            let defaultImage: UIImage?
+            if #available(iOS 13.0, *) {
+                defaultImage = UIImage(named: "user") ?? UIImage(systemName: "person.circle")
             } else {
-                print("错误: 无法获取用户图像或用户名")
+                defaultImage = UIImage(named: "user")
             }
+                let usernameStr = (username as? String) ?? "未知用户"
+                
+                if let validImg = img ?? defaultImage {
+                    ziji = Avatar(image: validImg, title: usernameStr + "的好友列表", id: "", bool: bool)
+                    self.profile.append(ziji)
+                    self.tableView.reloadData()
+                } else {
+                    print("错误: 无法获取用户图像")
+                    let alert = UIAlertController(title: "数据加载失败", message: "无法获取用户信息，请重试", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "重试", style: .default) { _ in
+                        self.createArray()
+                    })
+                    if self.view.window != nil {
+                        self.present(alert, animated: true)
+                    }
+                }
+
+    
         }
+
+    
             
     }
+
+    
     
     func appendArray() {
       
@@ -256,6 +341,8 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
             // 无用户时返回空结果
             return
         }
+
+    
         qe.whereKey("to", equalTo: currentUser)
         qe.findObjectsInBackground{ (objs:[PFObject]?, err:Error?) in
             
@@ -274,7 +361,11 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
                             alert.dismiss(animated: true)
                     self.tableView.reloadData()
                         }
+
+    
                     }
+
+    
                     
                 } else {
                     
@@ -302,26 +393,50 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
                             self.tableView.reloadData()
                 
                         }
+
+    
                         
                     }
+
+    
                     
                 }
+
+    
                 
             }
+
+    
                
         }
+
+    
         
         self.tableView.reloadData()
     
     }
+
+    
    
 }
 
+    
+
 extension TableViewController: UITableViewDataSource, UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        NotificationCenter.default.post(name: .userDidInteract, object: nil)
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        NotificationCenter.default.post(name: .userDidInteract, object: nil)
+    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return profile.count
     }
+
+    
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
@@ -337,6 +452,8 @@ extension TableViewController: UITableViewDataSource, UITableViewDelegate {
             // 如果用户未登录，返回一个普通单元格
             return cell
         }
+
+    
         
         if (profilerx.title) == str + "的好友列表" {
 
@@ -347,9 +464,13 @@ extension TableViewController: UITableViewDataSource, UITableViewDelegate {
             cell.setAvatar2(rx: profilerx)
             
         }
+
+    
         
         return cell
     }
+
+    
     
     func reddot(bol: String) {
 
@@ -363,7 +484,11 @@ extension TableViewController: UITableViewDataSource, UITableViewDelegate {
             print(bool)
         }
 
+    
+
     }
+
+    
     
     func redot(bol: String) {
         
@@ -376,8 +501,12 @@ extension TableViewController: UITableViewDataSource, UITableViewDelegate {
             bool = true
             print(bool)
         }
+
+    
         
     }
+
+    
     
     func avatarDelegate(title: String, id: String) {
        
@@ -386,6 +515,8 @@ extension TableViewController: UITableViewDataSource, UITableViewDelegate {
             print("错误: 当前无用户登录或Parse服务器连接问题")
             return
         }
+
+    
         
         if title == str + "的好友列表" {
             performSegue(withIdentifier: "friendList", sender: self)
@@ -393,8 +524,12 @@ extension TableViewController: UITableViewDataSource, UITableViewDelegate {
             sender = id
             performSegue(withIdentifier: "answerSegue", sender: self)
         }
+
+    
         
     }
+
+    
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
     {
@@ -407,6 +542,8 @@ extension TableViewController: UITableViewDataSource, UITableViewDelegate {
             backItem.title = "返回"
             navigationItem.backBarButtonItem = backItem
         }
+
+    
         
         if segue.destination is AnswerViewController
         {
@@ -416,6 +553,8 @@ extension TableViewController: UITableViewDataSource, UITableViewDelegate {
             vc?.dict = wentidic[objectId!] as! [String : String]
             vc?.objectId = objectId
         }
+
+    
         
         if segue.destination is ButtonViewController
         {
@@ -423,6 +562,10 @@ extension TableViewController: UITableViewDataSource, UITableViewDelegate {
             backItem.title = "返回"
             navigationItem.backBarButtonItem = backItem
         }
+
+    
     }
+
+    
     
 }

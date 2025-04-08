@@ -312,5 +312,9 @@ class ShowViewController: UIViewController {
         
     }
 
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        NotificationCenter.default.post(name: .userDidInteract, object: nil)
+    }
+
 
 }

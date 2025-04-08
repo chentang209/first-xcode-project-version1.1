@@ -6,12 +6,14 @@ class SessionManager {
     static let shared = SessionManager()
     
     private var idleTimer: Timer?
-    private let timeoutDuration: TimeInterval = 60 // 1分钟无操作
+    private let timeoutDuration: TimeInterval = 30 // 半分钟无操作
     private var isLogoutAlertShowing = false
     
     func startMonitoring() {
+        print("SessionManager: 开始监控用户活动")
         resetTimer()
         NotificationCenter.default.addObserver(self, selector: #selector(resetTimer), name: .userDidInteract, object: nil)
+        print("SessionManager: 已添加.userDidInteract通知观察者")
     }
     
     func stopMonitoring() {
@@ -20,13 +22,18 @@ class SessionManager {
     }
     
     @objc private func resetTimer() {
+        print("SessionManager: 重置计时器")
         idleTimer?.invalidate()
+        print("SessionManager: 当前计时器状态: \(idleTimer?.isValid == true ? "运行中" : "已停止")")
         idleTimer = Timer.scheduledTimer(withTimeInterval: timeoutDuration, repeats: false) { [weak self] _ in
+            print("SessionManager: 计时器触发，显示登出确认")
             self?.showLogoutConfirmation()
         }
+        print("SessionManager: 新计时器已创建，将在\(timeoutDuration)秒后触发")
     }
     
     private func showLogoutConfirmation() {
+        print("SessionManager: 准备显示登出确认对话框")
         guard !isLogoutAlertShowing else { return }
         
         let alert = UIAlertController(

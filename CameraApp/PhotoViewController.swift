@@ -103,6 +103,10 @@ class PhotoViewController: UIViewController, UIImagePickerControllerDelegate, UI
         }
     }
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        NotificationCenter.default.post(name: .userDidInteract, object: nil)
+    }
+    
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage;dismiss(animated: true, completion: nil)
         
