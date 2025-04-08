@@ -58,8 +58,13 @@ class LoginViewController: UIViewController{
     @IBAction func loginTapped(_ sender: UIButton) {
         
         if usernameTextField.text != "" && passwordTextField.text != "" {
-            PFUser.logInWithUsername(inBackground: usernameTextField.text!, password: passwordTextField.text!) { (user, error) in
-                if let loggedInUser = user {
+            PFUser.logInWithUsername(inBackground: usernameTextField.text!, password: passwordTextField.text!) { (user: PFUser?, error: Error?) in
+            print("🔵 登录回调触发 - 主线程状态:", Thread.isMainThread ? "主线程" : "后台线程")
+            print("🔄 当前执行队列:", OperationQueue.current?.name ?? "未命名队列")
+            print("🔵 登录回调触发 - 主线程状态:", Thread.isMainThread ? "主线程" : "后台线程")
+                print("🔍 用户对象状态:", user != nil ? "有效用户" : "空用户")
+            if let loggedInUser = user {
+                    print("✅ 登录回调被触发，当前用户:", loggedInUser.username ?? "无名用户")
                     
                     // User object isn't nill
                     // TODO: User logged in successfully, transition into homepage
@@ -72,12 +77,26 @@ class LoginViewController: UIViewController{
                         self.performSegue(withIdentifier: "loginSuccess", sender: self)
                     }
                     // 添加计时逻辑，5分钟后自动登出
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 300) {
+                    print("⏱️ 开始调度延迟登出任务，当前时间:", Date())
+                    print("ℹ️ 主线程状态:", Thread.isMainThread ? "主线程" : "后台线程")
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 20) {
+                        print("🔔 延迟任务开始执行，当前线程:", Thread.isMainThread ? "主线程" : "后台线程")
+                        print("👤 当前用户状态:", PFUser.current()?.username ?? "未登录")
                         PFUser.logOut()
-                        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                        let loginVC = storyboard.instantiateViewController(withIdentifier: "LoginViewController")
-                        let navigationController = UINavigationController(rootViewController: loginVC)
-                        UIApplication.shared.windows.first?.rootViewController = navigationController
+                        print("✅ 用户凭证已清除，当前用户状态:", PFUser.current()?.username ?? "未登录")
+                        DispatchQueue.main.async {
+                            print("🖥️ 开始界面跳转操作")
+                            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                            guard let window = UIApplication.shared.windows.first else {
+                                print("❌ 无法获取主窗口")
+                                return
+                            }
+                            print("🌐 窗口状态: isKeyWindow=(window.isKeyWindow), rootVC=(String(describing: window.rootViewController))")
+                            let loginVC = storyboard.instantiateViewController(withIdentifier: "LoginViewController")
+                            let navigationController = UINavigationController(rootViewController: loginVC)
+                            UIApplication.shared.windows.first?.rootViewController = navigationController
+                            print("🏁 界面跳转完成")
+                        }
                     }
                 } else {
                     

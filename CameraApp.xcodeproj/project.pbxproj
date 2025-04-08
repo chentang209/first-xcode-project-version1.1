@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C2F6F9912223D5EC002E67E2 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F6F9902223D5EC002E67E2 /* SessionManager.swift */; };
 		1D58F69F76D61674B2035F63 /* Pods_CameraApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D14F35A1C008B719CB88E638 /* Pods_CameraApp.framework */; };
 		C20DE6262228BAC0005F1267 /* Modal.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20DE6252228BAC0005F1267 /* Modal.swift */; };
 		C20DE6282228BB09005F1267 /* CustomAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20DE6272228BB09005F1267 /* CustomAlert.swift */; };
@@ -61,6 +62,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C2F6F9902223D5EC002E67E2 /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		586C7431EE0636A72147CE63 /* Pods-CameraApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CameraApp.debug.xcconfig"; path = "Target Support Files/Pods-CameraApp/Pods-CameraApp.debug.xcconfig"; sourceTree = "<group>"; };
 		B41C9502FCE96C75DE1C7339 /* Pods-CameraApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CameraApp.release.xcconfig"; path = "Target Support Files/Pods-CameraApp/Pods-CameraApp.release.xcconfig"; sourceTree = "<group>"; };
 		C20DE6252228BAC0005F1267 /* Modal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Modal.swift; sourceTree = "<group>"; };
@@ -722,7 +724,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = BGYJL75TZ4;
+				DEVELOPMENT_TEAM = YA62B26ZLJ;
 				INFOPLIST_FILE = CameraAppUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -742,7 +744,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = BGYJL75TZ4;
+				DEVELOPMENT_TEAM = YA62B26ZLJ;
 				INFOPLIST_FILE = CameraAppUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

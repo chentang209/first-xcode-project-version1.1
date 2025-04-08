@@ -63,6 +63,7 @@ class SignupViewController: UIViewController {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        NotificationCenter.default.post(name: .userDidInteract, object: nil)
         
             if confirmTextField.text == passwordTextField.text || confirmTextField.text == ""{
                 //Dismiss the keyboards
@@ -153,6 +154,29 @@ user.signUpInBackground { (result, error) in
                         DispatchQueue.main.asyncAfter(deadline: when){
                             alert.dismiss(animated: true)
                             self.performSegue(withIdentifier: "signupSuccess", sender: self)
+                            
+                            // 添加计时逻辑，5分钟后自动登出
+                            print("⏱️ 开始调度延迟登出任务，当前时间:", Date())
+                            print("ℹ️ 主线程状态:", Thread.isMainThread ? "主线程" : "后台线程")
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 20) {
+                                print("🔔 延迟任务开始执行，当前线程:", Thread.isMainThread ? "主线程" : "后台线程")
+                                print("👤 当前用户状态:", PFUser.current()?.username ?? "未登录")
+                                PFUser.logOut()
+                                print("✅ 用户凭证已清除，当前用户状态:", PFUser.current()?.username ?? "未登录")
+                                DispatchQueue.main.async {
+                                    print("🖥️ 开始界面跳转操作")
+                                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                                    guard let window = UIApplication.shared.windows.first else {
+                                        print("❌ 无法获取主窗口")
+                                        return
+                                    }
+                                    print("🌐 窗口状态: isKeyWindow=(window.isKeyWindow), rootVC=(String(describing: window.rootViewController))")
+                                    let loginVC = storyboard.instantiateViewController(withIdentifier: "LoginViewController")
+                                    let navigationController = UINavigationController(rootViewController: loginVC)
+                                    UIApplication.shared.windows.first?.rootViewController = navigationController
+                                    print("🏁 界面跳转完成")
+                                }
+                            }
                         }
                         
                     } else {
@@ -188,6 +212,7 @@ user.signUpInBackground { (result, error) in
 extension SignupViewController: UITextFieldDelegate{
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        NotificationCenter.default.post(name: .userDidInteract, object: nil)
         
             if confirmTextField.text == passwordTextField.text || confirmTextField.text == ""{
                 usernameTextField.resignFirstResponder()
