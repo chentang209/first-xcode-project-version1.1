@@ -1,5 +1,6 @@
 import UIKit
 import Foundation
+import Parse
 
 class SessionManager {
     static let shared = SessionManager()
@@ -61,20 +62,24 @@ class SessionManager {
 
 // 用户交互通知
 extension Notification.Name {
-    static let userDidInteract = Notification.Name("UserDidInteract")
+    static let userDidInteract = Notification.Name("userDidInteract")
 }
 
 // 获取顶层ViewController
 extension UIApplication {
     func topViewController() -> UIViewController? {
-        return windows.first?.rootViewController?.visibleViewController
+        guard let window = windows.first(where: { $0.isKeyWindow }),
+              let rootViewController = window.rootViewController else {
+            return nil
+        }
+        return rootViewController.visibleViewController()
     }
 }
 
 extension UIViewController {
     func visibleViewController() -> UIViewController {
         if let presented = presentedViewController {
-            return presentedViewController.visibleViewController()
+            return presented.visibleViewController()
         }
         return self
     }

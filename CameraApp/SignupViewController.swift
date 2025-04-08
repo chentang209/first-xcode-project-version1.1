@@ -1,3 +1,5 @@
+import Foundation
+
 //
 //  SignupViewController.swift
 //  CameraApp
@@ -8,6 +10,7 @@
 
 import UIKit
 import Parse
+
 
 class SignupViewController: UIViewController {
 

@@ -10,8 +10,6 @@ import UIKit
 import Parse
 import Foundation
 import Toast_Swift
-// 移除错误模块导入
-import SessionManager
 import UserNotifications
 
 @UIApplicationMain
