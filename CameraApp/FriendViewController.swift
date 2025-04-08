@@ -37,12 +37,7 @@ class FriendViewController: UIViewController, tableDelegate {
         tableView.dataSource = self
         
         let qe = PFQuery(className: "JoinTable")
-        // 安全获取当前用户，避免强制解包导致的崩溃
-        guard let currentUser = PFUser.current() else {
-            print("错误: 当前无用户登录或Parse服务器连接问题")
-            return
-        }
-        qe.whereKey("to", equalTo: currentUser)
+        qe.whereKey("to", equalTo: PFUser.current()!)
         qe.whereKey("request", equalTo: "sendrequest")
         let group1 = DispatchGroup()
         

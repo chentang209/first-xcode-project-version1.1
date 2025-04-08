@@ -41,10 +41,13 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
         if first {
             
             let alert = UIAlertController(title: "稍等片刻，数据加载中......", message: "", preferredStyle: .alert)
-            self.present(alert, animated: true)
-            let when = DispatchTime.now() + 3
-            DispatchQueue.main.asyncAfter(deadline: when){
-                alert.dismiss(animated: true)
+            // 确保视图已添加到窗口层次结构中再显示警告
+            if self.view.window != nil {
+                self.present(alert, animated: true)
+                let when = DispatchTime.now() + 3
+                DispatchQueue.main.asyncAfter(deadline: when){
+                    alert.dismiss(animated: true)
+                }
             }
             first = false
             
@@ -110,15 +113,34 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
     
     @objc func addTapped(sender: UITapGestureRecognizer) {
         
-        let current = PFUser.current()
-        let friendList = current!["friendList"] as! [PFObject]
+        // 安全获取当前用户，避免强制解包导致的崩溃
+        guard let current = PFUser.current() else {
+            print("错误: 当前无用户登录或Parse服务器连接问题")
+            let alert = UIAlertController(title: "登录状态异常", message: "请重新登录后再试", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "确定", style: .default, handler: { _ in
+                self.performSegue(withIdentifier: "logoutSegue", sender: self)
+            }))
+            // 确保当前视图已经加载到视图层次结构中
+            if self.view.window != nil {
+                self.present(alert, animated: true)
+            }
+            return
+        }
+        
+        guard let friendList = current["friendList"] as? [PFObject] else {
+            print("获取好友列表失败")
+            return
+        }
         
         if friendList.count == 0 {
             let alert = UIAlertController(title: "请添加好友", message: "", preferredStyle: .alert)
-            self.present(alert, animated: true)
-            let when = DispatchTime.now() + 1
-            DispatchQueue.main.asyncAfter(deadline: when){
-                alert.dismiss(animated: true)
+            // 确保当前视图已经加载到视图层次结构中
+            if self.view.window != nil {
+                self.present(alert, animated: true)
+                let when = DispatchTime.now() + 1
+                DispatchQueue.main.asyncAfter(deadline: when){
+                    alert.dismiss(animated: true)
+                }
             }
         }
         else {
@@ -145,18 +167,33 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
         alert.addAction(UIAlertAction(title: "再等会", style: .cancel, handler: nil
         ))
         
-        self.present(alert, animated: true)
+        // 确保当前视图已经加载到视图层次结构中
+        if self.view.window != nil {
+            self.present(alert, animated: true)
+        }
     }
     
     func createArray() {
         
-        let target = PFUser.current()
-        //print(target!["username"])
-        //let file = target!["avatar"]
-//        let username = target!["username"]
+        guard let target = PFUser.current() else {
+            print("错误: 当前无用户登录或Parse服务器连接问题")
+            // 显示错误提示
+            DispatchQueue.main.async {
+                let alert = UIAlertController(title: "登录状态异常", message: "请重新登录后再试", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "确定", style: .default, handler: { _ in
+                    self.performSegue(withIdentifier: "logoutSegue", sender: self)
+                }))
+                // 确保当前视图已经加载到视图层次结构中
+                if self.view.window != nil {
+                    self.present(alert, animated: true)
+                }
+            }
+            return
+        }
         
-        guard let unwrappedTarget = target, let username = unwrappedTarget["username"] else {
-            // 处理 target 为 nil 或不存在 "username" 键的情况
+        guard let username = target["username"] else {
+            // 处理不存在 "username" 键的情况
+            print("用户名不存在")
             return
         }
         // 在这里使用 username
@@ -174,25 +211,32 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
 //        }
         
         group.enter()
-        if let userPicture = target!.value(forKey: "avatar")! as? PFFileObject {
+        // 安全地获取用户头像
+        if let userPicture = target.value(forKey: "avatar") as? PFFileObject {
             userPicture.getDataInBackground(block: {
                 (imageData, error) -> Void in
-                if (error == nil) {
-                    img = UIImage(data:imageData!)
+                if error == nil, let imageData = imageData {
+                    img = UIImage(data: imageData)
                 } else {
-                    print(error?.localizedDescription)
+                    print(error?.localizedDescription ?? "未知错误")
                     print("wawawwawaw")
                 }
                 group.leave()
             })
+        } else {
+            print("用户头像获取失败")
+            group.leave()
         }
         
         group.notify(queue: .main){
-            
-            ziji = Avatar(image: img, title: (username as! String) + "的好友列表", id: "", bool: bool)
-            self.profile.append(ziji)
-            self.tableView.reloadData()
-        
+            // 安全检查，确保img不为nil
+            if let validImg = img, let usernameStr = username as? String {
+                ziji = Avatar(image: validImg, title: usernameStr + "的好友列表", id: "", bool: bool)
+                self.profile.append(ziji)
+                self.tableView.reloadData()
+            } else {
+                print("错误: 无法获取用户图像或用户名")
+            }
         }
             
     }
@@ -217,10 +261,13 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
                 if self.profile.count == 0 {
                    
                     let alert = UIAlertController(title: "稍等片刻，数据加载中......", message: "", preferredStyle: .alert)
-                    self.present(alert, animated: true)
-                    let when = DispatchTime.now() + 3
-                    DispatchQueue.main.asyncAfter(deadline: when){
-                        alert.dismiss(animated: true)
+                    // 确保视图已添加到窗口层次结构中再显示警告
+                    if self.view.window != nil {
+                        self.present(alert, animated: true)
+                        let when = DispatchTime.now() + 3
+                        DispatchQueue.main.asyncAfter(deadline: when){
+                            alert.dismiss(animated: true)
+                        }
                     }
                     
                 } else {
@@ -278,10 +325,14 @@ extension TableViewController: UITableViewDataSource, UITableViewDelegate {
         
         cell.delegate = self
         
-        let ziji = PFUser.current()
-        let str = ziji!["username"]
+        // 安全获取当前用户，避免强制解包导致的崩溃
+        guard let ziji = PFUser.current(), let str = ziji["username"] as? String else {
+            print("错误: 当前无用户登录或Parse服务器连接问题")
+            // 如果用户未登录，返回一个普通单元格
+            return cell
+        }
         
-        if (profilerx.title) == (str as! String) + "的好友列表" {
+        if (profilerx.title) == str + "的好友列表" {
 
             cell.setAvatar1(profile: profilerx)
         
@@ -324,8 +375,12 @@ extension TableViewController: UITableViewDataSource, UITableViewDelegate {
     
     func avatarDelegate(title: String, id: String) {
        
-        let ziji = PFUser.current()
-        let str = ziji!["username"] as! String
+        // 安全获取当前用户，避免强制解包导致的崩溃
+        guard let ziji = PFUser.current(), let str = ziji["username"] as? String else {
+            print("错误: 当前无用户登录或Parse服务器连接问题")
+            return
+        }
+        
         if title == str + "的好友列表" {
             performSegue(withIdentifier: "friendList", sender: self)
         } else {
