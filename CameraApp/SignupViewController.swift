@@ -38,6 +38,7 @@ class SignupViewController: UIViewController {
         usernameTextField.delegate = self
         passwordTextField.delegate = self
         confirmTextField.delegate = self
+        usernameTextField.becomeFirstResponder()
     
     }
     
@@ -108,15 +109,40 @@ class SignupViewController: UIViewController {
                 
                 }
                 
-                let file:PFFileObject = PFFileObject(data: avatar)!
-                user.setObject(file, forKey:"avatar")
+                // 先完成用户注册
+let file = PFFileObject(data: avatar, contentType: "image/jpeg")
+                // 暂时不设置avatar，等注册成功后再设置
                 user.setObject([], forKey: "friendReqList")
                 user.setObject([], forKey: "friendList")
                 user.setObject([], forKey: "receivedQuestions")
                 
-                user.signUpInBackground {
-                    
-                    (result,error) -> Void in
+                // 先完成基础注册
+user.signUpInBackground { (result, error) in
+    if let error = error {
+        // 处理注册错误
+        let alert = UIAlertController(title: error.localizedDescription, message: "", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
+        self.present(alert, animated: true)
+        return
+    }
+    
+    // 注册成功后设置头像
+    PFUser.current()?.setObject(file, forKey: "avatar")
+    PFUser.current()?.saveInBackground { (success, error) in
+        if let error = error {
+            let alert = UIAlertController(title: error.localizedDescription, message: "", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
+            self.present(alert, animated: true)
+        } else {
+            let alert = CustomAlert(title: "", image: UIImage(named: "enter")!)
+            alert.show(animated: true)
+            let when = DispatchTime.now() + 3
+            DispatchQueue.main.asyncAfter(deadline: when) {
+                alert.dismiss(animated: true)
+                self.performSegue(withIdentifier: "signupSuccess", sender: self)
+            }
+        }
+    }
                     
                     if error == nil && result == true {
                         

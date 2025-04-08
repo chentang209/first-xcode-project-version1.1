@@ -24,6 +24,7 @@ class LoginViewController: UIViewController{
         Login.clipsToBounds = true
         usernameTextField.delegate = self
         passwordTextField.delegate = self
+        usernameTextField.becomeFirstResponder()
         
         if PFUser.current() != nil {
             
@@ -70,7 +71,14 @@ class LoginViewController: UIViewController{
                         alert.dismiss(animated: true)
                         self.performSegue(withIdentifier: "loginSuccess", sender: self)
                     }
-                    
+                    // 添加计时逻辑，5分钟后自动登出
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 300) {
+                        PFUser.logOut()
+                        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                        let loginVC = storyboard.instantiateViewController(withIdentifier: "LoginViewController")
+                        let navigationController = UINavigationController(rootViewController: loginVC)
+                        UIApplication.shared.windows.first?.rootViewController = navigationController
+                    }
                 } else {
                     
                     // User object is nil, check error parameter

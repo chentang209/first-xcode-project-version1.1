@@ -44,10 +44,9 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
             // 确保视图已添加到窗口层次结构中再显示警告
             if self.view.window != nil {
                 self.present(alert, animated: true)
-                let when = DispatchTime.now() + 3
-                DispatchQueue.main.asyncAfter(deadline: when){
-                    alert.dismiss(animated: true)
-                }
+                alert.dismiss(animated: true, completion: {
+                    self.tableView.reloadData()
+                })
             }
             first = false
             
@@ -137,13 +136,19 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
             // 确保当前视图已经加载到视图层次结构中
             if self.view.window != nil {
                 self.present(alert, animated: true)
-                let when = DispatchTime.now() + 1
-                DispatchQueue.main.asyncAfter(deadline: when){
-                    alert.dismiss(animated: true)
+                alert.dismiss(animated: true) { [weak self] in
+                    guard let self = self else { return }
+                    // 确保在提示消失后正确跳转
+                    if friendList.count == 0 {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            self.performSegue(withIdentifier: "chutiSegue", sender: self)
+                        }
+                    }
+                    self.profile[0].bool = bool
+                    self.tableView.reloadData()
                 }
             }
-        }
-        else {
+        } else {
             performSegue(withIdentifier: "chutiSegue", sender: self)
         }
         
@@ -267,6 +272,7 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
                         let when = DispatchTime.now() + 3
                         DispatchQueue.main.asyncAfter(deadline: when){
                             alert.dismiss(animated: true)
+                    self.tableView.reloadData()
                         }
                     }
                     
