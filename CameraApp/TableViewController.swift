@@ -153,7 +153,14 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
         let target = PFUser.current()
         //print(target!["username"])
         //let file = target!["avatar"]
-        let username = target!["username"]
+//        let username = target!["username"]
+        
+        guard let unwrappedTarget = target, let username = unwrappedTarget["username"] else {
+            // 处理 target 为 nil 或不存在 "username" 键的情况
+            return
+        }
+        // 在这里使用 username
+        
         var img: UIImage!
         var ziji: Avatar!
         let group = DispatchGroup()
