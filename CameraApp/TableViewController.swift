@@ -57,8 +57,18 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
         let tempImageView = UIImageView(image: tu)
         tempImageView.frame = self.tableView.frame
         self.tableView.backgroundView = tempImageView
-        
+
+        /*
         let add = UIBarButtonItem(image: UIImage(named: "givequestion")!.withRenderingMode(.alwaysOriginal), landscapeImagePhone: UIImage(named: "givequestion")!.withRenderingMode(.alwaysOriginal), style: .plain,  target: self, action: #selector(addTapped))
+        */
+
+        guard let image = UIImage(named: "givequestion") else {
+            print("名为givequestion的图片资源未找到")
+            return
+        }
+        let add = UIBarButtonItem(image: image.withRenderingMode(.alwaysOriginal), landscapeImagePhone: image.withRenderingMode(.alwaysOriginal), style:.plain, target: self, action: #selector(addTapped))
+        //   这样在图片资源不存在时，能更优雅地处理，避免程序崩溃。
+
         let search = UIBarButtonItem(title: "🔍好友", style: .plain, target: self, action: #selector(searchTapped))
         let logout = UIBarButtonItem(title: "登出", style: .plain, target: self, action: #selector(logoutTapped))
         
