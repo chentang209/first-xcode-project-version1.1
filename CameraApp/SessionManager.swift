@@ -10,6 +10,8 @@ class SessionManager {
     private var isLogoutAlertShowing = false
     
     func startMonitoring() {
+        print("SessionManager监控已启动")
+        // 添加其他初始化代码
         print("SessionManager: 开始监控用户活动")
         resetTimer()
         NotificationCenter.default.addObserver(self, selector: #selector(resetTimer), name: .userDidInteract, object: nil)
