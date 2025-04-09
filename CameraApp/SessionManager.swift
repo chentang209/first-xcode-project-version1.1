@@ -24,14 +24,15 @@ class SessionManager {
     }
     
     @objc private func resetTimer() {
-        print("SessionManager: 重置计时器")
-        idleTimer?.invalidate()
-        print("SessionManager: 当前计时器状态: \(idleTimer?.isValid == true ? "运行中" : "已停止")")
-        idleTimer = Timer.scheduledTimer(withTimeInterval: timeoutDuration, repeats: false) { [weak self] _ in
-            print("SessionManager: 计时器触发，显示登出确认")
-            self?.showLogoutConfirmation()
+        print("SessionManager: 重置计时器 - 开始失效原有计时器")
+        DispatchQueue.main.async {
+            self.idleTimer?.invalidate()
+            self.idleTimer = Timer.scheduledTimer(withTimeInterval: self.timeoutDuration, repeats: false) { [weak self] _ in
+                print("SessionManager: 计时器触发，显示登出确认")
+                self?.showLogoutConfirmation()
+            }
+            print("SessionManager: 计时器已重置，将在\(self.timeoutDuration)秒后触发")
         }
-        print("SessionManager: 新计时器已创建，将在\(timeoutDuration)秒后触发")
     }
     
     private func showLogoutConfirmation() {

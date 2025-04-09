@@ -34,6 +34,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
                 $0.server = "http://8.138.186.198:1337/parse"
             }
             Parse.initialize(with: configuration)
+
+        // 设置默认ACL
+        let defaultACL = PFACL()
+        defaultACL.hasPublicReadAccess = true
+        if let currentUser = PFUser.current() {
+            defaultACL.setWriteAccess(true, for: currentUser)
+        }
+        PFACL.setDefault(defaultACL, withAccessForCurrentUser: true)
             
             // 确保在主线程初始化窗口
             DispatchQueue.main.async {
