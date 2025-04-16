@@ -1,4 +1,5 @@
 PODS:
+  - Alamofire (5.10.2)
   - Bolts (1.9.1):
     - Bolts/AppLinks (= 1.9.1)
     - Bolts/Tasks (= 1.9.1)
@@ -13,6 +14,7 @@ PODS:
   - Toast-Swift (5.1.1)
 
 DEPENDENCIES:
+  - Alamofire (~> 5.7)
   - Bolts (~> 1.9.0)
   - Parse (~> 1.19.0)
   - SwiftGifOrigin (~> 1.7.0)
@@ -20,17 +22,19 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - Alamofire
     - Bolts
     - Parse
     - SwiftGifOrigin
     - Toast-Swift
 
 SPEC CHECKSUMS:
+  Alamofire: 7193b3b92c74a07f85569e1a6c4f4237291e7496
   Bolts: 8c1e8aab2f603387b8b9924f57d1d64f43d3ffdc
   Parse: 6d572042e2c171414c677acabcd9bab7bbf51264
   SwiftGifOrigin: fbd6cf37afcfcf97a5c3db996ddc0492e5c5c145
   Toast-Swift: 7a03a532afe3a560d4044bc7c237e2864d295173
 
-PODFILE CHECKSUM: abcf389870f17bb99628ef40b82f65b057c1cd6d
+PODFILE CHECKSUM: c658d628af91e02e58491c0a8db14074470df6ac
 
 COCOAPODS: 1.16.2

@@ -11,6 +11,7 @@ import Parse
 import Foundation
 import Toast_Swift
 import UserNotifications
+import Alamofire
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
@@ -31,7 +32,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             let configuration = ParseClientConfiguration {
                 $0.applicationId = "ParseServerMyCameraAppId123"
                 $0.clientKey = ""
-                $0.server = "http://8.138.186.198:1337/parse"
+                $0.server = "https://www.michaelyanghang.com/parse"
+                
+                // 添加SSL验证配置
+                let sessionConfig = URLSessionConfiguration.af.default
+                sessionConfig.timeoutIntervalForRequest = 30
+                sessionConfig.timeoutIntervalForResource = 60
+                sessionConfig.requestCachePolicy = .reloadIgnoringLocalCacheData
+                // Configure SSL certificate policy
+                let evaluators: [String: ServerTrustEvaluating] = [
+                    "www.michaelyanghang.com": DisabledTrustEvaluator()
+                ]
+                let serverTrustManager = ServerTrustManager(evaluators: evaluators)
+                $0.urlSessionConfiguration = sessionConfig
+                
             }
             Parse.initialize(with: configuration)
 
@@ -158,6 +172,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             pfi?.saveInBackground { (success, error) in
                 if let error = error {
                     print("Parse服务器连接失败: \(error.localizedDescription)")
+                        print("服务器响应原始数据: \(String(describing: (error as NSError).userInfo["com.parse.code"]))")
+                        print("服务器响应内容: \(String(describing: (error as NSError).userInfo["error"]))")
                     if retryCount < maxRetries {
                         retryCount += 1
                         print("尝试第\(retryCount)次重连...")
