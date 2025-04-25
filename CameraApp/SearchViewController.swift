@@ -36,20 +36,40 @@ extension SearchViewController: UISearchBarDelegate {
         let group = DispatchGroup()
         group.enter()
         print(searchText)
-        let query = PFUser.query()
-        query?.whereKey("username", equalTo: searchText)
-        query?.findObjectsInBackground(block: {(objects:[PFObject]?, error: Error?) in
-       
-            if (error == nil) {
-                self.userObj = objects?.first
-            } else {
-                print(error as Any)
-                self.searching = false
-            }
-            
-            group.leave()
         
-        })
+//        let query = PFUser.query()
+//        query?.whereKey("username", equalTo: searchText)
+//        query?.findObjectsInBackground(block: {(objects:[PFObject]?, error: Error?) in
+//       
+//            if (error == nil) {
+//                self.userObj = objects?.first
+//            } else {
+//                print(error as Any)
+//                self.searching = false
+//            }
+//            
+//            group.leave()
+//        
+//        })
+        
+        // ✅ 正确做法：通过 Cloud Function 间接查询
+        PFCloud.callFunction(inBackground: "searchUsers",
+                             withParameters: ["username": searchText]) {
+          (results, error) in
+          if let error = error {
+            print("搜索用户出错: \(error.localizedDescription)")
+            self.userObj = nil
+            group.leave()
+            return
+          }
+          
+          if let users = results as? [PFObject], !users.isEmpty {
+            self.userObj = users.first
+          } else {
+            self.userObj = nil
+          }
+          group.leave()
+        }
         
         group.notify(queue: .main) {
             

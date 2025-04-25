@@ -36,8 +36,10 @@ class FriendCell: UITableViewCell {
     }
     
     @objc func tapEdit(sender: UITapGestureRecognizer) {
-        delegate?.myTableDelegate(id: friendName.text!,icon: friendIcon.image!)
+        guard let name = friendName.text, let icon = friendIcon.image else {
+            print("Required fields are missing")
+            return
+        }
+        delegate?.myTableDelegate(id: name, icon: icon)
     }
-    
-    
 }

@@ -512,9 +512,8 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-       
         var img: UIImage!
-        var fd: PFObject!
+        var fd: PFObject? // Change to optional
         var name: String!
         var file: PFFileObject!
         
@@ -522,31 +521,46 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
         cell.delegate = self
         
         let friend = friendList[indexPath.row]
-        let userId = friend.objectId
+        guard let userId = friend.objectId else {
+            print("User ID is nil for friend at index \(indexPath.row)")
+            return cell
+        }
         
         let profileQuery:PFQuery = PFUser.query()!
         let group = DispatchGroup()
         group.enter()
-        profileQuery.getObjectInBackground(withId: userId as! String) { (object: PFObject?, error: Error?) in
-            fd = object!
+        profileQuery.getObjectInBackground(withId: userId) { (object: PFObject?, error: Error?) in
+            if let object = object {
+                fd = object
+            } else {
+                print("Error getting user object: \(error?.localizedDescription ?? "unknown error")")
+            }
             group.leave()
         }
         
         group.notify(queue: .main) {
-            name = (fd["username"] as! String)
-            file = (fd["avatar"] as! PFFileObject)
-        
-            let group2 = DispatchGroup()
-            group2.enter()
-        
-            (file as! PFFileObject).getDataInBackground {
-                (data: Data?, error: Error?) -> Void in
-                img = UIImage(data: data!)!
-                group2.leave()
-            }
-        
-            group2.notify(queue: .main) {
-                cell.setAvatar(username: name as! String, icon: img)
+            if let fd = fd {
+                name = (fd["username"] as? String)
+                file = (fd["avatar"] as? PFFileObject)
+                
+                if let file = file {
+                    let group2 = DispatchGroup()
+                    group2.enter()
+                    
+                    file.getDataInBackground {
+                        (data: Data?, error: Error?) -> Void in
+                        if let data = data, let image = UIImage(data: data) {
+                            img = image
+                        }
+                        group2.leave()
+                    }
+                    
+                    group2.notify(queue: .main) {
+                        if let name = name, let img = img {
+                            cell.setAvatar(username: name, icon: img)
+                        }
+                    }
+                }
             }
         }
         
