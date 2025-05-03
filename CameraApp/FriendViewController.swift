@@ -3,7 +3,7 @@
 //  CameraApp
 //
 //  Created by Hang Yang on 3/1/19.
-//  Copyright © 2019 hang yang. All rights reserved.
+//  Copyright 2019 hang yang. All rights reserved.
 //
 
 import UIKit
@@ -397,6 +397,20 @@ class FriendViewController: UIViewController, tableDelegate {
     
     }
     
+    // 显示错误提示弹窗
+    private func showErrorAlert(message: String) {
+        let alert = UIAlertController(title: "错误", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "确定", style: .default, handler: nil))
+        self.present(alert, animated: true)
+    }
+    
+    // 显示成功提示弹窗
+    private func showSuccessAlert(message: String) {
+        let alert = UIAlertController(title: "成功", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "确定", style: .default, handler: nil))
+        self.present(alert, animated: true)
+    }
+    
 }
 
 extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
@@ -512,13 +526,24 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var img: UIImage!
-        var fd: PFObject? // Change to optional
-        var name: String!
-        var file: PFFileObject!
-        
         let cell = tableView.dequeueReusableCell(withIdentifier: "FriendCell") as! FriendCell
         cell.delegate = self
+        
+        // 设置默认状态，避免显示空白
+        cell.friendName.text = "加载中..."
+        // 设置默认图像
+        if let defaultImage = UIImage(named: "placeholder") {
+            cell.friendIcon.image = defaultImage
+        } else {
+            // 使用自定义默认图像，而不是系统图像
+            cell.friendIcon.image = UIImage(named: "default_avatar") ?? UIImage()
+        }
+        
+        // 确保索引有效
+        guard indexPath.row < friendList.count else {
+            print("Index out of bounds: \(indexPath.row), friendList count: \(friendList.count)")
+            return cell
+        }
         
         let friend = friendList[indexPath.row]
         guard let userId = friend.objectId else {
@@ -526,44 +551,128 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
             return cell
         }
         
-        let profileQuery:PFQuery = PFUser.query()!
-        let group = DispatchGroup()
-        group.enter()
-        profileQuery.getObjectInBackground(withId: userId) { (object: PFObject?, error: Error?) in
-            if let object = object {
-                fd = object
-            } else {
-                print("Error getting user object: \(error?.localizedDescription ?? "unknown error")")
-            }
-            group.leave()
-        }
+        print("Loading user with ID: \(userId)")
         
-        group.notify(queue: .main) {
-            if let fd = fd {
-                name = (fd["username"] as? String)
-                file = (fd["avatar"] as? PFFileObject)
-                
-                if let file = file {
-                    let group2 = DispatchGroup()
-                    group2.enter()
-                    
-                    file.getDataInBackground {
-                        (data: Data?, error: Error?) -> Void in
-                        if let data = data, let image = UIImage(data: data) {
-                            img = image
-                        }
-                        group2.leave()
+        // 获取当前用户对象
+        let directUser = friendList[indexPath.row]
+        let objectId = directUser.objectId ?? "Unknown"
+        
+        // 设置默认显示信息
+        cell.friendName.text = "用户(已删除)"
+        
+        // 1. 尝试从本地对象直接读取数据
+        if directUser.allKeys.count > 0 {
+            print("\(objectId): 本地对象有\(directUser.allKeys.count)个属性")
+            
+            // 检查是否有用户名
+            if let username = directUser["username"] as? String {
+                cell.friendName.text = username
+                print("\(objectId): 直接读取到用户名 - \(username)")
+            }
+            
+            // 试图读取头像
+            if let avatarFile = directUser["avatar"] as? PFFileObject {
+                avatarFile.getDataInBackground { (imageData, error) in
+                    if let error = error {
+                        print("\(objectId): 读取头像失败 - \(error.localizedDescription)")
+                        return
                     }
                     
-                    group2.notify(queue: .main) {
-                        if let name = name, let img = img {
-                            cell.setAvatar(username: name, icon: img)
+                    if let data = imageData, let image = UIImage(data: data) {
+                        DispatchQueue.main.async {
+                            // 确保cell仍然可见
+                            if let cells = tableView.visibleCells as? [FriendCell],
+                               let visibleCell = cells.first(where: { $0.tag == indexPath.row }) {
+                                visibleCell.friendIcon.image = image
+                                print("\(objectId): 设置头像成功")
+                            }
                         }
                     }
                 }
             }
+        } else {
+            print("\(objectId): 本地对象没有可用属性")
         }
         
+        // 2. 设置cell的tag便于后续识别
+        cell.tag = indexPath.row
+        
+        // 3. 使用Cloud Function来绕过ACL限制查询用户
+        let params = ["userId": objectId]
+        
+        print("\(objectId): 使用Cloud Function获取用户")
+        PFCloud.callFunction(inBackground: "fetchUserWithMasterKey", withParameters: params) { (result, error) in
+            if let error = error {
+                print("\(objectId): Cloud Function调用失败 - \(error.localizedDescription)")
+                
+                DispatchQueue.main.async {
+                    if let cells = tableView.visibleCells as? [FriendCell],
+                       let visibleCell = cells.first(where: { $0.tag == indexPath.row }) {
+                        visibleCell.friendName.text = "无法获取用户 (ID: \(objectId.prefix(6))...)"
+                    }
+                }
+                return
+            }
+            
+            // 解析返回结果
+            guard let resultDict = result as? [String: Any],
+                  let success = resultDict["success"] as? Bool else {
+                print("\(objectId): 无法解析返回数据")
+                return
+            }
+            
+            if success, let userData = resultDict["user"] as? [String: Any] {
+                // 成功获取用户数据
+                let username = userData["username"] as? String ?? "未知用户"
+                let avatarUrl = userData["avatar"] as? String
+                
+                print("\(objectId): 使用Cloud Function成功获取用户 - \(username)")
+                
+                DispatchQueue.main.async {
+                    // 查找标记为当前索引的可见cell
+                    if let cells = tableView.visibleCells as? [FriendCell],
+                       let visibleCell = cells.first(where: { $0.tag == indexPath.row }) {
+                        
+                        // 设置用户名
+                        visibleCell.friendName.text = username
+                        
+                        // 获取头像如果有URL
+                        if let avatarUrlString = avatarUrl, let url = URL(string: avatarUrlString) {
+                            URLSession.shared.dataTask(with: url) { (data, response, urlError) in
+                                if let urlError = urlError {
+                                    print("\(objectId): 下载头像失败 - \(urlError.localizedDescription)")
+                                    return
+                                }
+                                
+                                if let data = data, let image = UIImage(data: data) {
+                                    DispatchQueue.main.async {
+                                        // 再次检查cell可见性
+                                        if let cells = tableView.visibleCells as? [FriendCell],
+                                           let stillVisibleCell = cells.first(where: { $0.tag == indexPath.row }) {
+                                            stillVisibleCell.friendIcon.image = image
+                                            print("\(objectId): 设置来自服务器的头像成功")
+                                        }
+                                    }
+                                }
+                            }.resume()
+                        }
+                    }
+                }
+            } else {
+                // 服务器上没有找到用户或没有权限
+                let message = resultDict["message"] as? String ?? "未知错误"
+                print("\(objectId): Cloud Function返回错误 - \(message)")
+                
+                DispatchQueue.main.async {
+                    // 查找标记为当前索引的可见cell
+                    if let cells = tableView.visibleCells as? [FriendCell],
+                       let visibleCell = cells.first(where: { $0.tag == indexPath.row }) {
+                        visibleCell.friendName.text = "已删除的用户 (ID: \(objectId.prefix(6))...)"
+                    }
+                }
+            }
+        }
+        // 返回配置好的cell
         return cell
     }
     
@@ -818,38 +927,84 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
             
             alert.addAction(UIAlertAction(title: "同意", style: .default, handler: { action in
                 
+                // 安全地查询用户
                 let tableQuery = PFQuery(className: "JoinTable")
-                let userQuery = PFUser.query()
+                guard let userQuery = PFUser.query() else {
+                    print("Error: 无法创建User查询")
+                    self.showErrorAlert(message: "无法处理该请求，请稍后再试")
+                    return
+                }
+                
                 let acl = PFACL()
                 
-                userQuery?.whereKey("username", equalTo: id)
-                let user = try! userQuery?.findObjects().first
-                print(user!["username"])
-                tableQuery.whereKey("from", equalTo: user)
-                tableQuery.whereKey("to", equalTo: PFUser.current())
-                tableQuery.whereKey("request", equalTo: "sendrequest")
-                let request = try! tableQuery.findObjects().first as! PFObject
-                print(request.objectId)
-                request.setObject("approverequest", forKey: "request")
-                acl.setReadAccess(true, for: PFUser.current()!)
-                acl.setWriteAccess(true, for: PFUser.current()!)
-                acl.setReadAccess(true, for: user as! PFUser)
-                acl.setWriteAccess(true, for: user as! PFUser)
-                request.acl = acl
-                request.saveEventually()
+                // 查询用户
+                userQuery.whereKey("username", equalTo: id)
+                
+                // 声明一个外部变量保存用户对象，可在整个handler中使用
+                var foundUser: PFUser? = nil
+                
+                do {
+                    // 安全地获取用户对象
+                    let userObjects = try userQuery.findObjects()
+                    guard let user = userObjects.first as? PFUser else {
+                        print("Error: 没有找到用户名为\(id)的用户")
+                        self.showErrorAlert(message: "找不到该用户，请稍后再试")
+                        return
+                    }
+                    
+                    // 存储到外部变量
+                    foundUser = user
+                    
+                    print("User found: \(user.username ?? "<no username>")")
+                    
+                    // 查询请求
+                    tableQuery.whereKey("from", equalTo: user)
+                    tableQuery.whereKey("to", equalTo: PFUser.current()!)
+                    tableQuery.whereKey("request", equalTo: "sendrequest")
+                    
+                    let requestObjects = try tableQuery.findObjects()
+                    guard let request = requestObjects.first else {
+                        print("Error: 没有找到匹配的请求")
+                        self.showErrorAlert(message: "请求信息不存在，可能已被删除")
+                        return
+                    }
+                    
+                    print("Request found: \(request.objectId ?? "<no id>")")
+                    
+                    // 设置请求和权限
+                    request.setObject("approverequest", forKey: "request")
+                    acl.setReadAccess(true, for: PFUser.current()!)
+                    acl.setWriteAccess(true, for: PFUser.current()!)
+                    acl.setReadAccess(true, for: user)
+                    acl.setWriteAccess(true, for: user)
+                    request.acl = acl
+                    request.saveEventually()
+                } catch {
+                    print("Error processing friend request: \(error.localizedDescription)")
+                    self.showErrorAlert(message: "处理请求时出错，请稍后再试")
+                    return
+                }
+                
+                // 检查是否成功获取到用户
+                guard let user = foundUser else {
+                    print("Error: 不能继续处理，用户对象为空")
+                    self.showErrorAlert(message: "处理请求时出错，请稍后再试")
+                    return
+                }
+                
+                // 现在可以安全地使用user对象
                 var list = PFUser.current()!["friendReqList"] as! [PFObject]
                
                 print(list.count)
                     
                 for i in 0 ..< list.count {
-                        
-                    if user!.objectId == (list[i].objectId) {
+                    // 安全地使用user.objectId，不需要强制解包
+                    if user.objectId == list[i].objectId {
                         print("JIN")
                         list.remove(at: i)
                         self.friendReqList = list
                         break
                     }
-                        
                 }
                 
                 print(list.count)
@@ -859,89 +1014,84 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                 group.enter()
                 
                 do {
-                    
                     PFUser.current()!.saveEventually()
                     print("long\((PFUser.current()!["friendReqList"] as! [PFObject]).count)")
                     group.leave()
-                
                 }
                 
                 group.notify(queue: .main) {
-                    
-                    //print((try! PFQuery(className: "JoinTable").getFirstObject())["request"] as! String)
                     print("waahh")
-                    PFCloud.callFunction(inBackground: "friendReqApprove", withParameters: ["someId": user!.objectId , "someName": PFUser.current()!["username"]]) {(result, error) in
-                        
-                        if (error == nil) {
-                            print(result)
+                    
+                    // 使用user.objectId，安全地访问
+                    let userId = user.objectId ?? ""
+                    
+                    PFCloud.callFunction(inBackground: "friendReqApprove", withParameters: [
+                        "someId": userId,
+                        "someName": PFUser.current()!["username"] ?? ""
+                    ]) { (result, error) in
+                        if error == nil {
+                            print(result ?? "Success")
                         } else {
-                            print(error?.localizedDescription)
+                            print(error?.localizedDescription ?? "Unknown error")
                         }
                     }
                     
                     print("second")
                     self.viewDidLoad()
-                
                 }
-                
             }))
             
             alert.addAction(UIAlertAction(title: "不同意", style: .cancel, handler: { action in
-            
+                // 创建Query对象
                 let tableQuery = PFQuery(className: "JoinTable")
-                let userQuery = PFUser.query()
-                
-                userQuery?.whereKey("username", equalTo: id)
-                let user = try! userQuery?.findObjects().first
-                
-                tableQuery.whereKey("from", equalTo: user)
-                tableQuery.whereKey("to", equalTo: PFUser.current())
-                tableQuery.whereKey("request", equalTo: "sendrequest")
-                
-                var list = PFUser.current()!["friendReqList"] as! [PFObject]
-                
-                for i in 0 ..< list.count {
-                    
-                    if user!.objectId == (list[i].objectId) {
-                     
-                        list.remove(at: i)
-                        break
-                    
-                    }
-                    
+                guard let userQuery = PFUser.query() else {
+                    print("Error: 无法创建User查询")
+                    self.showErrorAlert(message: "无法处理操作，请稍后再试")
+                    return
                 }
                 
-                PFUser.current()!.setObject(list, forKey: "friendReqList")
-                let group = DispatchGroup()
-                
-                group.enter()
+                // 安全地查询用户
+                userQuery.whereKey("username", equalTo: id)
                 
                 do {
+                    // 安全地获取用户对象
+                    let userObjects = try userQuery.findObjects()
+                    guard let user = userObjects.first as? PFUser else {
+                        print("Error: 没有找到用户名为\(id)的用户")
+                        self.showErrorAlert(message: "找不到该用户，请稍后再试")
+                        return
+                    }
                     
-                    let request = try! tableQuery.findObjects().first as! PFObject
-                    request.deleteEventually()
-                    PFUser.current()!.saveEventually()
+                    // 查询请求
+                    tableQuery.whereKey("from", equalTo: user)
+                    tableQuery.whereKey("to", equalTo: PFUser.current()!)
+                    tableQuery.whereKey("request", equalTo: "sendrequest")
                     
-                    group.leave()
+                    // 更新好友请求列表
+                    var list = PFUser.current()!["friendReqList"] as! [PFObject]
                     
-                }
-                
-                group.notify(queue: .main) {
-                    
-                    PFCloud.callFunction(inBackground: "friendReqReject", withParameters: ["someId": user!.objectId , "someName": PFUser.current()!["username"]]) {(result, error) in
-                        
-                        if (error == nil) {
-                            print(result)
-                        } else {
-                            print(error?.localizedDescription)
+                    for i in 0 ..< list.count {
+                        if user.objectId == list[i].objectId {
+                            list.remove(at: i)
+                            break
                         }
                     }
                     
-                    print("sec")
-                    self.viewDidLoad()
+                    // 更新用户数据
+                    PFUser.current()!.setObject(list, forKey: "friendReqList")
+                    PFUser.current()!.saveEventually()
                     
+                    // 通知用户
+                    self.showSuccessAlert(message: "已拒绝用户 \(user.username ?? id) 的好友请求")
+                    
+                    // 刷新界面
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        self.viewDidLoad()
+                    }
+                } catch {
+                    print("Error rejecting friend request: \(error.localizedDescription)")
+                    self.showErrorAlert(message: "处理请求时出错，请稍后再试")
                 }
-                
             }))
             
             self.present(alert, animated: true)
