@@ -687,39 +687,12 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                 var f1 = true
                 var f2 = true
                 let query1 = PFQuery(className: "JoinTable")
-                
+                let uquery = PFUser.query()
                 let gp = DispatchGroup()
-                
-//                let uquery = PFUser.query()
-//                uquery?.whereKey("username", equalTo: id)
-//                let target = try! uquery?.getFirstObject()
-                
-                var foundUser: PFUser? = nil
-                
-                do {
-                    print("Calling searchUsers Cloud Function with username: \(id)")
-                    
-                    do {
-                        let result = try PFCloud.callFunction("searchUsers", withParameters: ["username": id]) as? [PFObject]
-                        guard let users = result, let user = users.first as? PFUser else {
-                            print("No user found with username: \(id)")
-                            return
-                        }
-                        print("Found user: \(user.username ?? "N/A")")
-                        foundUser = user
-                    } catch {
-                        print("Cloud function error: \(error.localizedDescription)")
-                        self.showErrorAlert(message: "Failed to search users")
-                    }
-                    
-                } catch {
-                    print("Error in Cloud Function call: \(error.localizedDescription)")
-                    self.showErrorAlert(message: "处理请求时出错，请稍后再试")
-                    return
-                }
-                
+                uquery?.whereKey("username", equalTo: id)
+                let target = try! uquery?.getFirstObject()
                 query1.whereKey("from", equalTo: PFUser.current())
-                query1.whereKey("to", equalTo: foundUser)
+                query1.whereKey("to", equalTo: target)
                 query1.whereKey("request", equalTo: "approverequest")
                 gp.enter()
                 query1.findObjectsInBackground( block:{(objs,err) in
@@ -736,7 +709,7 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                 
                 let query2 = PFQuery(className: "JoinTable")
                 query2.whereKey("to", equalTo: PFUser.current())
-                query2.whereKey("from", equalTo: foundUser)
+                query2.whereKey("from", equalTo: target)
                 query2.whereKey("request", equalTo: "approverequest")
                 gp.enter()
                 query2.findObjectsInBackground( block:{(objs,err) in
@@ -797,26 +770,18 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                         self.newdict.updateValue(id, forKey: "his_id")
                         
                         var user: PFObject!
-//                        let his_id = id
-//                        let query = PFUser.query()
-//                        query?.whereKey("username", equalTo: his_id)
+                        let his_id = id
+                        let query = PFUser.query()
+                        query?.whereKey("username", equalTo: his_id)
                         let gp1 = DispatchGroup()
                         gp1.enter()
-                        
-                        PFCloud.callFunction(inBackground: "searchUsers", withParameters: ["username": id]) { (result: Any?, error1: Error?) in
+                        query?.findObjectsInBackground { (objects: [PFObject]?, error1: Error?) in
                             
                             if(error1 == nil) {
-//                              user = result?.first
-                                guard let userObjects = result as? [PFObject],
-                                let u = userObjects.first as? PFUser else {
-                                    print("No user found with username: \(id)")
-                                    self.showErrorAlert(message: "User not found")
-                                    return
-                                }
+                                
+                                user = objects?.first
                                 let current = PFUser.current()
                                 let groupACL = PFACL()
-                                
-                                user = u
                                 
                                 groupACL.setReadAccess(true, for: user as! PFUser)
                                 groupACL.setWriteAccess(true, for: user as! PFUser)
@@ -978,51 +943,19 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                 // 声明一个外部变量保存用户对象，可在整个handler中使用
                 var foundUser: PFUser? = nil
                 
-                // 使用Cloud Function "searchUsers"获取用户
-                // 在调用Cloud Function之前添加调试日志
-                print("Before calling searchUsers Cloud Function")
-                
-                let currentConfig = PFConfig.current()
-                print("Current Parse configuration: \(currentConfig)")
-                 
-                if let serverURL = Parse.currentConfiguration?.server {
-                    print("Current Parse server URL: \(serverURL)")
-                } else {
-                    print("No Parse server URL configured")
-                }
-
-                // 在调用Cloud Function之前添加调试日志
-                print("Before calling searchUsers Cloud Function")
-
                 do {
-                    print("Calling searchUsers Cloud Function with username: \(id)")
-                    
-                    do {
-                        let result = try PFCloud.callFunction("searchUsers", withParameters: ["username": id]) as? [PFObject]
-                        guard let users = result, let user = users.first as? PFUser else {
-                            print("No user found with username: \(id)")
-                            return
-                        }
-                        print("Found user: \(user.username ?? "N/A")")
-                        foundUser = user
-                    } catch {
-                        print("Cloud function error: \(error.localizedDescription)")
-                        self.showErrorAlert(message: "Failed to search users")
-                    }
-                    
-                } catch {
-                    print("Error in Cloud Function call: \(error.localizedDescription)")
-                    self.showErrorAlert(message: "处理请求时出错，请稍后再试")
-                    return
-                }
-                
-                do {
-                    // 检查是否成功获取到用户
-                    guard let user = foundUser else {
-                        print("Error: 不能继续处理，用户对象为空")
-                        self.showErrorAlert(message: "处理请求时出错，请稍后再试")
+                    // 安全地获取用户对象
+                    let userObjects = try userQuery.findObjects()
+                    guard let user = userObjects.first as? PFUser else {
+                        print("Error: 没有找到用户名为\(id)的用户")
+                        self.showErrorAlert(message: "找不到该用户，请稍后再试")
                         return
                     }
+                    
+                    // 存储到外部变量
+                    foundUser = user
+                    
+                    print("User found: \(user.username ?? "<no username>")")
                     
                     // 查询请求
                     tableQuery.whereKey("from", equalTo: user)
@@ -1042,8 +975,8 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                     request.setObject("approverequest", forKey: "request")
                     acl.setReadAccess(true, for: PFUser.current()!)
                     acl.setWriteAccess(true, for: PFUser.current()!)
-                    acl.setReadAccess(true, for: (foundUser)!)
-                    acl.setWriteAccess(true, for: (foundUser)!)
+                    acl.setReadAccess(true, for: user)
+                    acl.setWriteAccess(true, for: user)
                     request.acl = acl
                     request.saveEventually()
                 } catch {
@@ -1076,8 +1009,8 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                 
                 print(list.count)
                 PFUser.current()!.setObject(list, forKey: "friendReqList")
-                
                 let group = DispatchGroup()
+                
                 group.enter()
                 
                 do {
@@ -1092,52 +1025,15 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                     // 使用user.objectId，安全地访问
                     let userId = user.objectId ?? ""
                     
-//                    PFCloud.callFunction(inBackground: "friendReqApprove", withParameters: [
-//                        "someId": userId,
-//                        "someName": PFUser.current()!["username"] ?? ""
-//                    ]) { (result, error) in
-//                        if error == nil {
-//                            print(result ?? "Success")
-//                        } else {
-//                            print(error?.localizedDescription ?? "Unknown error")
-//                        }
-//                    }
-                    
-                    do {
-                        let result = try PFCloud.callFunction("friendReqApprove", withParameters: [
-                            "someId": userId,
-                            "someName": PFUser.current()!["username"] ?? ""
-                        ])
-                        print("Friend request approved: \(String(describing: result))")
-                    } catch {
-                        print("Error approving friend request: \(error.localizedDescription)")
-                        self.showErrorAlert(message: "处理好友请求时出错，请稍后再试")
-                    }
-                    
-                    // 更新本地数据源
-//                    if var friendReqList = PFUser.current()?["friendReqList"] as? [String] {
-//                        friendReqList.removeAll { $0 == user.username }
-//                        PFUser.current()?["friendReqList"] = friendReqList
-//                        try PFUser.current()?.save()
-//                    }
-                    
-                    // 更新好友请求列表
-                    var list = PFUser.current()!["friendReqList"] as! [PFObject]
-                    
-                    for i in 0 ..< list.count {
-                        if foundUser?.objectId == list[i].objectId {
-                            list.remove(at: i)
-                            break
+                    PFCloud.callFunction(inBackground: "friendReqApprove", withParameters: [
+                        "someId": userId,
+                        "someName": PFUser.current()!["username"] ?? ""
+                    ]) { (result, error) in
+                        if error == nil {
+                            print(result ?? "Success")
+                        } else {
+                            print(error?.localizedDescription ?? "Unknown error")
                         }
-                    }
-                    
-                    // 更新用户数据
-                    PFUser.current()!.setObject(list, forKey: "friendReqList")
-                    PFUser.current()!.saveEventually()
-                    
-                    // 刷新表格
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
                     }
                     
                     print("second")
@@ -1157,37 +1053,12 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                 // 安全地查询用户
                 userQuery.whereKey("username", equalTo: id)
                 
-                // 声明一个外部变量保存用户对象，可在整个handler中使用
-                var foundUser: PFUser? = nil
-                
-                // 使用Cloud Function "searchUsers"获取用户
                 do {
-                    print("Calling searchUsers Cloud Function with username: \(id)")
-                    
-                    do {
-                        let result = try PFCloud.callFunction("searchUsers", withParameters: ["username": id]) as? [PFObject]
-                        guard let users = result, let user = users.first as? PFUser else {
-                            print("No user found with username: \(id)")
-                            return
-                        }
-                        print("Found user: \(user.username ?? "N/A")")
-                        foundUser = user
-                    } catch {
-                        print("Cloud function error: \(error.localizedDescription)")
-                        self.showErrorAlert(message: "Failed to search users")
-                    }
-                    
-                } catch {
-                    print("Error in Cloud Function call: \(error.localizedDescription)")
-                    self.showErrorAlert(message: "处理请求时出错，请稍后再试")
-                    return
-                }
-                
-                do {
-                    // 检查是否成功获取到用户
-                    guard let user = foundUser else {
-                        print("Error: 不能继续处理，用户对象为空")
-                        self.showErrorAlert(message: "处理请求时出错，请稍后再试")
+                    // 安全地获取用户对象
+                    let userObjects = try userQuery.findObjects()
+                    guard let user = userObjects.first as? PFUser else {
+                        print("Error: 没有找到用户名为\(id)的用户")
+                        self.showErrorAlert(message: "找不到该用户，请稍后再试")
                         return
                     }
                     
@@ -1196,38 +1067,11 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                     tableQuery.whereKey("to", equalTo: PFUser.current()!)
                     tableQuery.whereKey("request", equalTo: "sendrequest")
                     
-                    let results = try tableQuery.findObjects()
-                    if let request = results.first {
-                        // 更新请求状态
-                        request["request"] = "rejectrequest"
-                        
-                        // 设置ACL
-                        let acl = PFACL()
-                        request.setObject("rejectrequest", forKey: "request")
-                        acl.setReadAccess(true, for: PFUser.current()!)
-                        acl.setWriteAccess(true, for: PFUser.current()!)
-                        acl.setReadAccess(true, for: (foundUser)!)
-                        acl.setWriteAccess(true, for: (foundUser)!)
-                        request.acl = acl
-                        request.saveEventually()
-                        
-                        // 保存更新
-//                        try request.save()
-                        
-                        // 更新本地数据源
-//                        if var friendReqList = PFUser.current()?["friendReqList"] as? [String] {
-//                            friendReqList.removeAll { $0 == user.username }
-//                            PFUser.current()?["friendReqList"] = friendReqList
-//                            try PFUser.current()?.save()
-//                        }
-                        
-                    }
-                    
                     // 更新好友请求列表
                     var list = PFUser.current()!["friendReqList"] as! [PFObject]
                     
                     for i in 0 ..< list.count {
-                        if foundUser?.objectId == list[i].objectId {
+                        if user.objectId == list[i].objectId {
                             list.remove(at: i)
                             break
                         }
@@ -1238,15 +1082,11 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                     PFUser.current()!.saveEventually()
                     
                     // 通知用户
-                    self.showSuccessAlert(message: "已拒绝用户 \(foundUser?.username ?? id) 的好友请求")
+                    self.showSuccessAlert(message: "已拒绝用户 \(user.username ?? id) 的好友请求")
                     
                     // 刷新界面
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                         self.viewDidLoad()
-                    }
-                    // 刷新表格
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
                     }
                 } catch {
                     print("Error rejecting friend request: \(error.localizedDescription)")

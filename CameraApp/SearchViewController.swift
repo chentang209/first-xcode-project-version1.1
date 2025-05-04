@@ -151,14 +151,27 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
             let list = PFUser.current()!["friendList"] as! [PFObject]
 
             for o in list {
-
+                
                 let ta = o.objectId
-                let qt = PFUser.query()
-                qt?.whereKey("objectId", equalTo: ta)
-                let oo = try! qt?.getFirstObject()
-                let na = oo!["username"] as! String
-                array.append(na)
-
+                // let qt = PFUser.query()
+                // qt?.whereKey("objectId", equalTo: ta)
+                do {
+                    let result = try PFCloud.callFunction("searchUsers", withParameters: ["userId": ta]) as? [PFUser]
+                    
+                    // let oo = try! qt?.getFirstObject()
+                    guard let userObjects = result as? [PFObject], let user = userObjects.first as? PFUser else {
+                        print("Error: 没有找到用户名为\(ta)的用户")
+                        print("Received result type: \(type(of: result))")
+                        print("Result description: \(String(describing: result))")
+                        
+                        throw NSError(domain: "UserNotFound", code: 404, userInfo: nil)
+                    }
+                    let na = user["username"] as! String
+                    array.append(na)
+                } catch {
+                    print("Cloud function error: \(error.localizedDescription)")
+                }
+            
             }
 
             for o in array {
