@@ -41,6 +41,7 @@
 		C2F6F9952224CF9B002E67E2 /* Avatar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F6F9942224CF9B002E67E2 /* Avatar.swift */; };
 		C2F6F997222516FD002E67E2 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F6F996222516FD002E67E2 /* SearchViewController.swift */; };
 		C2F6F99922253C4A002E67E2 /* IconCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F6F99822253C4A002E67E2 /* IconCell.swift */; };
+		C473A88D2DC7F32500168A11 /* yanhua.gif in Resources */ = {isa = PBXBuildFile; fileRef = C473A88C2DC7F32500168A11 /* yanhua.gif */; };
 		C49EF1D02DA5D846002EA63E /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C49EF1CF2DA5D846002EA63E /* SessionManager.swift */; };
 /* End PBXBuildFile section */
 
@@ -106,6 +107,7 @@
 		C2F6F9942224CF9B002E67E2 /* Avatar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Avatar.swift; sourceTree = "<group>"; };
 		C2F6F996222516FD002E67E2 /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		C2F6F99822253C4A002E67E2 /* IconCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconCell.swift; sourceTree = "<group>"; };
+		C473A88C2DC7F32500168A11 /* yanhua.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = yanhua.gif; sourceTree = "<group>"; };
 		C49EF1CF2DA5D846002EA63E /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		D14F35A1C008B719CB88E638 /* Pods_CameraApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CameraApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -214,6 +216,7 @@
 				C2F6F98422200205002E67E2 /* SignupViewController.swift */,
 				C2E781BA21F760680023F4FB /* PhotoViewController.swift */,
 				C2F6F98622224D8D002E67E2 /* FullPicViewController.swift */,
+				C473A88C2DC7F32500168A11 /* yanhua.gif */,
 				C22F62C72235A4EC0062745E /* zhanghan.gif */,
 				C211CB3A223481B500CA0D8F /* jinguanzhang.gif */,
 				C2E7819121F677E00023F4FB /* Assets.xcassets */,
@@ -366,6 +369,7 @@
 				C22F62C82235A4EC0062745E /* zhanghan.gif in Resources */,
 				C2E7819521F677E00023F4FB /* LaunchScreen.storyboard in Resources */,
 				C2E7819221F677E00023F4FB /* Assets.xcassets in Resources */,
+				C473A88D2DC7F32500168A11 /* yanhua.gif in Resources */,
 				C2E7819021F677DD0023F4FB /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

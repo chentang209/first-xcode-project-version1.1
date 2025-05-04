@@ -676,6 +676,24 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
         return cell
     }
     
+    
+    // 压缩图片后再上传（示例）
+    func compressImage(_ image: UIImage, maxSizeKB: Int) -> Data? {
+        var compression: CGFloat = 1.0
+        let maxSizeBytes = maxSizeKB * 1024
+        
+        guard var imageData = image.jpegData(compressionQuality: compression) else {
+            return nil
+        }
+        
+        while imageData.count > maxSizeBytes, compression > 0.1 {
+            compression -= 0.1
+            imageData = image.jpegData(compressionQuality: compression) ?? imageData
+        }
+        
+        return imageData
+    }
+    
     func myTableDelegate(id: String, icon: UIImage) {
         
         if afterchuti {
@@ -759,19 +777,23 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                         self.present(alertt, animated: true)
                         
                         var imageData:NSData = (self.store["pic1"] as! UIImage).jpegData(compressionQuality: 0)! as NSData
-                        var strBase64 = imageData.base64EncodedString(options: [])
+                        var compressedData = self.compressImage(UIImage(data: imageData as Data)!, maxSizeKB: 500)
+                        var strBase64 = compressedData!.base64EncodedString(options: [])
                         self.newdict.updateValue(strBase64 as String, forKey: "pic1")
                         
                         imageData = (self.store["pic2"] as! UIImage).jpegData(compressionQuality: 0)! as NSData
-                        strBase64 = imageData.base64EncodedString(options: [])
+                        compressedData = self.compressImage(UIImage(data: imageData as Data)!, maxSizeKB: 500)
+                        strBase64 = compressedData!.base64EncodedString(options: [])
                         self.newdict.updateValue(strBase64 as String, forKey: "pic2")
                         
                         imageData = (self.store["pic3"] as! UIImage).jpegData(compressionQuality: 0)! as NSData
-                        strBase64 = imageData.base64EncodedString(options: [])
+                        compressedData = self.compressImage(UIImage(data: imageData as Data)!, maxSizeKB: 500)
+                        strBase64 = compressedData!.base64EncodedString(options: [])
                         self.newdict.updateValue(strBase64 as String, forKey: "pic3")
                         
                         imageData = (self.store["pic4"] as! UIImage).jpegData(compressionQuality: 0)! as NSData
-                        strBase64 = imageData.base64EncodedString(options: [])
+                        compressedData = self.compressImage(UIImage(data: imageData as Data)!, maxSizeKB: 500)
+                        strBase64 = compressedData!.base64EncodedString(options: [])
                         self.newdict.updateValue(strBase64 as String, forKey: "pic4")
                         
                         let op1 = self.store["op1"]
@@ -825,9 +847,28 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                                 let question = self.newdict
                                 joinTable.acl = groupACL
                                 
+                                // 在保存之前添加详细的日志
+                                print("Before saving joinTable:")
+                                print("Current thread: \(Thread.current)")
+                                print("Is main thread: \(Thread.isMainThread)")
+
+                                // 检查 question 数据
+                                print("Question data type: \(type(of: self.newdict))")
+                                print("Question keys: \(Array(self.newdict.keys))")
+                                for (key, value) in self.newdict {
+                                    print("Key: \(key), Value type: \(type(of: value)), Value: \(value)")
+                                }
+
+                                // 检查用户数据
+                                print("To user: \(user.objectId ?? "no id")")
+                                print("From user: \(PFUser.current()?.objectId ?? "no id")")
+                                
                                 joinTable.setObject(question , forKey: "question")
                                 joinTable.setObject(user as Any, forKey: "to")
                                 joinTable.setObject(current as Any, forKey: "from")
+                                
+                                // 添加日志输出，查看 question 内容
+//                                print("即将保存的 question 内容: \(question)")
                                 
                                 joinTable.saveInBackground{(success, error) in
                                     
@@ -849,6 +890,13 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                                             alert.dismiss(animated: true)
                                             let alert = UIAlertController(title: "发生内部错误，请稍后再试", message: "", preferredStyle: .alert)
                                             alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
+                                            self.present(alert, animated: true)
+                                        }
+                                        
+                                        // 显示错误给用户
+                                        alertt.dismiss(animated: true) {
+                                            let alert = UIAlertController(title: "发送失败", message: "请检查网络连接后重试", preferredStyle: .alert)
+                                            alert.addAction(UIAlertAction(title: "确定", style: .default, handler: nil))
                                             self.present(alert, animated: true)
                                         }
                                         
@@ -884,7 +932,7 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                                 if success {
                                     print("numOfQuestionToHim saved")
                                     
-                                    PFCloud.callFunction(inBackground: "sendTiPush", withParameters: ["someId": user.objectId , "someName": PFUser.current()!["username"]]) {
+                                    PFCloud.callFunction(inBackground: "sendTiPush", withParameters: ["someId": user.objectId, "someName": PFUser.current()!.username]) {
                                         (result, error) in
                                         if (error == nil) {
                                             print("rt")
