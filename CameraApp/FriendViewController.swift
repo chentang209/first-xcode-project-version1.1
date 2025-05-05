@@ -845,6 +845,15 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                                 
                                 let joinTable = PFObject(className: "JoinTable")
                                 let question = self.newdict
+//                                var jsonData: String!
+//                                if let prettyData = try? JSONSerialization.data(withJSONObject: question, options: .prettyPrinted) {
+//                                    if let prettyString = String(data: prettyData, encoding: .utf8) {
+//                                        print("格式化后的 JSON:\n\(prettyString)")
+//                                        jsonData = prettyString
+//                                    }
+//                                }
+//                              question = String(data: jsonData!, encoding: .utf8)
+                                
                                 joinTable.acl = groupACL
                                 
                                 // 在保存之前添加详细的日志
@@ -853,17 +862,20 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                                 print("Is main thread: \(Thread.isMainThread)")
 
                                 // 检查 question 数据
-                                print("Question data type: \(type(of: self.newdict))")
-                                print("Question keys: \(Array(self.newdict.keys))")
-                                for (key, value) in self.newdict {
-                                    print("Key: \(key), Value type: \(type(of: value)), Value: \(value)")
-                                }
+//                                print("Question data type: \(type(of: self.newdict))")
+//                                print("Question keys: \(Array(self.newdict.keys))")
+//                                for (key, value) in self.newdict {
+//                                    print("Key: \(key), Value type: \(type(of: value)), Value: \(value)")
+//                                }
 
                                 // 检查用户数据
                                 print("To user: \(user.objectId ?? "no id")")
                                 print("From user: \(PFUser.current()?.objectId ?? "no id")")
                                 
-                                joinTable.setObject(question , forKey: "question")
+                                if let dict = question as? [String: Any] {
+//                                    joinTable.setObject(dict, forKey: "question")  // 自动转为 Parse Object
+                                }
+//                                joinTable.setObject(question, forKey: "question")
                                 joinTable.setObject(user as Any, forKey: "to")
                                 joinTable.setObject(current as Any, forKey: "from")
                                 

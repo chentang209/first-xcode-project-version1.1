@@ -378,7 +378,12 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
                        
                         if o["request"] == nil {
                             
-                            let dic = o["question"] as! [String : String]
+//                            let dic = o["question"] as! [String : String]
+                            guard let dic = o["question"] as? [String: String] else {
+                                // Handle error case and return/throw
+                                return
+                            }
+                            // Use dic here
                             let sender_name = dic["self_name"]
                             let idd = o.objectId
                             self.wentidic.updateValue(dic, forKey: idd!)
