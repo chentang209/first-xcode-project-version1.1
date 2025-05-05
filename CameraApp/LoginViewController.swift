@@ -62,7 +62,8 @@ class LoginViewController: UIViewController{
             print("🔵 登录回调触发 - 主线程状态:", Thread.isMainThread ? "主线程" : "后台线程")
             print("🔄 当前执行队列:", OperationQueue.current?.name ?? "未命名队列")
             print("🔵 登录回调触发 - 主线程状态:", Thread.isMainThread ? "主线程" : "后台线程")
-                print("🔍 用户对象状态:", user != nil ? "有效用户" : "空用户")
+            print("🔍 用户对象状态:", user != nil ? "有效用户" : "空用户")
+
             if let loggedInUser = user {
                     print("✅ 登录回调被触发，当前用户:", loggedInUser.username ?? "无名用户")
                     
@@ -82,7 +83,7 @@ class LoginViewController: UIViewController{
                     DispatchQueue.main.asyncAfter(deadline: .now() + 180) {
                         print("🔔 延迟任务开始执行，当前线程:", Thread.isMainThread ? "主线程" : "后台线程")
                         print("👤 当前用户状态:", PFUser.current()?.username ?? "未登录")
-                        PFUser.logOut()
+//                        PFUser.logOut()
                         print("✅ 用户凭证已清除，当前用户状态:", PFUser.current()?.username ?? "未登录")
                         DispatchQueue.main.async {
                             print("🖥️ 开始界面跳转操作")

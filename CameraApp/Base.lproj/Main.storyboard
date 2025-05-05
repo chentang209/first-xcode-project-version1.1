@@ -11,7 +11,7 @@
         <!--ButtonViewController-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" title="ButtonViewController" customClass="ButtonViewController" storyboardIdentifier="ButtonViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ButtonViewController" title="ButtonViewController" id="BYZ-38-t0r" customClass="ButtonViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -99,7 +99,7 @@
         <!--Friend View Controller-->
         <scene sceneID="lBg-5j-g1N">
             <objects>
-                <viewController id="B8J-yc-wE8" useStoryboardIdentifierAsRestorationIdentifier="YES" customClass="FriendViewController" storyboardIdentifier="FriendViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="FriendViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="B8J-yc-wE8" customClass="FriendViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="lBM-U0-5ex">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -160,10 +160,10 @@
             </objects>
             <point key="canvasLocation" x="2636" y="876.61169415292363"/>
         </scene>
-        <!--Answer View Controller-->
+        <!--ViewController-->
         <scene sceneID="Ztp-CA-be0">
             <objects>
-                <viewController id="DJC-bb-DiO" userLabel="ViewController" customClass="AnswerViewController" storyboardIdentifier="AnswerViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="AnswerViewController" id="DJC-bb-DiO" userLabel="ViewController" customClass="AnswerViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="mOt-Ei-ocg">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -255,10 +255,10 @@
             </objects>
             <point key="canvasLocation" x="3765.5999999999999" y="762.36881559220399"/>
         </scene>
-        <!--Result View Controller-->
+        <!--ViewController-->
         <scene sceneID="OZ2-Vp-8bR">
             <objects>
-                <viewController id="9Lh-zz-4Ii" userLabel="ViewController" customClass="ResultViewController" storyboardIdentifier="ResultViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ResultViewController" id="9Lh-zz-4Ii" userLabel="ViewController" customClass="ResultViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="AOr-Dp-4yf">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -342,10 +342,10 @@
             </objects>
             <point key="canvasLocation" x="4780" y="761.46926536731644"/>
         </scene>
-        <!--Photo View Controller-->
+        <!--ViewController-->
         <scene sceneID="iY0-pN-xid">
             <objects>
-                <viewController id="zeH-1D-FdE" userLabel="ViewController" customClass="PhotoViewController" storyboardIdentifier="PhotoViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="PhotoViewController" id="zeH-1D-FdE" userLabel="ViewController" customClass="PhotoViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="c32-j8-3fK">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -408,10 +408,10 @@
             </objects>
             <point key="canvasLocation" x="4104.8000000000002" y="-87.706146926536732"/>
         </scene>
-        <!--Show View Controller-->
+        <!--ViewController-->
         <scene sceneID="e4F-Xq-Dd0">
             <objects>
-                <viewController id="Gxg-qE-iDC" userLabel="ViewController" customClass="ShowViewController" storyboardIdentifier="ShowViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ShowViewController" id="Gxg-qE-iDC" userLabel="ViewController" customClass="ShowViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ryv-Kc-cjy">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -471,10 +471,10 @@
             </objects>
             <point key="canvasLocation" x="5830" y="452"/>
         </scene>
-        <!--Full Pic View Controller-->
+        <!--ViewController-->
         <scene sceneID="hHd-E5-4a0">
             <objects>
-                <viewController id="HJb-1P-nUm" userLabel="ViewController" customClass="FullPicViewController" storyboardIdentifier="FullPicViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="FullPicViewController" id="HJb-1P-nUm" userLabel="ViewController" customClass="FullPicViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="SfH-gi-JeQ">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -504,10 +504,10 @@
             </objects>
             <point key="canvasLocation" x="4849" y="-88"/>
         </scene>
-        <!--Table View Controller-->
+        <!--ViewController-->
         <scene sceneID="ItD-4f-jb6">
             <objects>
-                <viewController id="r88-0t-lLy" userLabel="ViewController" customClass="TableViewController" storyboardIdentifier="TableViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="TableViewController" id="r88-0t-lLy" userLabel="ViewController" customClass="TableViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="SGY-KO-Qcr">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -587,7 +587,7 @@
         <!--View Controller-->
         <scene sceneID="xaV-Ff-lQH">
             <objects>
-                <viewController id="OV0-F5-lBC" storyboardIdentifier="MainViewController" customClass="ViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MainViewController" id="OV0-F5-lBC" customClass="ViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="9Kw-SQ-zd1">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -620,10 +620,10 @@
             </objects>
             <point key="canvasLocation" x="2357.5999999999999" y="-616.64167916041981"/>
         </scene>
-        <!--Search View Controller-->
+        <!--ViewController-->
         <scene sceneID="PPF-dp-stv">
             <objects>
-                <viewController id="bFT-sG-dQU" userLabel="ViewController" customClass="SearchViewController" storyboardIdentifier="SearchViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SearchViewController" id="bFT-sG-dQU" userLabel="ViewController" customClass="SearchViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="X7l-8y-uLm">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -680,10 +680,10 @@
             </objects>
             <point key="canvasLocation" x="1574" y="815"/>
         </scene>
-        <!--Login View Controller-->
+        <!--ViewController-->
         <scene sceneID="eZk-Zk-0Me">
             <objects>
-                <viewController id="6aT-nk-Uiv" userLabel="ViewController" customClass="LoginViewController" storyboardIdentifier="LoginViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="LoginViewController" id="6aT-nk-Uiv" userLabel="ViewController" customClass="LoginViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Xpr-vd-rFh">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
@@ -776,10 +776,10 @@
             </objects>
             <point key="canvasLocation" x="668" y="-615.74212893553226"/>
         </scene>
-        <!--Signup View Controller-->
+        <!--ViewController-->
         <scene sceneID="Hs3-Vd-mdl">
             <objects>
-                <viewController id="NKb-GC-VY5" userLabel="ViewController" customClass="SignupViewController" storyboardIdentifier="SignupViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SignupViewController" id="NKb-GC-VY5" userLabel="ViewController" customClass="SignupViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="KEc-z1-4mh">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -924,10 +924,10 @@
     <inferredMetricsTieBreakers>
         <segue reference="weU-wb-Gd7"/>
         <segue reference="gPw-Kh-Rf9"/>
-        <segue reference="Xet-MK-SmY"/>
+        <segue reference="bJg-3i-Nd7"/>
         <segue reference="hYI-hF-d1i"/>
         <segue reference="ts0-aK-8r9"/>
-        <segue reference="3AQ-nG-ZCf"/>
+        <segue reference="30I-uy-PAM"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="GarudaPixel" width="199" height="64"/>

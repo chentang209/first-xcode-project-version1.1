@@ -873,7 +873,7 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                                 print("From user: \(PFUser.current()?.objectId ?? "no id")")
                                 
                                 if let dict = question as? [String: Any] {
-//                                    joinTable.setObject(dict, forKey: "question")  // 自动转为 Parse Object
+                                    joinTable.setObject(dict, forKey: "question")  // 自动转为 Parse Object
                                 }
 //                                joinTable.setObject(question, forKey: "question")
                                 joinTable.setObject(user as Any, forKey: "to")
