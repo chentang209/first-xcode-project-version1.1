@@ -12,7 +12,7 @@ class FullPicViewController: UIViewController {
 
     @IBOutlet weak var mainView: UIImageView!
     var image: UIImage = UIImage(named: "user")!
-    var dic: [String : String] = [ : ]
+    var dic: [String : Any] = [ : ]
     var objectId : String!
 
     override func viewDidLoad() {

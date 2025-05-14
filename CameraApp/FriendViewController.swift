@@ -14,7 +14,7 @@ protocol friendDelegate {
 }
 
 class FriendViewController: UIViewController, tableDelegate {
-
+    
     @IBOutlet weak var tableView: UITableView!
     var friendList: [PFObject] = []
     var friendReqList: [PFObject] = []
@@ -160,9 +160,9 @@ class FriendViewController: UIViewController, tableDelegate {
                                 group2.leave()
                                 
                             }
-                        
+                            
                         }
-                    
+                        
                     }
                     
                 }
@@ -287,7 +287,7 @@ class FriendViewController: UIViewController, tableDelegate {
                                     }
                                     
                                     group.leave()
-                                
+                                    
                                 }
                                 
                             })
@@ -376,11 +376,11 @@ class FriendViewController: UIViewController, tableDelegate {
                     self.tableView.reloadData()
                     
                 }
-            
+                
             }
-        
+            
         }
-    
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -388,13 +388,13 @@ class FriendViewController: UIViewController, tableDelegate {
         if !cond {
             
             self.navigationItem.hidesBackButton = !cond
-        
+            
         } else {
-        
+            
             self.navigationItem.hidesBackButton = !cond
-        
+            
         }
-    
+        
     }
     
     // 显示错误提示弹窗
@@ -418,11 +418,11 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         
         return true
-    
+        
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-       
+        
         if self.friendList != self.friendReqList {
             
             if (editingStyle == .delete) {
@@ -434,7 +434,13 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                     let name = currentCell.friendName.text
                     let query1 = PFUser.query()!
                     query1.whereKey("username", equalTo: name)
-                    let userObj = try! query1.getFirstObject()
+                    guard let userObj = try? query1.getFirstObject() else {
+                        print("Error: Failed to fetch user object or no data found")
+                        // 处理错误情况，比如返回、显示提示等
+                        return
+                    }
+                    // 安全使用 userObj
+                    print("User object: \(userObj)")
                     let objId = userObj.objectId
                     let currentUser = PFUser.current()!
                     let group = DispatchGroup()
@@ -452,10 +458,10 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                         query1.whereKey("request", equalTo: "approverequest")
                         query1.findObjectsInBackground(block: {(objects, error) in
                             
-                           if (objects?.first) != nil {
+                            if (objects?.first) != nil {
                                 
                                 (objects?.first as! PFObject).deleteEventually()
-                            
+                                
                             }
                             
                         })
@@ -516,7 +522,7 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                 }
                 
             }
-        
+            
         }
         
     }
@@ -694,6 +700,71 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
         return imageData
     }
     
+    func printDict(_ dict: [String: Any], prefix: String = "") {
+        for (k, v) in dict {
+            print("\(prefix)\(k): \(v), type: \(type(of: v))")
+            if let subDict = v as? [String: Any] {
+                printDict(subDict, prefix: prefix + "  ")
+            } else if let arr = v as? [Any] {
+                for (i, item) in arr.enumerated() {
+                    print("\(prefix)  [\(i)]: \(item), type: \(type(of: item))")
+                    if let subDict = item as? [String: Any] {
+                        printDict(subDict, prefix: prefix + "    ")
+                    }
+                }
+            }
+        }
+    }
+    
+    // MARK: - Parse 图片上传相关
+    /// 直接上传图片Data到Parse，完成后回调PFFileObject
+    func uploadImageDataToParse(imageData: Data, imageName: String, completion: @escaping (PFFileObject?) -> Void) {
+        let file = PFFileObject(name: imageName, data: imageData)
+        file?.saveInBackground { (success, error) in
+            if success {
+                print("[Parse] 图片文件上传成功: \(file?.name ?? imageName)")
+                completion(file)
+            } else {
+                print("[Parse] 图片文件上传失败[\(file?.name ?? imageName)]: \(error?.localizedDescription ?? "未知错误")")
+                completion(nil)
+            }
+        }
+    }
+    
+    /// 上传图片到Parse（UIImage接口，内部转Data）
+    func uploadImageToParse(image: UIImage, imageName: String, completion: @escaping (PFFileObject?) -> Void) {
+        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+            print("[ERROR] 图片压缩失败")
+            completion(nil)
+            return
+        }
+        uploadImageDataToParse(imageData: imageData, imageName: imageName, completion: completion)
+    }
+    
+    /// 上传图片到JoinTable的question字段，支持自定义图片键名
+    func uploadPicToJoinTableQuestion(image: UIImage, imageKey: String) {
+        uploadImageToParse(image: image, imageName: imageKey) { file in
+            guard let file = file else {
+                print("[ERROR] 图片上传失败，无法存入 JoinTable.question")
+                return
+            }
+            // 构造 question 字典，imageKey 为 PFFileObject
+            let questionDict: [String: Any] = [
+                imageKey: file
+                // 可添加其它字段
+            ]
+            let joinTable = PFObject(className: "JoinTable")
+            joinTable["question"] = questionDict
+            joinTable.saveInBackground { success, error in
+                if success {
+                    print("[Parse] 图片已作为 PFFileObject 存入 JoinTable.question.\(imageKey)")
+                } else {
+                    print("[ERROR] 保存到 JoinTable 失败: \(error?.localizedDescription ?? "未知错误")")
+                }
+            }
+        }
+    }
+    
     func myTableDelegate(id: String, icon: UIImage) {
         
         if afterchuti {
@@ -708,9 +779,9 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                 
                 let gp = DispatchGroup()
                 
-//                let uquery = PFUser.query()
-//                uquery?.whereKey("username", equalTo: id)
-//                let target = try! uquery?.getFirstObject()
+                //                let uquery = PFUser.query()
+                //                uquery?.whereKey("username", equalTo: id)
+                //                let target = try! uquery?.getFirstObject()
                 
                 var foundUser: PFUser? = nil
                 
@@ -741,15 +812,15 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                 query1.whereKey("request", equalTo: "approverequest")
                 gp.enter()
                 query1.findObjectsInBackground( block:{(objs,err) in
-                
+                    
                     if objs?.count == 0 {
-                    
+                        
                         f1 = false
-                    
+                        
                     }
                     
                     gp.leave()
-                
+                    
                 })
                 
                 let query2 = PFQuery(className: "JoinTable")
@@ -766,7 +837,7 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                     }
                     
                     gp.leave()
-                
+                    
                 })
                 
                 gp.notify(queue: .main) {
@@ -776,156 +847,119 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                         var alertt = UIAlertController(title: "数据传送中......", message: "", preferredStyle: .alert)
                         self.present(alertt, animated: true)
                         
-                        var imageData:NSData = (self.store["pic1"] as! UIImage).jpegData(compressionQuality: 0)! as NSData
-                        var compressedData = self.compressImage(UIImage(data: imageData as Data)!, maxSizeKB: 500)
-                        var strBase64 = compressedData!.base64EncodedString(options: [])
-                        self.newdict.updateValue(strBase64 as String, forKey: "pic1")
+                        // --- 新图片上传逻辑 ---
+                        let imageKeys = ["pic1", "pic2", "pic3", "pic4", "his_icon", "self_icon"]
+                        let imageSources: [String: UIImage] = [
+                            "pic1": self.store["pic1"] as! UIImage,
+                            "pic2": self.store["pic2"] as! UIImage,
+                            "pic3": self.store["pic3"] as! UIImage,
+                            "pic4": self.store["pic4"] as! UIImage,
+                            "his_icon": icon as! UIImage,
+                            "self_icon": self.store["self_icon"] as! UIImage
+                        ]
                         
-                        imageData = (self.store["pic2"] as! UIImage).jpegData(compressionQuality: 0)! as NSData
-                        compressedData = self.compressImage(UIImage(data: imageData as Data)!, maxSizeKB: 500)
-                        strBase64 = compressedData!.base64EncodedString(options: [])
-                        self.newdict.updateValue(strBase64 as String, forKey: "pic2")
+                        var questionDict = [String: Any]()
+                        let uploadGroup = DispatchGroup()
+                        for key in imageKeys {
+                            if let img = imageSources[key] {
+                                uploadGroup.enter()
+                                let compressedData = self.compressImage(img, maxSizeKB: 500) ?? img.jpegData(compressionQuality: 0.8)
+                                if let data = compressedData {
+                                    self.uploadImageDataToParse(imageData: data, imageName: key) { file in
+                                        if let file = file {
+                                            questionDict[key] = file
+                                        } else {
+                                            print("[ERROR] 图片上传失败: \(key)")
+                                        }
+                                        uploadGroup.leave()
+                                    }
+                                } else {
+                                    print("[ERROR] 压缩图片失败: \(key)")
+                                    uploadGroup.leave()
+                                }
+                            }
+                        }
                         
-                        imageData = (self.store["pic3"] as! UIImage).jpegData(compressionQuality: 0)! as NSData
-                        compressedData = self.compressImage(UIImage(data: imageData as Data)!, maxSizeKB: 500)
-                        strBase64 = compressedData!.base64EncodedString(options: [])
-                        self.newdict.updateValue(strBase64 as String, forKey: "pic3")
+                        // 其它非图片字段直接赋值到questionDict
+                        questionDict["op1"] = self.store["op1"] as! String
+                        questionDict["op2"] = self.store["op2"] as! String
+                        questionDict["op3"] = self.store["op3"] as! String
+                        questionDict["op4"] = self.store["op4"] as! String
+                        questionDict["correct"] = self.store["correct"] as! String
+                        questionDict["self_name"] = self.store["self_name"] as! String
+                        questionDict["his_id"] = id
                         
-                        imageData = (self.store["pic4"] as! UIImage).jpegData(compressionQuality: 0)! as NSData
-                        compressedData = self.compressImage(UIImage(data: imageData as Data)!, maxSizeKB: 500)
-                        strBase64 = compressedData!.base64EncodedString(options: [])
-                        self.newdict.updateValue(strBase64 as String, forKey: "pic4")
-                        
-                        let op1 = self.store["op1"]
-                        let op2 = self.store["op2"]
-                        let op3 = self.store["op3"]
-                        let op4 = self.store["op4"]
-                        let correct = self.store["correct"]
-                        let self_icon = self.store["self_icon"]
-                        let self_name = self.store["self_name"]
-                        imageData = (self_icon as! UIImage).jpegData(compressionQuality: 0)! as NSData
-                        strBase64 = imageData.base64EncodedString(options: [])
-                        
-                        self.newdict.updateValue(op1 as! String, forKey: "op1")
-                        self.newdict.updateValue(op2 as! String, forKey: "op2")
-                        self.newdict.updateValue(op3 as! String, forKey: "op3")
-                        self.newdict.updateValue(op4 as! String, forKey: "op4")
-                        self.newdict.updateValue(correct as! String, forKey: "correct")
-                        self.newdict.updateValue(strBase64 as! String, forKey: "self_icon")
-                        self.newdict.updateValue(self_name as! String, forKey: "self_name")
-                        imageData = (icon as! UIImage).jpegData(compressionQuality: 0)! as NSData
-                        strBase64 = imageData.base64EncodedString(options: [])
-                        self.newdict.updateValue(strBase64 as String, forKey: "his_icon")
-                        self.newdict.updateValue(id, forKey: "his_id")
-                        
-                        var user: PFObject!
-//                        let his_id = id
-//                        let query = PFUser.query()
-//                        query?.whereKey("username", equalTo: his_id)
+                        let joinTable = PFObject(className: "JoinTable")
+                        var user: PFUser?
                         let gp1 = DispatchGroup()
+                        
                         gp1.enter()
                         
-                        PFCloud.callFunction(inBackground: "searchUsers", withParameters: ["username": id]) { (result: Any?, error1: Error?) in
+                        // 等全部图片上传完毕后再保存JoinTable
+                        uploadGroup.notify(queue: .main) {
+                            joinTable.setObject(questionDict, forKey: "question")
                             
-                            if(error1 == nil) {
-//                              user = result?.first
-                                guard let userObjects = result as? [PFObject],
-                                let u = userObjects.first as? PFUser else {
-                                    print("No user found with username: \(id)")
-                                    self.showErrorAlert(message: "User not found")
-                                    return
-                                }
-                                let current = PFUser.current()
-                                let groupACL = PFACL()
-                                
-                                user = u
-                                
-                                groupACL.setReadAccess(true, for: user as! PFUser)
-                                groupACL.setWriteAccess(true, for: user as! PFUser)
-                                
-                                let joinTable = PFObject(className: "JoinTable")
-                                let question = self.newdict
-//                                var jsonData: String!
-//                                if let prettyData = try? JSONSerialization.data(withJSONObject: question, options: .prettyPrinted) {
-//                                    if let prettyString = String(data: prettyData, encoding: .utf8) {
-//                                        print("格式化后的 JSON:\n\(prettyString)")
-//                                        jsonData = prettyString
-//                                    }
-//                                }
-//                              question = String(data: jsonData!, encoding: .utf8)
-                                
-                                joinTable.acl = groupACL
-                                
-                                // 在保存之前添加详细的日志
-                                print("Before saving joinTable:")
-                                print("Current thread: \(Thread.current)")
-                                print("Is main thread: \(Thread.isMainThread)")
-
-                                // 检查 question 数据
-//                                print("Question data type: \(type(of: self.newdict))")
-//                                print("Question keys: \(Array(self.newdict.keys))")
-//                                for (key, value) in self.newdict {
-//                                    print("Key: \(key), Value type: \(type(of: value)), Value: \(value)")
-//                                }
-
-                                // 检查用户数据
-                                print("To user: \(user.objectId ?? "no id")")
-                                print("From user: \(PFUser.current()?.objectId ?? "no id")")
-                                
-                                if let dict = question as? [String: Any] {
-                                    joinTable.setObject(dict, forKey: "question")  // 自动转为 Parse Object
-                                }
-//                                joinTable.setObject(question, forKey: "question")
-                                joinTable.setObject(user as Any, forKey: "to")
-                                joinTable.setObject(current as Any, forKey: "from")
-                                
-                                // 添加日志输出，查看 question 内容
-//                                print("即将保存的 question 内容: \(question)")
-                                
-                                joinTable.saveInBackground{(success, error) in
+                            PFCloud.callFunction(inBackground: "searchUsers", withParameters: ["username": id]) { (result: Any?, error1: Error?) in
+                                if(error1 == nil) {
                                     
-                                    if success {
-                                        
-                                        print("table saved")
-                                        gp1.leave()
-                                        
-                                    } else {
-                                        
-                                        if let error = error {
-                                            print(error)
-                                            alert.dismiss(animated: true)
-                                            let alert = UIAlertController(title: "发生内部错误，请稍后再试", message: "", preferredStyle: .alert)
-                                            alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
-                                            self.present(alert, animated: true)
-                                        } else {
-                                            print("table error")
-                                            alert.dismiss(animated: true)
-                                            let alert = UIAlertController(title: "发生内部错误，请稍后再试", message: "", preferredStyle: .alert)
-                                            alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
-                                            self.present(alert, animated: true)
-                                        }
-                                        
-                                        // 显示错误给用户
-                                        alertt.dismiss(animated: true) {
-                                            let alert = UIAlertController(title: "发送失败", message: "请检查网络连接后重试", preferredStyle: .alert)
-                                            alert.addAction(UIAlertAction(title: "确定", style: .default, handler: nil))
-                                            self.present(alert, animated: true)
-                                        }
-                                        
+                                    guard let userObjects = result as? [PFObject],
+                                          let u = userObjects.first as? PFUser else {
+                                        print("No user found with username: \(id)")
+                                        self.showErrorAlert(message: "User not found")
+                                        return
                                     }
+                                    let current = PFUser.current()
+                                    let groupACL = PFACL()
                                     
+                                    user = u
+                                    
+                                    groupACL.setReadAccess(true, for: user as! PFUser)
+                                    groupACL.setWriteAccess(true, for: user as! PFUser)
+                                    
+                                    joinTable.acl = groupACL
+                                    
+                                    // 在保存之前添加详细的日志
+                                    print("Before saving joinTable:")
+                                    print("Current thread: \(Thread.current)")
+                                    print("Is main thread: \(Thread.isMainThread)")
+                                    joinTable.setObject(user as Any, forKey: "to")
+                                    joinTable.setObject(current as Any, forKey: "from")
+                                    
+                                    joinTable.saveInBackground { (success, error) in
+                                        if success {
+                                            print("table saved")
+                                            gp1.leave()
+                                        } else {
+                                            if let error = error {
+                                                print("打印后台保存join表的错误: \(error)")
+                                                alert.dismiss(animated: true)
+                                                let alert = UIAlertController(title: "发生内部错误，请稍后再试", message: "", preferredStyle: .alert)
+                                                alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
+                                                self.present(alert, animated: true)
+                                            } else {
+                                                print("table error")
+                                                alert.dismiss(animated: true)
+                                                let alert = UIAlertController(title: "发生内部错误，请稍后再试", message: "", preferredStyle: .alert)
+                                                alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
+                                                self.present(alert, animated: true)
+                                            }
+                                            
+                                            // 显示错误给用户
+                                            alertt.dismiss(animated: true) {
+                                                let alert = UIAlertController(title: "发送失败", message: "请检查网络连接后重试", preferredStyle: .alert)
+                                                alert.addAction(UIAlertAction(title: "确定", style: .default, handler: nil))
+                                                self.present(alert, animated: true)
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    print(error1 as Any)
+                                    alert.dismiss(animated: true)
+                                    let alert = UIAlertController(title: "发生内部错误，请稍后再试", message: "", preferredStyle: .alert)
+                                    alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
+                                    self.present(alert, animated: true)
                                 }
-                                
-                            } else {
-                                
-                                print(error1 as Any)
-                                alert.dismiss(animated: true)
-                                let alert = UIAlertController(title: "发生内部错误，请稍后再试", message: "", preferredStyle: .alert)
-                                alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
-                                self.present(alert, animated: true)
-                                
                             }
-                            
                         }
                         
                         gp1.notify(queue: .main) {
@@ -944,7 +978,7 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                                 if success {
                                     print("numOfQuestionToHim saved")
                                     
-                                    PFCloud.callFunction(inBackground: "sendTiPush", withParameters: ["someId": user.objectId, "someName": PFUser.current()!.username]) {
+                                    PFCloud.callFunction(inBackground: "sendTiPush", withParameters: ["someId": user?.objectId, "someName": PFUser.current()!.username]) {
                                         (result, error) in
                                         if (error == nil) {
                                             print("rt")
@@ -1005,13 +1039,13 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                     }
                     
                 }
-            
-            })
                 
+            })
+                            
             )
             
             alert.addAction(UIAlertAction(title: "取消", style: .cancel, handler: nil
-            ))
+                                         ))
             
             self.present(alert, animated: true)
         }
@@ -1044,16 +1078,16 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                 
                 let currentConfig = PFConfig.current()
                 print("Current Parse configuration: \(currentConfig)")
-                 
+                
                 if let serverURL = Parse.currentConfiguration?.server {
                     print("Current Parse server URL: \(serverURL)")
                 } else {
                     print("No Parse server URL configured")
                 }
-
+                
                 // 在调用Cloud Function之前添加调试日志
                 print("Before calling searchUsers Cloud Function")
-
+                
                 do {
                     print("Calling searchUsers Cloud Function with username: \(id)")
                     
@@ -1121,9 +1155,9 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                 
                 // 现在可以安全地使用user对象
                 var list = PFUser.current()!["friendReqList"] as! [PFObject]
-               
+                
                 print(list.count)
-                    
+                
                 for i in 0 ..< list.count {
                     // 安全地使用user.objectId，不需要强制解包
                     if user.objectId == list[i].objectId {
@@ -1152,17 +1186,6 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                     // 使用user.objectId，安全地访问
                     let userId = user.objectId ?? ""
                     
-//                    PFCloud.callFunction(inBackground: "friendReqApprove", withParameters: [
-//                        "someId": userId,
-//                        "someName": PFUser.current()!["username"] ?? ""
-//                    ]) { (result, error) in
-//                        if error == nil {
-//                            print(result ?? "Success")
-//                        } else {
-//                            print(error?.localizedDescription ?? "Unknown error")
-//                        }
-//                    }
-                    
                     do {
                         let result = try PFCloud.callFunction("friendReqApprove", withParameters: [
                             "someId": userId,
@@ -1173,13 +1196,6 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                         print("Error approving friend request: \(error.localizedDescription)")
                         self.showErrorAlert(message: "处理好友请求时出错，请稍后再试")
                     }
-                    
-                    // 更新本地数据源
-//                    if var friendReqList = PFUser.current()?["friendReqList"] as? [String] {
-//                        friendReqList.removeAll { $0 == user.username }
-//                        PFUser.current()?["friendReqList"] = friendReqList
-//                        try PFUser.current()?.save()
-//                    }
                     
                     // 更新好友请求列表
                     var list = PFUser.current()!["friendReqList"] as! [PFObject]
@@ -1270,17 +1286,6 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                         acl.setWriteAccess(true, for: (foundUser)!)
                         request.acl = acl
                         request.saveEventually()
-                        
-                        // 保存更新
-//                        try request.save()
-                        
-                        // 更新本地数据源
-//                        if var friendReqList = PFUser.current()?["friendReqList"] as? [String] {
-//                            friendReqList.removeAll { $0 == user.username }
-//                            PFUser.current()?["friendReqList"] = friendReqList
-//                            try PFUser.current()?.save()
-//                        }
-                        
                     }
                     
                     // 更新好友请求列表
@@ -1317,7 +1322,7 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
             self.present(alert, animated: true)
             
         }
-    
+        
     }
     
 }

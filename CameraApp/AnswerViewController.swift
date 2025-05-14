@@ -7,24 +7,42 @@
 //
 
 import UIKit
+import Parse
 var ente = true
 
 class AnswerViewController: UIViewController {
 
-    @IBOutlet weak var but4: UIButton!
-    @IBOutlet weak var but3: UIButton!
-    @IBOutlet weak var but2: UIButton!
     @IBOutlet weak var but1: UIButton!
+    @IBOutlet weak var but2: UIButton!
+    @IBOutlet weak var but3: UIButton!
+    @IBOutlet weak var but4: UIButton!
     @IBOutlet weak var tuichu: UIButton!
     @IBOutlet weak var opt4: UITextField!
     @IBOutlet weak var opt3: UITextField!
     @IBOutlet weak var opt2: UITextField!
     @IBOutlet weak var opt1: UITextField!
     
-    var dict : [String : String] = [ : ]
+    var dict : [String : Any] = [ : ]
     var result = false
     var img : UIImage!
     var objectId : String!
+    
+    func getFileDataSync(fileObject: PFFileObject) -> Data? {
+        var fileData: Data?
+        let semaphore = DispatchSemaphore(value: 0)
+
+        fileObject.getDataInBackground { (data: Data?, error: Error?) in
+            if let error = error {
+                print("文件下载失败: \(error.localizedDescription)")
+            } else {
+                fileData = data
+            }
+            semaphore.signal() // 通知等待的线程
+        }
+
+        semaphore.wait() // 阻塞当前线程，直到回调完成
+        return fileData
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,26 +56,36 @@ class AnswerViewController: UIViewController {
             ente = false
         }
         
-        opt1.text = dict["op1"]
-        opt2.text = dict["op2"]
-        opt3.text = dict["op3"]
-        opt4.text = dict["op4"]
+        opt1.text = dict["op1"] as? String
+        opt2.text = dict["op2"] as? String
+        opt3.text = dict["op3"] as? String
+        opt4.text = dict["op4"] as? String
         
-        let pic_data1 = NSData(base64Encoded: dict["pic1"]!, options: [])
-        let pic1 = UIImage(data: pic_data1! as Data)
-        but1.setImage(pic1, for: [])
-        
-        let pic_data2 = NSData(base64Encoded: dict["pic2"]!, options: [])
-        let pic2 = UIImage(data: pic_data2! as Data)
-        but2.setImage(pic2, for: [])
-        
-        let pic_data3 = NSData(base64Encoded: dict["pic3"]!, options: [])
-        let pic3 = UIImage(data: pic_data3! as Data)
-        but3.setImage(pic3, for: [])
-        
-        let pic_data4 = NSData(base64Encoded: dict["pic4"]!, options: [])
-        let pic4 = UIImage(data: pic_data4! as Data)
-        but4.setImage(pic4, for: [])
+        DispatchQueue.global().async { [self] in
+            guard let fileObject = dict["pic1"]! as? PFFileObject else { return }
+            if let data = self.getFileDataSync(fileObject: fileObject) {
+                let pic1 = UIImage(data: data as! Data)
+                but1.setImage(pic1, for: [])
+            }
+            
+            guard let fileObject = dict["pic2"]! as? PFFileObject else { return }
+            if let data = self.getFileDataSync(fileObject: fileObject) {
+                let pic2 = UIImage(data: data as! Data)
+                but2.setImage(pic2, for: [])
+            }
+            
+            guard let fileObject = dict["pic3"]! as? PFFileObject else { return }
+            if let data = self.getFileDataSync(fileObject: fileObject) {
+                let pic3 = UIImage(data: data as! Data)
+                but3.setImage(pic3, for: [])
+            }
+            
+            guard let fileObject = dict["pic4"]! as? PFFileObject else { return }
+            if let data = self.getFileDataSync(fileObject: fileObject) {
+                let pic4 = UIImage(data: data as! Data)
+                but4.setImage(pic4, for: [])
+            }
+        }
        
         let myColor = UIColor.green
         opt1.layer.borderColor = myColor.cgColor
@@ -150,7 +178,7 @@ extension AnswerViewController: UITextFieldDelegate {
         
         alert.addAction(UIAlertAction(title: "确定", style: .default, handler: { action in
             
-            if textField.text == self.dict["correct"] {
+            if textField.text == self.dict["correct"] as! String {
                 self.result = true
             } else {
                 self.result = false

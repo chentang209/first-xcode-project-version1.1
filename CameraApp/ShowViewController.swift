@@ -13,6 +13,20 @@ var enter = true
 
 class ShowViewController: UIViewController {
     
+    /// 将图片文件关联到当前用户（avatar字段）
+    func saveUserAvatar(imageFile: PFFileObject) {
+        if let user = PFUser.current() {
+            user["avatar"] = imageFile
+            user.saveInBackground { (success, error) in
+                if success {
+                    print("[Parse] 头像保存成功")
+                } else {
+                    print("[Parse] 头像保存失败: \(error?.localizedDescription ?? "未知错误")")
+                }
+            }
+        }
+    }
+    
     @IBOutlet weak var button1: UIButton!
     
     @IBOutlet weak var button2: UIButton!
@@ -35,9 +49,51 @@ class ShowViewController: UIViewController {
     
     //let database = CKContainer.default().publicCloudDatabase
     
+    func loadImagesForButtons() {
+        let findDic = PFQuery(className: "JoinTable")
+        findDic.getFirstObjectInBackground { (obj: PFObject?, err: Error?) -> Void in
+            if let err = err {
+                print("查询出错: \(err)")
+                return
+            }
+            guard let obj = obj, let dict = obj["question"] as? [String: Any] else {
+                print("question 字段类型错误")
+                return
+            }
+
+            // 加载四个图片字段
+            self.setButtonImage(from: dict["pic1"], button: self.button1, placeholder: "default_avatar")
+            self.setButtonImage(from: dict["pic2"], button: self.button2, placeholder: "default_avatar")
+            self.setButtonImage(from: dict["pic3"], button: self.button3, placeholder: "default_avatar")
+            self.setButtonImage(from: dict["pic4"], button: self.button4, placeholder: "default_avatar")
+        }
+    }
+
+    // 工具方法：从 PFFileObject 或 Base64 字符串设置图片到按钮
+    func setButtonImage(from value: Any?, button: UIButton, placeholder: String) {
+        var pic_data: Data?
+        if let base64String = value as? String {
+            pic_data = Data(base64Encoded: base64String, options: [])
+        } else if let file = value as? PFFileObject {
+            do {
+                pic_data = try file.getData()
+            } catch {
+                print("PFFileObject获取失败: \(error)")
+            }
+        }
+        if let pic_data = pic_data, let img = UIImage(data: pic_data) {
+            button.setImage(img, for: [])
+        } else {
+            let defaultImage = UIImage(named: placeholder) ?? UIImage()
+            button.setImage(defaultImage, for: [])
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        loadImagesForButtons()
+        
         self.navigationItem.hidesBackButton = true
         
         if enter {
@@ -58,6 +114,18 @@ class ShowViewController: UIViewController {
     
     @IBAction func sendPic(_ sender: UIButton) {
         enter = false
+        // 示例：上传当前img为头像到Parse
+        if let image = self.img {
+            self.uploadImageToParse(image: image) { file in
+                if let file = file {
+                    self.saveUserAvatar(imageFile: file)
+                } else {
+                    print("[ERROR] 图片上传失败，未保存到用户头像")
+                }
+            }
+        } else {
+            print("[ERROR] 没有可上传的图片")
+        }
         self.performSegue(withIdentifier: "sendSegue", sender: self)
     }
     
@@ -70,6 +138,24 @@ class ShowViewController: UIViewController {
         }
     }
     
+    func uploadImageToParse(image: UIImage, completion: @escaping (PFFileObject?) -> Void) {
+        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+            print("[ERROR] 图片压缩失败")
+            completion(nil)
+            return
+        }
+        let file = PFFileObject(name: "avatar.jpg", data: imageData)
+        file?.saveInBackground { (success, error) in
+            if success {
+                print("[Parse] 图片文件上传成功")
+                completion(file)
+            } else {
+                print("[Parse] 图片文件上传失败: \(error?.localizedDescription ?? "未知错误")")
+                completion(nil)
+            }
+        }
+    }
+    
     @IBAction func showact(_ sender: UIButton) {
       
         let findD = PFQuery(className: "Users")
@@ -79,21 +165,21 @@ class ShowViewController: UIViewController {
         print(y)
         print(x)
         
-        let user = PFObject(className: "JoinTable")
-       
-        user.setObject("dduo" , forKey: "tu")
-        
-        user.saveInBackground{(success, error) in
-            if success {
-                print("tu saved")
-            } else {
-                if let error = error {
-                    print(error)
-                } else {
-                    print("Error")
-                }
-            }
-        }
+//        let user = PFObject(className: "JoinTable")
+//
+//        user.setObject("dduo" , forKey: "tu")
+//
+//        user.saveInBackground{(success, error) in
+//            if success {
+//                print("tu saved")
+//            } else {
+//                if let error = error {
+//                    print(error)
+//                } else {
+//                    print("Error")
+//                }
+//            }
+//        }
         
         let findDi = PFQuery(className: "JoinTable")
         let uu = try! findDi.getFirstObject()
@@ -104,33 +190,85 @@ class ShowViewController: UIViewController {
         
         
         
-        let findDic = PFQuery(className: "Users")
-        findDic.getFirstObjectInBackground{
-        (obj: PFObject?, err: Error?) -> Void in
+//        let findDic = PFQuery(className: "Users")
+//        findDic.getFirstObjectInBackground{
+//        (obj: PFObject?, err: Error?) -> Void in
+//
+//            let pf = obj!["question"] as! PFFileObject
+//
+//            let group = DispatchGroup()
+//            group.enter()
+//            pf.getDataInBackground{
+//                (qData: Data?, error: Error?) -> Void in
+//
+//                let actualdic = try! JSONSerialization.jsonObject(with: qData!, options: []) as! [String : String]
+//                let x = actualdic["pic3"]
+//                print("5")
+//                let data = NSData(base64Encoded: x!, options: [])
+//                self.img = UIImage(data: data! as Data)
+//
+//                print(actualdic["op3"] as Any)
+//                group.leave()
+//            }
+//
+//            group.notify(queue: .main) {
+//                print("7")
+//                self.button2.setImage(self.img, for: [])
+//            }
+//
+//        }
         
-            let pf = obj!["question"] as! PFFileObject
-            
-            let group = DispatchGroup()
-            group.enter()
-            pf.getDataInBackground{
-                (qData: Data?, error: Error?) -> Void in
-         
-                let actualdic = try! JSONSerialization.jsonObject(with: qData!, options: []) as! [String : String]
-                let x = actualdic["pic3"]
-                print("5")
-                let data = NSData(base64Encoded: x!, options: [])
-                self.img = UIImage(data: data! as Data)
-                
-                print(actualdic["op3"] as Any)
-                group.leave()
+        
+        let findDic = PFQuery(className: "Users")
+        findDic.getFirstObjectInBackground { (obj: PFObject?, err: Error?) -> Void in
+            print("[调试] 查询结果 obj: \(String(describing: obj))")
+            if let err = err {
+                print("[调试] 查询出错: \(err)")
+                return
             }
-         
-            group.notify(queue: .main) {
-                print("7")
-                self.button2.setImage(self.img, for: [])
+            if let questionValue = obj?["question"] {
+                print("[DEBUG] question 字段原始内容: \(questionValue), 类型: \(type(of: questionValue))")
+            } else {
+                print("[DEBUG] question 字段不存在")
             }
-            
+            guard let dic = obj?["question"] as? [String: Any] else {
+                let q = obj?["question"]
+                print("[ERROR] question 字段不是字典类型，当前值为: \(String(describing: q)), 类型: \(type(of: q))")
+                return
+            }
+            print("[调试] 解析到question字典: \(dic)")
+            let sender_name = dic["self_name"] as? String ?? ""
+            let idd = obj?.objectId ?? ""
+            let op1 = dic["op1"] as? String ?? ""
+            let title = sender_name + " : " + op1 + "......"
+            let self_icon = dic["self_icon"]
+            var pic_data: Data?
+
+            if let base64String = self_icon as? String {
+                print("[调试] self_icon为Base64字符串，长度: \(base64String.count)")
+                pic_data = Data(base64Encoded: base64String, options: [])
+            } else if let file = self_icon as? PFFileObject {
+                print("[调试] self_icon为PFFileObject，name: \(file.name ?? "nil") url: \(file.url ?? "nil")")
+                do {
+                    pic_data = try file.getData()
+                    print("[调试] PFFileObject获取到图片数据，字节数: \(pic_data?.count ?? 0)")
+                } catch {
+                    print("[调试] 获取PFFileObject数据失败: \(error)")
+                }
+            } else {
+                print("[调试] self_icon类型未知: \(type(of: self_icon))")
+            }
+
+            if let pic_data = pic_data, let tou = UIImage(data: pic_data) {
+                print("[调试] 成功解析图片，设置到button2")
+                self.button2.setImage(tou, for: [])
+            } else {
+                print("[调试] 图片解析失败，使用默认头像")
+                let defaultImage = UIImage(named: "default_avatar") ?? UIImage()
+                self.button2.setImage(defaultImage, for: [])
+            }
         }
+        
         
 //            let user = PFUser.current()
 //            let file = user!["avatar"]!
@@ -158,11 +296,22 @@ class ShowViewController: UIViewController {
             let asset = record.value(forKey: "content")
             let text2 = try! String(contentsOf: (asset as! CKAsset).fileURL, encoding: .utf8)
             let dat = text2.data(using: .utf8)
-            let actual = try! JSONSerialization.jsonObject(with: dat!, options: []) as! [String : String]
-            let x = actual["pic3"]!
-            let data = NSData(base64Encoded: x, options: [])
-            let tu = UIImage(data: data! as Data)
-            self.img = tu
+            // 健壮性判断：只有内容为标准 JSON 才解析
+            if let dat = dat, let firstChar = text2.trimmingCharacters(in: .whitespacesAndNewlines).first, firstChar == "{" || firstChar == "[" {
+                if let question = try? JSONSerialization.jsonObject(with: dat, options: []) as? [String: Any] {
+                    let x = question["pic3"]
+                    // 你的后续逻辑
+                    if let xStr = x as? String {
+                        let data = NSData(base64Encoded: xStr, options: [])
+                        let tu = UIImage(data: data! as Data)
+                        self.img = tu
+                    }
+                } else {
+                    print("[ERROR] 读取 question 字段失败，内容为: \(text2)")
+                }
+            } else {
+                print("[ERROR] question 内容不是标准 JSON，内容为: \(text2)")
+            }
         }
         
         database.add(queryOperation)
@@ -251,9 +400,7 @@ class ShowViewController: UIViewController {
         print("kaishi")
         
         let user = PFObject(className: "Users")
-        let question = try! JSONSerialization.data(withJSONObject: newdic, options: [])
-        let file:PFFileObject = PFFileObject(data: question)!
-        user.setObject(file , forKey: "question")
+        user.setObject(newdic, forKey: "question") // 直接以 Object 存储
         
         print("before")
         
