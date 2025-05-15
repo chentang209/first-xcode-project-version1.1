@@ -64,26 +64,34 @@ class AnswerViewController: UIViewController {
         DispatchQueue.global().async { [self] in
             guard let fileObject = dict["pic1"]! as? PFFileObject else { return }
             if let data = self.getFileDataSync(fileObject: fileObject) {
-                let pic1 = UIImage(data: data as! Data)
-                but1.setImage(pic1, for: [])
+                let pic1 = UIImage(data: data)
+                DispatchQueue.main.async {
+                    self.but1.setImage(pic1, for: [])
+                }
             }
             
             guard let fileObject = dict["pic2"]! as? PFFileObject else { return }
             if let data = self.getFileDataSync(fileObject: fileObject) {
-                let pic2 = UIImage(data: data as! Data)
-                but2.setImage(pic2, for: [])
+                let pic2 = UIImage(data: data)
+                DispatchQueue.main.async {
+                    self.but2.setImage(pic2, for: [])
+                }
             }
             
             guard let fileObject = dict["pic3"]! as? PFFileObject else { return }
             if let data = self.getFileDataSync(fileObject: fileObject) {
-                let pic3 = UIImage(data: data as! Data)
-                but3.setImage(pic3, for: [])
+                let pic3 = UIImage(data: data)
+                DispatchQueue.main.async {
+                    self.but3.setImage(pic3, for: [])
+                }
             }
             
             guard let fileObject = dict["pic4"]! as? PFFileObject else { return }
             if let data = self.getFileDataSync(fileObject: fileObject) {
-                let pic4 = UIImage(data: data as! Data)
-                but4.setImage(pic4, for: [])
+                let pic4 = UIImage(data: data)
+                DispatchQueue.main.async {
+                    self.but4.setImage(pic4, for: [])
+                }
             }
         }
        

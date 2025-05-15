@@ -49,50 +49,8 @@ class ShowViewController: UIViewController {
     
     //let database = CKContainer.default().publicCloudDatabase
     
-    func loadImagesForButtons() {
-        let findDic = PFQuery(className: "JoinTable")
-        findDic.getFirstObjectInBackground { (obj: PFObject?, err: Error?) -> Void in
-            if let err = err {
-                print("查询出错: \(err)")
-                return
-            }
-            guard let obj = obj, let dict = obj["question"] as? [String: Any] else {
-                print("question 字段类型错误")
-                return
-            }
-
-            // 加载四个图片字段
-            self.setButtonImage(from: dict["pic1"], button: self.button1, placeholder: "default_avatar")
-            self.setButtonImage(from: dict["pic2"], button: self.button2, placeholder: "default_avatar")
-            self.setButtonImage(from: dict["pic3"], button: self.button3, placeholder: "default_avatar")
-            self.setButtonImage(from: dict["pic4"], button: self.button4, placeholder: "default_avatar")
-        }
-    }
-
-    // 工具方法：从 PFFileObject 或 Base64 字符串设置图片到按钮
-    func setButtonImage(from value: Any?, button: UIButton, placeholder: String) {
-        var pic_data: Data?
-        if let base64String = value as? String {
-            pic_data = Data(base64Encoded: base64String, options: [])
-        } else if let file = value as? PFFileObject {
-            do {
-                pic_data = try file.getData()
-            } catch {
-                print("PFFileObject获取失败: \(error)")
-            }
-        }
-        if let pic_data = pic_data, let img = UIImage(data: pic_data) {
-            button.setImage(img, for: [])
-        } else {
-            let defaultImage = UIImage(named: placeholder) ?? UIImage()
-            button.setImage(defaultImage, for: [])
-        }
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        loadImagesForButtons()
         
         self.navigationItem.hidesBackButton = true
         

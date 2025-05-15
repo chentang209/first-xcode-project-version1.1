@@ -169,31 +169,20 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
                 alert.dismiss(animated: true) { [weak self] in
                     guard let self = self else { return }
                     
-                    
                     // 确保在提示消失后正确跳转
-                    if friendList.count == 0 {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            self.performSegue(withIdentifier: "chutiSegue", sender: self)
-                        }
-                        
-                        
-                    }
-                    
+//                    if friendList.count == 0 {
+//                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+//                            self.performSegue(withIdentifier: "chutiSegue", sender: self)
+//                        }
+//                    }
                     
                     self.profile[0].bool = bool
                     self.tableView.reloadData()
                 }
-                
-                
             }
-            
-            
         } else {
             performSegue(withIdentifier: "chutiSegue", sender: self)
         }
-        
-        
-        
     }
     
     
@@ -412,31 +401,12 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
                             self.tableView.reloadData()
                             
                         }
-                        
-                        
-                        
                     }
-                    
-                    
-                    
                 }
-                
-                
-                
             }
-            
-            
-            
         }
-        
-        
-        
-//        self.tableView.reloadData()
-        
+        // self.tableView.reloadData()
     }
-    
-    
-    
 }
 
 
