@@ -354,12 +354,14 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
                                                     
                                                 }
                                                 
-                                                PFCloud.callFunction(inBackground: "friendReqPush", withParameters: ["someId": self.userObj.objectId , "someName":PFUser.current()!["username"]]) {(result, error) in
-                                                    
-                                                    if (error == nil) {
-                                                        print(result)
+                                                PFCloud.callFunction(inBackground: "friendReqPush", withParameters: [
+                                                    "someId": self.userObj.objectId ?? "",
+                                                    "someName": PFUser.current()?["username"] ?? ""
+                                                ]) { (result, error) in
+                                                    if let error = error {
+                                                        print("[Cloud] 发送好友申请通知失败: \(error.localizedDescription)")
                                                     } else {
-                                                        print(error?.localizedDescription)
+                                                        print("[Cloud] 好友申请通知已发送: \(String(describing: result))")
                                                     }
                                                 }
                                                 

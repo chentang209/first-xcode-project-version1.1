@@ -29,12 +29,18 @@ class FriendViewController: UIViewController, tableDelegate {
     override func viewDidLoad() {
         
         super.viewDidLoad()
+        
         friendListUpdate = false
         friendList = []
         friendReqList = []
         arrayUserObj = []
         tableView.delegate = self
         tableView.dataSource = self
+        
+        fetchFriendList { [weak self] friends in
+            self?.friendList = friends
+            self?.tableView.reloadData()
+        }
         
         let qe = PFQuery(className: "JoinTable")
         qe.whereKey("to", equalTo: PFUser.current()!)
@@ -384,17 +390,11 @@ class FriendViewController: UIViewController, tableDelegate {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        
         if !cond {
-            
             self.navigationItem.hidesBackButton = !cond
-            
         } else {
-            
             self.navigationItem.hidesBackButton = !cond
-            
         }
-        
     }
     
     // 显示错误提示弹窗
@@ -416,12 +416,12 @@ class FriendViewController: UIViewController, tableDelegate {
 extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        
         return true
-        
     }
     
+    // 滑动删除好友并同步 Parse 后端
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        let currentUser = PFUser.current()!
         
         if self.friendList != self.friendReqList {
             
@@ -429,88 +429,150 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                 
                 if !afterchuti {
                     
-                    // handle delete (by removing the data from your array and updating the tableview)
-                    let currentCell = self.tableView.cellForRow(at: indexPath) as! FriendCell
-                    let name = currentCell.friendName.text
-                    let query1 = PFUser.query()!
-                    query1.whereKey("username", equalTo: name)
-                    guard let userObj = try? query1.getFirstObject() else {
-                        print("Error: Failed to fetch user object or no data found")
-                        // 处理错误情况，比如返回、显示提示等
-                        return
-                    }
-                    // 安全使用 userObj
-                    print("User object: \(userObj)")
-                    let objId = userObj.objectId
-                    let currentUser = PFUser.current()!
-                    let group = DispatchGroup()
-                    var list = currentUser["friendList"] as! [PFUser]
+                    var userObj: PFUser?
                     
-                    print(list.count)
+                    let name = currentUser.username
+                    let params = ["username": name]
                     
-                    group.enter()
+                    print("\(name): 使用Cloud Function获取用户")
                     
-                    do {
-                        
-                        let query1 = PFQuery(className: "JoinTable")
-                        query1.whereKey("from", equalTo: PFUser.current())
-                        query1.whereKey("to", equalTo: userObj)
-                        query1.whereKey("request", equalTo: "approverequest")
-                        query1.findObjectsInBackground(block: {(objects, error) in
-                            
-                            if (objects?.first) != nil {
-                                
-                                (objects?.first as! PFObject).deleteEventually()
-                                
-                            }
-                            
-                        })
-                        
-                        let query2 = PFQuery(className: "JoinTable")
-                        query2.whereKey("to", equalTo: PFUser.current())
-                        query2.whereKey("from", equalTo: userObj)
-                        query2.whereKey("request", equalTo: "approverequest")
-                        query2.findObjectsInBackground(block: {(objects, error) in
-                            
-                            if (objects?.first) != nil {
-                                
-                                (objects?.first as! PFObject).deleteEventually()
-                                
-                            }
-                            
-                        })
-                        
-                        for i in 0 ..< list.count {
-                            
-                            if objId == (list[i].objectId) {
-                                list.remove(at: i)
-                                friendList = list
-                                break
-                            }
-                            
+                    let gr = DispatchGroup()
+                    
+                    gr.enter()
+                    
+                    PFCloud.callFunction(inBackground: "searchUsers", withParameters: params) { (result, error) in
+                        if let error = error {
+                            print("\(name): Cloud Function调用失败 - \(error.localizedDescription)")
+                            gr.leave()
+                            return
                         }
                         
-                        currentUser.setObject(list, forKey: "friendList")
-                        currentUser.saveInBackground()
-                        
-                        let pfq = PFQuery(className: "Rapport")
-                        pfq.whereKey("from", equalTo: PFUser.current()!)
-                        pfq.whereKey("to", equalTo: userObj)
-                        let rapport = try! pfq.getFirstObject()
-                        try! rapport.delete()
-                        
-                        print("done")
-                        group.leave()
-                        
+                        guard let userData = (result as? [PFUser])?.first else {
+                            print("错误：用户数据数组为空")
+                            gr.leave()
+                            return
+                        }
+
+                        userObj = userData  // 假设 userObj 已在外部声明
+                        print("\(name): 使用 Cloud Function 成功获取用户")
+                        gr.leave()
                     }
                     
-                    group.notify(queue: .main) {
+                    gr.notify(queue: .main) {
+                        let currentCell = self.tableView.cellForRow(at: indexPath) as! FriendCell
+                        let friendToDeleteName = currentCell.friendName.text
                         
-                        print("roger")
+                        // 1. 本地 friendList 数组移除
+                        let toDelUser = self.friendList[indexPath.row] as? PFUser
+                        print("    在存之前的indexPath.row   : \(indexPath.row)")
+                        print("    在存之前的toDelUser   : \(toDelUser)")
+                        self.friendList.remove(at: indexPath.row)
+                        self.tableView.deleteRows(at: [indexPath], with: .automatic)
                         self.tableView.reloadData()
                         
+                        // 2. Parse 后端 friendList 字段移除
+                        if var friends = userObj?["friendList"] as? [PFUser] {
+                            friends.removeAll {$0.objectId == toDelUser?.objectId}
+                            print("    在存之前的friends   : \(friends)")
+                            userObj?["friendList"] = friends
+                            userObj?.saveInBackground { (success, error) in
+                                if success {
+                                    print("Parse friendList 已移除好友")
+                                } else {
+                                    print("Parse 移除失败: \(String(describing: error))")
+                                }
+                            }
+                        }
+                        
+                        let group = DispatchGroup()
+                        
+                        group.enter()
+                        
+                        do {
+                            var userObject: PFUser?
+                            
+                            let param = ["username": friendToDeleteName]
+                            
+                            let gg = DispatchGroup()
+                            
+                            gg.enter()
+                            
+                            print("\(friendToDeleteName): 使用Cloud Function获取用户")
+                            PFCloud.callFunction(inBackground: "searchUsers", withParameters: param) { (result, error) in
+                                if let error = error {
+                                    print("\(friendToDeleteName): Cloud Function调用失败 - \(error.localizedDescription)")
+                                    gg.leave()
+                                    return
+                                }
+                                
+                                guard let userData = (result as? [PFUser])?.first else {
+                                    print("错误：用户数据数组为空")
+                                    gg.leave()
+                                    return
+                                }
+
+                                userObject = userData
+                                print("使用 Cloud----Function 成功获取用户")
+                                gg.leave()
+                            }
+                            
+                            gg.notify(queue: .main) {
+                                let pfq = PFQuery(className: "Rapport")
+                                pfq.whereKey("from", equalTo: PFUser.current()!)
+                                pfq.whereKey("to", equalTo: userObject)
+                                var rapport: PFObject?
+                                
+                                if let result = try? pfq.getFirstObject() {
+                                    rapport = result
+                                    print("成功获取对象: \(rapport)")
+                                } else {
+                                    print("获取对象失败")
+                                }
+                                
+                                do {
+                                    if let rapport = rapport {
+                                        try rapport.delete()
+                                        print("删除成功")
+                                    } else {
+                                        print("rapport对象为nil，无需删除")
+                                    }
+                                } catch {
+                                    print("删除失败: \(error.localizedDescription)")
+                                }
+                                
+                                pfq.whereKey("from", equalTo: userObject)
+                                pfq.whereKey("to", equalTo: PFUser.current()!)
+                            
+                                if let result = try? pfq.getFirstObject() {
+                                    rapport = result
+                                    print("成功获取对象: \(rapport)")
+                                } else {
+                                    print("获取对象失败")
+                                }
+                                
+                                do {
+                                    if let rapport = rapport {
+                                        try rapport.delete()
+                                        print("删除成功")
+                                    } else {
+                                        print("rapport对象为nil，无需删除")
+                                    }
+                                } catch {
+                                    print("删除失败: \(error.localizedDescription)")
+                                }
+                                
+                                print("done")
+                                group.leave()
+                            }
+                        }
+                        
+                        group.notify(queue: .main) {
+                            
+                            print("roger")
+                            self.tableView.reloadData()
+                            
+                        }
                     }
-                    
                 } else {
                     
                     let alert = UIAlertController(title: "此时不能删除好友", message: "", preferredStyle: .alert)
@@ -525,6 +587,49 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
             
         }
         
+    }
+    
+    func fetchFriendList(completion: @escaping ([PFUser]) -> Void) {
+        guard let objectId = PFUser.current()?.objectId else {
+            print("objectId 为空，无法调用云函数")
+            completion([])
+            return
+        }
+        print("准备调用云函数，objectId=\(objectId)")
+        PFCloud.callFunction(inBackground: "fetchUserWithMasterKey", withParameters: ["userId": objectId]) { (result, error) in
+            print("云函数回调执行")
+            if let error = error {
+                print("云函数调用失败: \(error.localizedDescription)")
+                completion([])
+                return
+            }
+            guard let userDict = result as? [String: Any],
+                  let userData = userDict["user"] as? [String: Any],
+                  let friendsArray = userData["friendList"] as? [[String: Any]] else {
+                print("解析失败，result=\(String(describing: result))")
+                completion([])
+                return
+            }
+            print("看看friendsArray: \(friendsArray)")
+            let friends = friendsArray.compactMap { dict -> PFUser? in
+                guard let objectId = dict["objectId"] as? String else { return nil }
+                // 只要 username 字段存在且非空才显示
+                guard let username = dict["username"] as? String, !username.isEmpty else {
+                    print("过滤掉已删除用户: \(objectId)")
+                    return nil
+                }
+                let user = PFUser(withoutDataWithObjectId: objectId)
+                user.username = username
+                if let avatar = dict["avatar"] as? String {
+                    user["avatar"] = avatar
+                }
+                print("成功加载好友: \(username)")
+                return user
+            }
+            print("成功啦啦啦啦909909")
+            print("看看friends: \(friends)")
+            completion(friends)
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -545,6 +650,11 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
             cell.friendIcon.image = UIImage(named: "default_avatar") ?? UIImage()
         }
         
+//        fetchFriendList { [weak self] friends in
+//            self?.friendList = friends
+//            self?.tableView.reloadData()
+//        }
+        
         // 确保索引有效
         guard indexPath.row < friendList.count else {
             print("Index out of bounds: \(indexPath.row), friendList count: \(friendList.count)")
@@ -560,6 +670,8 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
         print("Loading user with ID: \(userId)")
         
         // 获取当前用户对象
+        print("看看    friendList: \(friendList)")
+        print("看看    indexPath.row: \(indexPath.row)")
         let directUser = friendList[indexPath.row]
         let objectId = directUser.objectId ?? "Unknown"
         
@@ -576,24 +688,34 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                 print("\(objectId): 直接读取到用户名 - \(username)")
             }
             
-            // 试图读取头像
-            if let avatarFile = directUser["avatar"] as? PFFileObject {
-                avatarFile.getDataInBackground { (imageData, error) in
+            if let avatarUrlString = directUser["avatar"] as? String,
+               let avatarUrl = URL(string: avatarUrlString) {
+                
+                // 使用URLSession或第三方库加载网络图片
+                URLSession.shared.dataTask(with: avatarUrl) { [weak self] (data, _, error) in
                     if let error = error {
-                        print("\(objectId): 读取头像失败 - \(error.localizedDescription)")
+                        print("\(objectId): 下载头像失败 - \(error.localizedDescription)")
                         return
                     }
                     
-                    if let data = imageData, let image = UIImage(data: data) {
+                    if let data = data, let image = UIImage(data: data) {
                         DispatchQueue.main.async {
-                            // 确保cell仍然可见
-                            if let cells = tableView.visibleCells as? [FriendCell],
-                               let visibleCell = cells.first(where: { $0.tag == indexPath.row }) {
-                                visibleCell.friendIcon.image = image
-                                print("\(objectId): 设置头像成功")
+                            guard let self = self,
+                                  let cell = self.tableView?.cellForRow(at: indexPath) as? FriendCell else {
+                                print("\(objectId): Cell已不可见")
+                                return
                             }
+                            
+                            cell.friendIcon.image = image
+                            print("\(objectId): 设置头像成功")
                         }
                     }
+                }.resume()
+                
+            } else {
+                print("用户没有有效头像URL")
+                DispatchQueue.main.async {
+                    (self.tableView?.cellForRow(at: indexPath) as? FriendCell)?.friendIcon.image = UIImage(named: "user")
                 }
             }
         } else {
@@ -629,6 +751,7 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
             
             if success, let userData = resultDict["user"] as? [String: Any] {
                 // 成功获取用户数据
+                print("看看userData: \(userData)")
                 let username = userData["username"] as? String ?? "未知用户"
                 let avatarUrl = userData["avatar"] as? String
                 

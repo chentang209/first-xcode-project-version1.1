@@ -48,23 +48,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
                 
             }
             Parse.initialize(with: configuration)
-
-        // 设置默认ACL
-        let defaultACL = PFACL()
-        defaultACL.hasPublicReadAccess = true
-        if let currentUser = PFUser.current() {
-            defaultACL.setWriteAccess(true, for: currentUser)
-        }
-        PFACL.setDefault(defaultACL, withAccessForCurrentUser: true)
+            
+            // 设置默认ACL
+            let defaultACL = PFACL()
+            defaultACL.hasPublicReadAccess = true
+            if let currentUser = PFUser.current() {
+                defaultACL.setWriteAccess(true, for: currentUser)
+            }
+            PFACL.setDefault(defaultACL, withAccessForCurrentUser: true)
             
             // 确保在主线程初始化窗口
             DispatchQueue.main.async {
                 self.window = UIWindow(frame: UIScreen.main.bounds)
-                let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                
                 // 明确指定要加载的ViewController作为根视图控制器
-                let initialVC = storyboard.instantiateViewController(withIdentifier: "MainViewController")
-                self.window?.rootViewController = initialVC
-
+                let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                let loginVC = storyboard.instantiateViewController(withIdentifier: "LoginViewController")
+                let navigationController = UINavigationController(rootViewController: loginVC)
+                self.window?.rootViewController = navigationController
+                
                 self.window?.makeKeyAndVisible()
             }
         }
@@ -154,13 +156,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             print("execute")
             // 设置一个全局标志，在TableViewController的viewDidLoad或viewWillAppear中处理
             bool = false
-        
+            
         }
         
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
-    SessionManager.shared.startMonitoring()
+        SessionManager.shared.startMonitoring()
         
         UIApplication.shared.applicationIconBadgeNumber = 0
         let pfi = PFInstallation.current()
@@ -172,8 +174,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             pfi?.saveInBackground { (success, error) in
                 if let error = error {
                     print("Parse服务器连接失败: \(error.localizedDescription)")
-                        print("服务器响应原始数据: \(String(describing: (error as NSError).userInfo["com.parse.code"]))")
-                        print("服务器响应内容: \(String(describing: (error as NSError).userInfo["error"]))")
+                    print("服务器响应原始数据: \(String(describing: (error as NSError).userInfo["com.parse.code"]))")
+                    print("服务器响应内容: \(String(describing: (error as NSError).userInfo["error"]))")
                     if retryCount < maxRetries {
                         retryCount += 1
                         print("尝试第\(retryCount)次重连...")
@@ -208,7 +210,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             self.window?.rootViewController?.view.makeToastActivity(ToastPosition.center)
         }
         saveInstallation()
-
+        
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
@@ -222,7 +224,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             // 设置全局变量，让TableViewController在加载时使用
             bool = false
         }
-            
+        
     }
     
     ///////////////////////////////////////////////////////////
