@@ -269,21 +269,30 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
                             
                             dgroup.notify(queue: .main) {
                                 
-                                let tableQuery = PFQuery(className: "JoinTable")
+//                                let tableQuery = PFQuery(className: "JoinTable")
+//                                tableQuery.whereKey("from", equalTo: PFUser.current())
+//                                tableQuery.whereKey("to", equalTo: self.userObj)
+//                                tableQuery.whereKeyExists("request")
                                 
-                                tableQuery.whereKey("from", equalTo: PFUser.current())
-                                tableQuery.whereKey("to", equalTo: self.userObj)
-                                tableQuery.whereKeyExists("request")
+                                let query1 = PFQuery(className: "JoinTable")
+                                query1.whereKey("from", equalTo: PFUser.current()!) // 当前用户 → 目标用户
+                                query1.whereKey("to", equalTo: self.userObj)
+                                
+                                let query2 = PFQuery(className: "JoinTable")
+                                query2.whereKey("from", equalTo: self.userObj)      // 目标用户 → 当前用户
+                                query2.whereKey("to", equalTo: PFUser.current()!)
+                                
+                                let tableQuery = PFQuery.orQuery(withSubqueries: [query1, query2])
                                 
                                 tableQuery.findObjectsInBackground(block: { (objs, err) in
                                     
-                                    if objs?.first != nil {
+                                    if objs != nil && objs?.first != nil {
                                         
                                         print(objs?.first!["request"] as! String)
                                         
                                         if objs?.first!["request"] as! String == "sendrequest" {
                                             
-                                            let alert = UIAlertController(title: "你已经给该用户发送过请求", message: "", preferredStyle: .alert)
+                                            let alert = UIAlertController(title: "你/对方已申请添加好友", message: "", preferredStyle: .alert)
                                             self.present(alert, animated: true)
                                             let when = DispatchTime.now() + 2
                                             DispatchQueue.main.asyncAfter(deadline: when) {
@@ -294,7 +303,7 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
                                             
                                         } else if objs?.first!["request"] as! String == "approverequest" {
                                             
-                                            let alert = UIAlertController(title: "你发送的请求已经被通过", message: "", preferredStyle: .alert)
+                                            let alert = UIAlertController(title: "你们已经是好友了", message: "", preferredStyle: .alert)
                                             self.present(alert, animated: true)
                                             let when = DispatchTime.now() + 2
                                             DispatchQueue.main.asyncAfter(deadline: when) {
@@ -325,9 +334,8 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
                                             joinTable.saveInBackground{(success, error) in
                                                 
                                                 if success {
-                                                    
+                                                    print("sendrequest 保存成功")
                                                     gp11.leave()
-                                                    
                                                 } else {
                                                     
                                                     if let error = error {

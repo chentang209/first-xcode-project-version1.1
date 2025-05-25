@@ -6,7 +6,7 @@ class SessionManager {
     static let shared = SessionManager()
     
     private var idleTimer: Timer?
-    private let timeoutDuration: TimeInterval = 30 // 半分钟无操作
+    private let timeoutDuration: TimeInterval = 60 // 1分钟无操作
     private var isLogoutAlertShowing = false
     
     func startMonitoring() {

@@ -20,6 +20,7 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
     var profile: [Avatar] = []
     var wentidic: [String : Any] = [ : ]
     var sender: String!
+    var friendList: [PFObject] = []
     
     func reactFriendRequest(bol: Bool) {
         
@@ -29,14 +30,14 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
         
     }
     
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //        let getfBook = storyboard?.instantiateViewController(withIdentifier: "FriendViewController") as! FriendViewController
-        //        let getfBook = FriendViewController()
-        //        getfBook.friendDelegate = self
+        // 清除本地缓存，从 Parse 服务器获取最新数据
+        fetchFriendList(cachePolicy: .networkOnly) { [weak self] friends in
+            self?.friendList = friends
+            self?.tableView.reloadData()
+        }
         
         navigationItem.hidesBackButton = true
         
@@ -55,8 +56,6 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
             first = false
             
         }
-        
-        
         
         let tu = UIImage(named: "woodbackground")
         if let nav = self.navigationController {
@@ -99,13 +98,23 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
     
     
     override func viewWillAppear(_ animated: Bool) {
-        print("will")
-        self.tableView.reloadData()
-        if let nav = self.navigationController {
-            nav.navigationBar.setBackgroundImage(UIImage(named: "wood2"), for: .default)
+        super.viewWillAppear(animated)
+        
+        // 清除本地缓存，从 Parse 服务器获取最新数据
+        fetchFriendList(cachePolicy: .networkOnly) { [weak self] friends in
+            self?.friendList = friends
+            self?.tableView.reloadData()
         }
         
+        // 确保在视图出现时立即设置导航栏背景
+        if let nav = self.navigationController {
+            nav.navigationBar.setBackgroundImage(UIImage(named: "wood2"), for: .default)
+            nav.navigationBar.barStyle = .black // 保持状态栏文字可见性
+            nav.navigationBar.isTranslucent = true // 保持半透明特性
+        }
         
+        print("will")
+        self.tableView.reloadData()
     }
     
     
@@ -126,7 +135,29 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
         
     }
     
-    
+    func fetchFriendList(cachePolicy: PFCachePolicy = .cacheThenNetwork, completion: @escaping ([PFUser]) -> Void) {
+        guard let objectId = PFUser.current()?.objectId else {
+            print("objectId 为空，无法调用云函数")
+            completion([])
+            return
+        }
+        print("准备调用云函数，objectId=\(objectId)")
+        // 显式设置缓存策略为仅网络（避免读取旧缓存）
+        let query = PFQuery(className: "_User")
+        query.cachePolicy = cachePolicy
+        query.getObjectInBackground(withId: objectId) { [weak self] (user, error) in
+            if let error = error {
+                print("获取用户失败: \(error.localizedDescription)")
+                completion([])
+                return
+            }
+            guard let user = user as? PFUser, let friends = user["friendList"] as? [PFUser] else {
+                completion([])
+                return
+            }
+            completion(friends)
+        }
+    }
     
     override var prefersStatusBarHidden: Bool {
         return true
@@ -148,18 +179,14 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
                 self.present(alert, animated: true)
             }
             
-            
             return
         }
-        
-        
-        
-        guard let friendList = current["friendList"] as? [PFObject] else {
-            print("获取好友列表失败")
-            return
+                
+        // 清除本地缓存，从 Parse 服务器获取最新数据
+        fetchFriendList(cachePolicy: .networkOnly) { [weak self] friends in
+            self?.friendList = friends
+            self?.tableView.reloadData()
         }
-        
-        
         
         if friendList.count == 0 {
             let alert = UIAlertController(title: "请添加好友", message: "", preferredStyle: .alert)

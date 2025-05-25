@@ -43,6 +43,7 @@
 		C2F6F99922253C4A002E67E2 /* IconCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F6F99822253C4A002E67E2 /* IconCell.swift */; };
 		C473A88D2DC7F32500168A11 /* yanhua.gif in Resources */ = {isa = PBXBuildFile; fileRef = C473A88C2DC7F32500168A11 /* yanhua.gif */; };
 		C49EF1D02DA5D846002EA63E /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C49EF1CF2DA5D846002EA63E /* SessionManager.swift */; };
+		C4C98FF82DE1ED500008FC44 /* index.js in Resources */ = {isa = PBXBuildFile; fileRef = C4C98FF62DE1ED500008FC44 /* index.js */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -109,6 +110,7 @@
 		C2F6F99822253C4A002E67E2 /* IconCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconCell.swift; sourceTree = "<group>"; };
 		C473A88C2DC7F32500168A11 /* yanhua.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = yanhua.gif; sourceTree = "<group>"; };
 		C49EF1CF2DA5D846002EA63E /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
+		C4C98FF62DE1ED500008FC44 /* index.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = index.js; sourceTree = "<group>"; };
 		D14F35A1C008B719CB88E638 /* Pods_CameraApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CameraApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -170,6 +172,7 @@
 		C2E7817E21F677DD0023F4FB = {
 			isa = PBXGroup;
 			children = (
+				C4C98FF72DE1ED500008FC44 /* cloud */,
 				C2E7818921F677DD0023F4FB /* CameraApp */,
 				C2E7819E21F677E00023F4FB /* CameraAppTests */,
 				C2E781A921F677E00023F4FB /* CameraAppUITests */,
@@ -242,6 +245,14 @@
 				C2E781AC21F677E00023F4FB /* Info.plist */,
 			);
 			path = CameraAppUITests;
+			sourceTree = "<group>";
+		};
+		C4C98FF72DE1ED500008FC44 /* cloud */ = {
+			isa = PBXGroup;
+			children = (
+				C4C98FF62DE1ED500008FC44 /* index.js */,
+			);
+			path = cloud;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -368,6 +379,7 @@
 				C211CB3B223481B600CA0D8F /* jinguanzhang.gif in Resources */,
 				C22F62C82235A4EC0062745E /* zhanghan.gif in Resources */,
 				C2E7819521F677E00023F4FB /* LaunchScreen.storyboard in Resources */,
+				C4C98FF82DE1ED500008FC44 /* index.js in Resources */,
 				C2E7819221F677E00023F4FB /* Assets.xcassets in Resources */,
 				C473A88D2DC7F32500168A11 /* yanhua.gif in Resources */,
 				C2E7819021F677DD0023F4FB /* Main.storyboard in Resources */,

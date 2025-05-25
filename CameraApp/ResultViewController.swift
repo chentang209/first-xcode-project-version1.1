@@ -106,7 +106,15 @@ class ResultViewController: UIViewController {
                         correct = correct + 1
                         correctmap.updateValue(correct, forKey: PFUser.current()!.objectId!)
                         obj!.setObject(correctmap, forKey: "numHisCorrect")
-                        try! obj!.save()
+                        
+                        do {
+                            try obj?.save()
+                            print("保存成功")
+                        } catch {
+                            print("保存失败: \(error.localizedDescription)")
+                        }
+                        
+//                      try! obj!.save()
                         
                     }
                     
@@ -131,7 +139,7 @@ class ResultViewController: UIViewController {
                         
                         if self.flag == false {
                             
-                            self.text3.text = "快添加对方为好友进行游戏吧～"
+                            self.text3.text = "快给TA出道题看看你们的默契度吧～"
                             
                         } else {
                             
