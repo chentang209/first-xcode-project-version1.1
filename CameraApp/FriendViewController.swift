@@ -25,6 +25,7 @@ class FriendViewController: UIViewController, tableDelegate {
     var cond = false
     var friendListUpdate: Bool!
     var friendDelegate: friendDelegate!
+    var friendNameText: String!
     
     override func viewDidLoad() {
         
@@ -446,8 +447,8 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                     gr.leave()
                     
                     gr.notify(queue: .main) {
-                        let currentCell = self.tableView.cellForRow(at: indexPath) as! FriendCell
-                        let friendToDeleteName = currentCell.friendName.text
+//                        let currentCell = self.tableView.cellForRow(at: indexPath) as! FriendCell
+                        let friendToDeleteName = self.friendNameText
                         
                         // 1. 本地 friendList 数组移除
                         let toDelUser = self.friendList[indexPath.row] as? PFUser
@@ -683,8 +684,52 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                     if let cells = tableView.visibleCells as? [FriendCell],
                        let visibleCell = cells.first(where: { $0.tag == indexPath.row }) {
                         
-                        // 设置用户名
-                        visibleCell.friendName.text = username
+                       guard let userId = userData["objectId"] as? String else {
+                            print("用户ID缺失")
+                            return
+                       }
+                    
+                       var tmpUser: PFUser?
+                        do {
+                            let result = try PFCloud.callFunction("searchUsers", withParameters: ["username": username]) as? [PFObject]
+                            guard let users = result, let user = users.first as? PFUser else {
+                                print("No user found with username: \(self.friendNameText)")
+                                return
+                            }
+                            print("Found user: \(user.username ?? "N/A")")
+                            tmpUser = user
+                        } catch {
+                            print("Cloud function error: \(error.localizedDescription)")
+                            self.showErrorAlert(message: "Failed to search users")
+                        }
+                        
+                        let pq = PFQuery(className: "Rapport")
+                        pq.whereKey("from", equalTo: PFUser.current()!)
+                        pq.whereKey("to", equalTo: tmpUser)
+                        
+                        var level : String = "无"
+                        var score : Double = 0.0
+                        
+                        let dispatchGroup = DispatchGroup()
+                        dispatchGroup.enter()
+                        
+                        pq.getFirstObjectInBackground { (obj, err) in
+                            // 安全获取字段值（避免强制解包崩溃）
+                            level = obj?["level"] as? String ?? "无"
+                            score = obj?["compatibilityScore"] as? Double ?? 0.0
+                            
+                            if let error = err {
+                                print(error)
+                            }
+                            
+                            dispatchGroup.leave()
+                        }
+                        
+                        dispatchGroup.notify(queue: .main) {
+                            visibleCell.friendName.text = username + "           " + "默契程度 ：" + level + "(\(score)%)"
+                        }
+                        
+                        self.friendNameText = username
                         
                         // 获取头像如果有URL
                         if let avatarUrlString = avatarUrl, let url = URL(string: avatarUrlString) {
@@ -830,12 +875,12 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                 var foundUser: PFUser? = nil
                 
                 do {
-                    print("Calling searchUsers Cloud Function with username: \(id)")
+                    print("Calling searchUsers Cloud Function with username: \(self.friendNameText)")
                     
                     do {
-                        let result = try PFCloud.callFunction("searchUsers", withParameters: ["username": id]) as? [PFObject]
+                        let result = try PFCloud.callFunction("searchUsers", withParameters: ["username": self.friendNameText]) as? [PFObject]
                         guard let users = result, let user = users.first as? PFUser else {
-                            print("No user found with username: \(id)")
+                            print("No user found with username: \(self.friendNameText)")
                             return
                         }
                         print("Found user: \(user.username ?? "N/A")")
@@ -931,7 +976,7 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                         questionDict["op4"] = self.store["op4"] as! String
                         questionDict["correct"] = self.store["correct"] as! String
                         questionDict["self_name"] = self.store["self_name"] as! String
-                        questionDict["his_id"] = id
+                        questionDict["his_id"] = self.friendNameText
                         
                         let joinTable = PFObject(className: "JoinTable")
                         var user: PFUser?
@@ -943,12 +988,12 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                         uploadGroup.notify(queue: .main) {
                             joinTable.setObject(questionDict, forKey: "question")
                             
-                            PFCloud.callFunction(inBackground: "searchUsers", withParameters: ["username": id]) { (result: Any?, error1: Error?) in
+                            PFCloud.callFunction(inBackground: "searchUsers", withParameters: ["username": self.friendNameText]) { (result: Any?, error1: Error?) in
                                 if(error1 == nil) {
                                     
                                     guard let userObjects = result as? [PFObject],
                                           let u = userObjects.first as? PFUser else {
-                                        print("No user found with username: \(id)")
+                                        print("No user found with username: \(self.friendNameText)")
                                         self.showErrorAlert(message: "User not found")
                                         return
                                     }
@@ -1031,6 +1076,9 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                                 newRapport["to"] = user!
                                 newRapport["numOfQuestionToHim"] = [user?.objectId : 0]
                                 newRapport["numHisCorrect"] = [user?.objectId : 0]
+                                newRapport["level"] = "无"
+                                newRapport["compatibilityScore"] = 0.0
+                                
                                 newRapport.acl?.setWriteAccess(true, for: user!)
                                 
                                 // 4. 保存新记录
@@ -1145,7 +1193,7 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                 let acl = PFACL()
                 
                 // 查询用户
-                userQuery.whereKey("username", equalTo: id)
+                userQuery.whereKey("username", equalTo: self.friendNameText)
                 
                 // 声明一个外部变量保存用户对象，可在整个handler中使用
                 var foundUser: PFUser? = nil
@@ -1167,12 +1215,12 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                 print("Before calling searchUsers Cloud Function")
                 
                 do {
-                    print("Calling searchUsers Cloud Function with username: \(id)")
+                    print("Calling searchUsers Cloud Function with username: \(self.friendNameText)")
                     
                     do {
-                        let result = try PFCloud.callFunction("searchUsers", withParameters: ["username": id]) as? [PFObject]
+                        let result = try PFCloud.callFunction("searchUsers", withParameters: ["username": self.friendNameText]) as? [PFObject]
                         guard let users = result, let user = users.first as? PFUser else {
-                            print("No user found with username: \(id)")
+                            print("No user found with username: \(self.friendNameText)")
                             return
                         }
                         print("Found user: \(user.username ?? "N/A")")
@@ -1317,19 +1365,19 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                 }
                 
                 // 安全地查询用户
-                userQuery.whereKey("username", equalTo: id)
+                userQuery.whereKey("username", equalTo: self.friendNameText)
                 
                 // 声明一个外部变量保存用户对象，可在整个handler中使用
                 var foundUser: PFUser? = nil
                 
                 // 使用Cloud Function "searchUsers"获取用户
                 do {
-                    print("Calling searchUsers Cloud Function with username: \(id)")
+                    print("Calling searchUsers Cloud Function with username: \(self.friendNameText)")
                     
                     do {
-                        let result = try PFCloud.callFunction("searchUsers", withParameters: ["username": id]) as? [PFObject]
+                        let result = try PFCloud.callFunction("searchUsers", withParameters: ["username": self.friendNameText]) as? [PFObject]
                         guard let users = result, let user = users.first as? PFUser else {
-                            print("No user found with username: \(id)")
+                            print("No user found with username: \(self.friendNameText)")
                             return
                         }
                         print("Found user: \(user.username ?? "N/A")")
@@ -1402,7 +1450,7 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                     }
                     
                     // 通知用户
-                    self.showSuccessAlert(message: "已拒绝用户 \(foundUser?.username ?? id) 的好友请求")
+                    self.showSuccessAlert(message: "已拒绝用户 \(foundUser?.username ?? self.friendNameText) 的好友请求")
                     
                     // 刷新界面
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {

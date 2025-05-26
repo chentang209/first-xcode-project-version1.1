@@ -413,3 +413,17 @@ Parse.Cloud.define("friendReqReject", async (req) => {
         };
     }
 });
+
+Parse.Cloud.beforeSave("_User", async (request) => {
+    // 仅在新用户注册时触发（非更新操作）
+    if (!request.original) {
+        const username = request.object.get("username");
+        const query = new Parse.Query("_User");
+        query.equalTo("username", username);
+        const existingUser = await query.first({ useMasterKey: true });
+
+        if (existingUser) {
+            throw new Parse.Error(202, "该用户名已经被注册了哟~，试试别的吧！");
+        }
+    }
+});

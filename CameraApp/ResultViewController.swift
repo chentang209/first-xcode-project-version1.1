@@ -129,6 +129,8 @@ class ResultViewController: UIViewController {
             }
             
             gp.notify(queue: .main) {
+                var h0 : Double = 0.0
+                var level0 : String = "无"
                 
                 let pq = PFQuery(className: "Rapport")
                 pq.whereKey("from", equalTo: PFUser.current()!)
@@ -212,6 +214,8 @@ class ResultViewController: UIViewController {
                                     }
                                     
                                     self.text3.text = level + ": 你俩的默契度为" + "\(h)" + "%"
+                                    level0 = level
+                                    h0 = h
                                     
                                 }
                                 
@@ -223,12 +227,52 @@ class ResultViewController: UIViewController {
                     
                 }
                 
+                let query1 = PFQuery(className: "Rapport")
+                query1.whereKey("from", equalTo: PFUser.current()!)
+                query1.whereKey("to", equalTo: sender)
+                
+                let query2 = PFQuery(className: "Rapport")
+                query2.whereKey("from", equalTo: sender)
+                query2.whereKey("to", equalTo: PFUser.current()!)
+                
+                let tableQuery = PFQuery.orQuery(withSubqueries: [query1, query2])
+                
+                tableQuery.findObjectsInBackground(block: { (objs, err) in
+                    
+                    if objs != nil && objs?[0] != nil {
+                        // ✅ 新增：将 level 保存到 Rapport 文档
+                        objs?[0]["level"] = level0  // 添加 level 字段
+                        objs?[0]["compatibilityScore"] = h0  // 可选：存储数值型默契度
+                        objs?[0].saveInBackground { (success, error) in
+                            if success {
+                                print("1. ✅ level 和 compatibilityScore 已保存到服务器")
+                            } else if let error = error {
+                                print("1. ❌ 保存失败: \(error.localizedDescription)")
+                            }
+                        }
+                    }
+                    
+                    if objs != nil && objs?[1] != nil {
+                        // ✅ 新增：将 level 保存到 Rapport 文档
+                        objs?[1]["level"] = level0  // 添加 level 字段
+                        objs?[1]["compatibilityScore"] = h0  // 可选：存储数值型默契度
+                        objs?[1].saveInBackground { (success, error) in
+                            if success {
+                                print("2. ✅ level 和 compatibilityScore 已保存到服务器")
+                            } else if let error = error {
+                                print("2. ❌ 保存失败: \(error.localizedDescription)")
+                            }
+                        }
+                    }
+                    
+                })
+                
             }
             
         }
         
     }
-        
+    
     
     func doStuff() {
         

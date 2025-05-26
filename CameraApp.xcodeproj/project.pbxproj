@@ -657,6 +657,7 @@
 					"$(PROJECT_DIR)/CameraApp",
 				);
 				INFOPLIST_FILE = CameraApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "朋友抽象脑洞";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -683,6 +684,7 @@
 					"$(PROJECT_DIR)/CameraApp",
 				);
 				INFOPLIST_FILE = CameraApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "朋友抽象脑洞";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
