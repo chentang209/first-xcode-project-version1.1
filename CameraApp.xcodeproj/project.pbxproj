@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -114,6 +114,10 @@
 		D14F35A1C008B719CB88E638 /* Pods_CameraApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CameraApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		C4C98FFD2DE616E00008FC44 /* audio */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = audio; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		C2E7818421F677DD0023F4FB /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -172,6 +176,7 @@
 		C2E7817E21F677DD0023F4FB = {
 			isa = PBXGroup;
 			children = (
+				C4C98FFD2DE616E00008FC44 /* audio */,
 				C4C98FF72DE1ED500008FC44 /* cloud */,
 				C2E7818921F677DD0023F4FB /* CameraApp */,
 				C2E7819E21F677E00023F4FB /* CameraAppTests */,
@@ -271,6 +276,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				C4C98FFD2DE616E00008FC44 /* audio */,
 			);
 			name = CameraApp;
 			productName = CameraApp;

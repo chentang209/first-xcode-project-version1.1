@@ -9,6 +9,7 @@
 import UIKit
 import Parse
 import SwiftGifOrigin
+import AVFoundation
 
 class ResultViewController: UIViewController {
 
@@ -16,6 +17,7 @@ class ResultViewController: UIViewController {
     var objectId: String!
     var ratio: Double!
     var flag: Bool!
+    var audioPlayer: AVAudioPlayer?
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var crowView: UIImageView!
     @IBOutlet weak var yanhuaView: UIImageView!
@@ -68,6 +70,41 @@ class ResultViewController: UIViewController {
         doStuff()
         calculate()
         
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        playCustomSound()
+    }
+    
+    func playCustomSound() {
+        var soundURL: URL?
+
+        if result {
+            guard let url = Bundle.main.url(forResource: "correct", withExtension: "m4a") else {
+                print("无法找到正确音频文件")
+                return
+            }
+            soundURL = url
+        } else {
+            guard let url = Bundle.main.url(forResource: "incorrect", withExtension: "m4a") else {
+                print("无法找到错误音频文件")
+                return
+            }
+            soundURL = url
+        }
+        
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+            try AVAudioSession.sharedInstance().setActive(true)
+            
+            audioPlayer = try AVAudioPlayer(contentsOf: soundURL!)
+            audioPlayer?.prepareToPlay()
+            audioPlayer?.play()
+        } catch {
+            print("播放声音时出错: \(error.localizedDescription)")
+        }
     }
     
     func calculate() {
