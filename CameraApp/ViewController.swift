@@ -20,6 +20,11 @@ class ViewController: UIViewController {
     var friendReqList: [PFObject] = []
     var tableViewController = TableViewController()
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        SessionManager.shared.resetTimer()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

@@ -427,3 +427,71 @@ Parse.Cloud.beforeSave("_User", async (request) => {
         }
     }
 });
+
+Parse.Cloud.define('sendWelcomePush', async (request) => {
+  // 获取Michael的设备令牌
+  const michaelQuery = new Parse.Query(Parse.User);
+  michaelQuery.equalTo('username', 'Michael');
+  const michael = await michaelQuery.first({ useMasterKey: true });
+  
+  let michaelToken = '';
+  if (michael) {
+    const installationQuery = new Parse.Query(Parse.Installation);
+    installationQuery.equalTo('user', michael);
+    const installation = await installationQuery.first({ useMasterKey: true });
+    michaelToken = installation?.get('deviceToken');
+  }
+  
+  // 原推送逻辑
+  const { username } = request.params;
+  
+  // 同时发送给Michael
+  if (michaelToken) {
+    await Parse.Push.send({
+      where: new Parse.Query(Parse.Installation).equalTo('deviceToken', michaelToken),
+      data: { alert: `新用户 ${username} 注册成功！` , sound: "default" }
+    }, { useMasterKey: true });
+  }
+});
+
+Parse.Cloud.define("questionFeedback", async (request) => {
+    const { result, sender: senderId, currentUserName } = request.params;
+        
+    // 通过 objectId 查询用户
+    const senderQuery = new Parse.Query(Parse.User);
+    let sender;
+    try {
+        sender = await senderQuery.get(senderId, { useMasterKey: true });
+    } catch (e) {
+        throw new Parse.Error(404, "未找到目标用户");
+    }
+
+    // 查询目标用户的安装设备
+    const installationQuery = new Parse.Query(Parse.Installation);
+    installationQuery.equalTo("user", sender);
+    const installations = await installationQuery.find({ useMasterKey: true });
+    
+    if (installations.length === 0) {
+        throw new Parse.Error(404, "目标用户没有设备安装记录");
+    }
+    
+    // 生成推送消息
+    const alertMessage = result
+        ? `${currentUserName} 答对了你的问题，你俩默契度有所提升。`
+        : `${currentUserName} 答错了你的问题，你俩默契度有所下降。`;
+    
+    // 发送推送
+    try {
+        await Parse.Push.send({
+            where: installationQuery,
+            data: {
+                alert: alertMessage,
+                sound: "default"
+            }
+        }, { useMasterKey: true });
+        
+        return "推送已发送至 " + installations.length + " 台设备";
+    } catch (e) {
+        throw new Parse.Error(500, "推送发送失败: " + e.message);
+    }
+});

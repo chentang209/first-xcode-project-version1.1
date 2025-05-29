@@ -378,10 +378,10 @@
                                 <color key="backgroundColor" systemColor="groupTableViewBackgroundColor"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oqQ-GY-XxA">
-                                <rect key="frame" x="255" y="539" width="89" height="41"/>
+                                <rect key="frame" x="255" y="539" width="89" height="42"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="25"/>
-                                <state key="normal" title="取消"/>
+                                <state key="normal" title="删除❌"/>
                                 <connections>
                                     <action selector="CancelAction:" destination="zeH-1D-FdE" eventType="touchUpInside" id="qY6-jz-7gb"/>
                                 </connections>
@@ -937,7 +937,7 @@
         <segue reference="msc-TX-eu2"/>
         <segue reference="hYI-hF-d1i"/>
         <segue reference="ts0-aK-8r9"/>
-        <segue reference="3AQ-nG-ZCf"/>
+        <segue reference="30I-uy-PAM"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="GarudaPixel" width="199" height="64"/>

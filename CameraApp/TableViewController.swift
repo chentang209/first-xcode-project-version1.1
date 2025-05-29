@@ -120,12 +120,12 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
     
     
     override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         print("did")
         //self.tableView.reloadData()
         appendArray()
+        SessionManager.shared.resetTimer()
     }
-    
-    
     
     override func viewWillDisappear(_ animated: Bool) {
         if let nav = self.navigationController {

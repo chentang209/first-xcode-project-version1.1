@@ -30,9 +30,9 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>GuessWords wants to access the camera merely for purpose of attaining images to play the game. Your privacy is secure and protected.</string>
+	<string>朋友抽象脑洞 请求访问相机仅用于获取游戏所需图像。您的隐私安全将得到充分保护。</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>GuessWords wants to access the photo library merely for purpose of attaining images to play the game. Your privacy is secure and protected.</string>
+	<string>朋友抽象脑洞 申请访问相册仅用于获取游戏所需图片，您的隐私安全将得到严格保护。</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

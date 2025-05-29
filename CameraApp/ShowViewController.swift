@@ -49,6 +49,11 @@ class ShowViewController: UIViewController {
     
     //let database = CKContainer.default().publicCloudDatabase
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        SessionManager.shared.resetTimer()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -60,10 +65,6 @@ class ShowViewController: UIViewController {
             self.present(alert, animated: true)
         }
         
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        //super.viewDidAppear(true)
     }
     
     @IBAction func test(_ sender: UIButton) {

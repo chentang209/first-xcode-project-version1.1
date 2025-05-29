@@ -25,7 +25,15 @@ class FriendViewController: UIViewController, tableDelegate {
     var cond = false
     var friendListUpdate: Bool!
     var friendDelegate: friendDelegate!
-    var friendNameText: String!
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        SessionManager.shared.resetTimer()
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        SessionManager.shared.resetTimer()
+    }
     
     override func viewDidLoad() {
         
@@ -448,7 +456,7 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                     
                     gr.notify(queue: .main) {
 //                        let currentCell = self.tableView.cellForRow(at: indexPath) as! FriendCell
-                        let friendToDeleteName = self.friendNameText
+//                        let friendToDeleteName = currentCell.friendName.text
                         
                         // 1. 本地 friendList 数组移除
                         let toDelUser = self.friendList[indexPath.row] as? PFUser
@@ -693,7 +701,7 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                         do {
                             let result = try PFCloud.callFunction("searchUsers", withParameters: ["username": username]) as? [PFObject]
                             guard let users = result, let user = users.first as? PFUser else {
-                                print("No user found with username: \(self.friendNameText)")
+                                print("No user found with username: \(username)")
                                 return
                             }
                             print("Found user: \(user.username ?? "N/A")")
@@ -726,10 +734,8 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                         }
                         
                         dispatchGroup.notify(queue: .main) {
-                            visibleCell.friendName.text = username + "           " + "默契程度 ：" + level + "(\(score)%)"
+                            visibleCell.friendName.text = username + "   " + "默契程度 ：" + level + "(\(score)%)"
                         }
-                        
-                        self.friendNameText = username
                         
                         // 获取头像如果有URL
                         if let avatarUrlString = avatarUrl, let url = URL(string: avatarUrlString) {
@@ -856,6 +862,12 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
     
     func myTableDelegate(id: String, icon: UIImage) {
         
+        var concatId : String = id
+        
+        if let range = id.range(of: "   ") {
+            concatId = String(id.prefix(upTo: range.lowerBound))
+        }
+        
         if afterchuti {
             
             let alert = UIAlertController(title: "是否把题目发送给该好友?", message: "", preferredStyle: .alert)
@@ -875,12 +887,12 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                 var foundUser: PFUser? = nil
                 
                 do {
-                    print("Calling searchUsers Cloud Function with username: \(self.friendNameText)")
+                    print("Calling searchUsers Cloud Function with username: \(concatId)")
                     
                     do {
-                        let result = try PFCloud.callFunction("searchUsers", withParameters: ["username": self.friendNameText]) as? [PFObject]
+                        let result = try PFCloud.callFunction("searchUsers", withParameters: ["username": concatId]) as? [PFObject]
                         guard let users = result, let user = users.first as? PFUser else {
-                            print("No user found with username: \(self.friendNameText)")
+                            print("No user found with username: \(concatId)")
                             return
                         }
                         print("Found user: \(user.username ?? "N/A")")
@@ -976,7 +988,7 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                         questionDict["op4"] = self.store["op4"] as! String
                         questionDict["correct"] = self.store["correct"] as! String
                         questionDict["self_name"] = self.store["self_name"] as! String
-                        questionDict["his_id"] = self.friendNameText
+                        questionDict["his_id"] = concatId
                         
                         let joinTable = PFObject(className: "JoinTable")
                         var user: PFUser?
@@ -988,12 +1000,12 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                         uploadGroup.notify(queue: .main) {
                             joinTable.setObject(questionDict, forKey: "question")
                             
-                            PFCloud.callFunction(inBackground: "searchUsers", withParameters: ["username": self.friendNameText]) { (result: Any?, error1: Error?) in
+                            PFCloud.callFunction(inBackground: "searchUsers", withParameters: ["username": concatId]) { (result: Any?, error1: Error?) in
                                 if(error1 == nil) {
                                     
                                     guard let userObjects = result as? [PFObject],
                                           let u = userObjects.first as? PFUser else {
-                                        print("No user found with username: \(self.friendNameText)")
+                                        print("No user found with username: \(concatId)")
                                         self.showErrorAlert(message: "User not found")
                                         return
                                     }
@@ -1193,7 +1205,7 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                 let acl = PFACL()
                 
                 // 查询用户
-                userQuery.whereKey("username", equalTo: self.friendNameText)
+                userQuery.whereKey("username", equalTo: concatId)
                 
                 // 声明一个外部变量保存用户对象，可在整个handler中使用
                 var foundUser: PFUser? = nil
@@ -1215,12 +1227,12 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                 print("Before calling searchUsers Cloud Function")
                 
                 do {
-                    print("Calling searchUsers Cloud Function with username: \(self.friendNameText)")
+                    print("Calling searchUsers Cloud Function with username: \(concatId)")
                     
                     do {
-                        let result = try PFCloud.callFunction("searchUsers", withParameters: ["username": self.friendNameText]) as? [PFObject]
+                        let result = try PFCloud.callFunction("searchUsers", withParameters: ["username": concatId]) as? [PFObject]
                         guard let users = result, let user = users.first as? PFUser else {
-                            print("No user found with username: \(self.friendNameText)")
+                            print("No user found with username: \(concatId)")
                             return
                         }
                         print("Found user: \(user.username ?? "N/A")")
@@ -1365,19 +1377,19 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                 }
                 
                 // 安全地查询用户
-                userQuery.whereKey("username", equalTo: self.friendNameText)
+                userQuery.whereKey("username", equalTo: concatId)
                 
                 // 声明一个外部变量保存用户对象，可在整个handler中使用
                 var foundUser: PFUser? = nil
                 
                 // 使用Cloud Function "searchUsers"获取用户
                 do {
-                    print("Calling searchUsers Cloud Function with username: \(self.friendNameText)")
+                    print("Calling searchUsers Cloud Function with username: \(concatId)")
                     
                     do {
-                        let result = try PFCloud.callFunction("searchUsers", withParameters: ["username": self.friendNameText]) as? [PFObject]
+                        let result = try PFCloud.callFunction("searchUsers", withParameters: ["username": concatId]) as? [PFObject]
                         guard let users = result, let user = users.first as? PFUser else {
-                            print("No user found with username: \(self.friendNameText)")
+                            print("No user found with username: \(concatId)")
                             return
                         }
                         print("Found user: \(user.username ?? "N/A")")
@@ -1450,7 +1462,7 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                     }
                     
                     // 通知用户
-                    self.showSuccessAlert(message: "已拒绝用户 \(foundUser?.username ?? self.friendNameText) 的好友请求")
+                    self.showSuccessAlert(message: "已拒绝用户 \(foundUser?.username ?? concatId) 的好友请求")
                     
                     // 刷新界面
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {

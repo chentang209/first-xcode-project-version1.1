@@ -28,6 +28,11 @@ class SignupViewController: UIViewController {
     
     var avatar2: UIImage = UIImage()
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        SessionManager.shared.resetTimer()
+    }
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
@@ -91,6 +96,15 @@ class SignupViewController: UIViewController {
             PFUser.logOut();
         }
         
+        if let username = usernameTextField.text, !username.isEmpty {
+            if username.rangeOfCharacter(from: .whitespaces) != nil {
+                let alert = UIAlertController(title: "用户名不能包含空格", message: "", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
+                self.present(alert, animated: true)
+                return
+            }
+        }
+        
         if usernameTextField.text != "" && passwordTextField.text != "" && confirmTextField.text != "" {
             
             if confirmTextField.text == passwordTextField.text {
@@ -137,14 +151,6 @@ class SignupViewController: UIViewController {
                             let alert = UIAlertController(title: error.localizedDescription, message: "", preferredStyle: .alert)
                             alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
                             self.present(alert, animated: true)
-                        } else {
-                            let alert = CustomAlert(title: "", image: UIImage(named: "enter")!)
-                            alert.show(animated: true)
-                            let when = DispatchTime.now() + 3
-                            DispatchQueue.main.asyncAfter(deadline: when) {
-                                alert.dismiss(animated: true)
-                                self.performSegue(withIdentifier: "signupSuccess", sender: self)
-                            }
                         }
                     }
                     
@@ -152,6 +158,15 @@ class SignupViewController: UIViewController {
                         
                         let alert = CustomAlert(title: "", image: UIImage(named: "enter")!)
                         alert.show(animated: true)
+                        
+                        // 发送注册成功推送
+                        PFCloud.callFunction(inBackground: "sendWelcomePush", withParameters: [
+                            "username": user.username ?? "新用户"
+                        ]) { (result, error) in
+                            if let error = error {
+                                print("推送发送失败: \(error.localizedDescription)")
+                            }
+                        }
                         
                         let when = DispatchTime.now() + 3
                         DispatchQueue.main.asyncAfter(deadline: when){

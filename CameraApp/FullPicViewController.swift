@@ -15,6 +15,11 @@ class FullPicViewController: UIViewController {
     var dic: [String : Any] = [ : ]
     var objectId : String!
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        SessionManager.shared.resetTimer()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 

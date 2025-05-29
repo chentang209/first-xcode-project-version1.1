@@ -27,6 +27,11 @@ class SearchViewController: UIViewController, UIGestureRecognizerDelegate, myTab
         searchBar.delegate = self
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        SessionManager.shared.resetTimer()
+    }
+    
 }
 
 extension SearchViewController: UISearchBarDelegate {

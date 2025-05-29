@@ -76,6 +76,8 @@ class ResultViewController: UIViewController {
         super.viewDidAppear(animated)
         
         playCustomSound()
+        
+        SessionManager.shared.resetTimer()
     }
     
     func playCustomSound() {
@@ -135,8 +137,16 @@ class ResultViewController: UIViewController {
                     
                     let numqmap = obj!["numOfQuestionToHim"] as! [String : Int]
                     var correctmap = obj!["numHisCorrect"] as! [String : Int]
-                    let numq = numqmap[PFUser.current()!.objectId!]!
-                    var correct = correctmap[PFUser.current()!.objectId!]!
+                    
+                    guard let userId = PFUser.current()?.objectId,
+                          let numq = numqmap[userId],
+                          let correctValue = correctmap[userId] else {
+                        print("用户ID或对应数值不存在")
+                        self.text1.text = "数据异常"
+                        return
+                    }
+                    
+                    var correct = correctValue
                     
                     if self.result {
                         
@@ -303,6 +313,21 @@ class ResultViewController: UIViewController {
                     }
                     
                 })
+                
+                do {
+                    guard let sender = sender as? PFUser else {
+                        throw NSError(domain: "InvalidSender", code: 400, userInfo: [NSLocalizedDescriptionKey: "无效的发送者对象"])
+                    }
+                    
+                    let result = try PFCloud.callFunction("questionFeedback", withParameters: [
+                        "result": self.result,
+                        "sender": sender.objectId ?? "", // 关键修改：传递 objectId 而不是 PFUser 对象
+                        "currentUserName": PFUser.current()?["username"] as? String ?? ""
+                    ])
+                    print("questionFeedback: \(String(describing: result))")
+                } catch {
+                    print("questionFeedback Error: \(error.localizedDescription)")
+                }
                 
             }
             

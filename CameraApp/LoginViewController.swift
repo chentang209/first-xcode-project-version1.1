@@ -17,6 +17,11 @@ class LoginViewController: UIViewController{
     @IBOutlet weak var passwordTextField: UITextField!
     var user: PFUser!
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        SessionManager.shared.resetTimer()
+    }
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()

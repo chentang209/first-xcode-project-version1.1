@@ -30,11 +30,18 @@ class ButtonViewController: UIViewController{
     var cur: Int = 0
     var correct: String = "nil"
     var alertw: UIAlertController!
+    var empty: Bool = true
+    var identical: Bool = true
     
     //override func viewWillAppear(_ animated: Bool) {
       //  super.viewWillAppear(animated)
         //navigationController?.setNavigationBarHidden(false, animated: animated)
     //}
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        SessionManager.shared.resetTimer()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -205,6 +212,13 @@ class ButtonViewController: UIViewController{
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        SessionManager.shared.resetTimer()
+        
+        if (diction.count != 4) {
+            let alert = UIAlertController(title: "请点击➕添加问题的4张图片", message: "", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
+            self.present(alert, animated: true)
+        }
         
         if (option1.text!.count > 8) || (option2.text!.count > 8)||(option3.text!.count > 8) || (option4.text!.count > 8) {
             
@@ -215,12 +229,23 @@ class ButtonViewController: UIViewController{
             self.present(alert, animated: true)
         }
         
-        if (option1.text == store["op2"] as? String && cur == 1 && option1.text != "") || (option1.text == store["op3"] as? String && cur == 1 && option1.text != "") || (option1.text == store["op4"] as? String && cur == 1 && option1.text != "") || (option2.text == store["op1"] as? String && cur == 2 && option2.text != "") || (option2.text == store["op3"] as? String && cur == 2 && option2.text != "") || (option2.text == store["op4"] as? String && cur == 2 && option2.text != "") || (option3.text == store["op1"] as? String && cur == 3 && option3.text != "") || (option3.text == store["op2"] as? String && cur == 3 && option3.text != "") || (option3.text == store["op4"] as? String && cur == 3 && option3.text != "") || (option4.text == store["op1"] as? String && cur == 4 && option4.text != "") || (option4.text == store["op2"] as? String && cur == 4 && option4.text != "") || (option4.text == store["op3"] as? String && cur == 4 && option4.text != ""){
-            
-            let alert = UIAlertController(title: "选项不能相同!", message: "", preferredStyle: .alert)
-            
+        let optionValues = [option1, option2, option3, option4].compactMap { $0.text }
+        
+        empty = optionValues.contains { option in
+            option.isEmpty
+        }
+        
+        if (empty) {
+            let alert = UIAlertController(title: "选项不能为空!", message: "", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
-            
+            self.present(alert, animated: true)
+        }
+        
+        identical = (option1.text == store["op2"] as? String) || (option1.text == store["op3"] as? String) || (option1.text == store["op4"] as? String ) || (option2.text == store["op1"] as? String) || (option2.text == store["op3"] as? String) || (option2.text == store["op4"] as? String) || (option3.text == store["op1"] as? String) || (option3.text == store["op2"] as? String) ||      (option3.text == store["op4"] as? String) || (option4.text == store["op1"] as? String) || (option4.text == store["op2"] as? String) || (option4.text == store["op3"] as? String)
+        
+        if (identical) {
+            let alert = UIAlertController(title: "选项不能相同!", message: "", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
             self.present(alert, animated: true)
         }
         
@@ -374,7 +399,7 @@ extension ButtonViewController: UITextFieldDelegate{
                 self.store.updateValue(option4.text! as AnyObject, forKey: "op4")
             }
             
-            if (store["op1"] as? String != "") && (store["op2"] as? String != "") && (store["op3"] as? String != "") && (store["op4"] as? String != "") {
+            if !empty && !identical && (store["op1"] as? String != "") && (store["op2"] as? String != "") && (store["op3"] as? String != "") && (store["op4"] as? String != "") {
           
                 alertw = UIAlertController(title: "确定用这些选项吗?", message: "", preferredStyle: .alert)
             

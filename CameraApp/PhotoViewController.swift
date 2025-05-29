@@ -18,6 +18,11 @@ class PhotoViewController: UIViewController, UIImagePickerControllerDelegate, UI
     var whichButton: String?
     var dictionary =  [Int:UIImage]()
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        SessionManager.shared.resetTimer()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 

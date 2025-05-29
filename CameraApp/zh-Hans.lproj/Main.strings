@@ -41,8 +41,8 @@
 /* Class = "UIButton"; normalTitle = "Button"; ObjectID = "m3O-2S-ejv"; */
 "m3O-2S-ejv.normalTitle" = "Button";
 
-/* Class = "UIButton"; normalTitle = "取消"; ObjectID = "oqQ-GY-XxA"; */
-"oqQ-GY-XxA.normalTitle" = "取消";
+/* Class = "UIButton"; normalTitle = "删除❌"; ObjectID = "oqQ-GY-XxA"; */
+"oqQ-GY-XxA.normalTitle" = "删除❌";
 
 /* Class = "UIButton"; normalTitle = "开始游戏"; ObjectID = "sS8-vx-zVI"; */
 "sS8-vx-zVI.normalTitle" = "开始游戏";
