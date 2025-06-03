@@ -77,20 +77,20 @@
 		C25CDAB921F8B19A00BFDCDA /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
 		C25CDABA21F8B19B00BFDCDA /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		C2E400162204E8B200DA2F80 /* ShowViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowViewController.swift; sourceTree = "<group>"; };
-		C2E4001822052EB900DA2F80 /* CameraApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CameraApp.entitlements; sourceTree = "<group>"; };
+		C2E4001822052EB900DA2F80 /* 朋友抽象脑洞.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "朋友抽象脑洞.entitlements"; sourceTree = "<group>"; };
 		C2E4001A22052EED00DA2F80 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
 		C2E4001C22054C6E00DA2F80 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
-		C2E7818721F677DD0023F4FB /* CameraApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CameraApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C2E7818721F677DD0023F4FB /* 朋友抽象脑洞.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "朋友抽象脑洞.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C2E7818A21F677DD0023F4FB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C2E7818C21F677DD0023F4FB /* ButtonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonViewController.swift; sourceTree = "<group>"; };
 		C2E7818F21F677DD0023F4FB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		C2E7819121F677E00023F4FB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C2E7819421F677E00023F4FB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C2E7819621F677E00023F4FB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C2E7819B21F677E00023F4FB /* CameraAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CameraAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C2E7819B21F677E00023F4FB /* 朋友抽象脑洞Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "朋友抽象脑洞Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C2E7819F21F677E00023F4FB /* CameraAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraAppTests.swift; sourceTree = "<group>"; };
 		C2E781A121F677E00023F4FB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C2E781A621F677E00023F4FB /* CameraAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CameraAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C2E781A621F677E00023F4FB /* 朋友抽象脑洞UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "朋友抽象脑洞UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C2E781AA21F677E00023F4FB /* CameraAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraAppUITests.swift; sourceTree = "<group>"; };
 		C2E781AC21F677E00023F4FB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C2E781BA21F760680023F4FB /* PhotoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoViewController.swift; sourceTree = "<group>"; };
@@ -178,7 +178,7 @@
 			children = (
 				C4C98FFD2DE616E00008FC44 /* audio */,
 				C4C98FF72DE1ED500008FC44 /* cloud */,
-				C2E7818921F677DD0023F4FB /* CameraApp */,
+				C2E7818921F677DD0023F4FB /* 朋友抽象脑洞 */,
 				C2E7819E21F677E00023F4FB /* CameraAppTests */,
 				C2E781A921F677E00023F4FB /* CameraAppUITests */,
 				C2E7818821F677DD0023F4FB /* Products */,
@@ -190,18 +190,18 @@
 		C2E7818821F677DD0023F4FB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				C2E7818721F677DD0023F4FB /* CameraApp.app */,
-				C2E7819B21F677E00023F4FB /* CameraAppTests.xctest */,
-				C2E781A621F677E00023F4FB /* CameraAppUITests.xctest */,
+				C2E7818721F677DD0023F4FB /* 朋友抽象脑洞.app */,
+				C2E7819B21F677E00023F4FB /* 朋友抽象脑洞Tests.xctest */,
+				C2E781A621F677E00023F4FB /* 朋友抽象脑洞UITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		C2E7818921F677DD0023F4FB /* CameraApp */ = {
+		C2E7818921F677DD0023F4FB /* 朋友抽象脑洞 */ = {
 			isa = PBXGroup;
 			children = (
 				C49EF1CF2DA5D846002EA63E /* SessionManager.swift */,
-				C2E4001822052EB900DA2F80 /* CameraApp.entitlements */,
+				C2E4001822052EB900DA2F80 /* 朋友抽象脑洞.entitlements */,
 				C2E7818A21F677DD0023F4FB /* AppDelegate.swift */,
 				C2F6F97D221F7E0C002E67E2 /* Bolts.framework */,
 				C2F6F97C221F7E0B002E67E2 /* Parse.framework */,
@@ -231,7 +231,7 @@
 				C2E7819321F677E00023F4FB /* LaunchScreen.storyboard */,
 				C2E7819621F677E00023F4FB /* Info.plist */,
 			);
-			path = CameraApp;
+			path = "朋友抽象脑洞";
 			sourceTree = "<group>";
 		};
 		C2E7819E21F677E00023F4FB /* CameraAppTests */ = {
@@ -263,9 +263,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		C2E7818621F677DD0023F4FB /* CameraApp */ = {
+		C2E7818621F677DD0023F4FB /* 朋友抽象脑洞 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C2E781AF21F677E00023F4FB /* Build configuration list for PBXNativeTarget "CameraApp" */;
+			buildConfigurationList = C2E781AF21F677E00023F4FB /* Build configuration list for PBXNativeTarget "朋友抽象脑洞" */;
 			buildPhases = (
 				648873EECE4C47B946AF5374 /* [CP] Check Pods Manifest.lock */,
 				C2E7818321F677DD0023F4FB /* Sources */,
@@ -280,14 +280,14 @@
 			fileSystemSynchronizedGroups = (
 				C4C98FFD2DE616E00008FC44 /* audio */,
 			);
-			name = CameraApp;
+			name = "朋友抽象脑洞";
 			productName = CameraApp;
-			productReference = C2E7818721F677DD0023F4FB /* CameraApp.app */;
+			productReference = C2E7818721F677DD0023F4FB /* 朋友抽象脑洞.app */;
 			productType = "com.apple.product-type.application";
 		};
-		C2E7819A21F677E00023F4FB /* CameraAppTests */ = {
+		C2E7819A21F677E00023F4FB /* 朋友抽象脑洞Tests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C2E781B221F677E00023F4FB /* Build configuration list for PBXNativeTarget "CameraAppTests" */;
+			buildConfigurationList = C2E781B221F677E00023F4FB /* Build configuration list for PBXNativeTarget "朋友抽象脑洞Tests" */;
 			buildPhases = (
 				C2E7819721F677E00023F4FB /* Sources */,
 				C2E7819821F677E00023F4FB /* Frameworks */,
@@ -298,14 +298,14 @@
 			dependencies = (
 				C2E7819D21F677E00023F4FB /* PBXTargetDependency */,
 			);
-			name = CameraAppTests;
+			name = "朋友抽象脑洞Tests";
 			productName = CameraAppTests;
-			productReference = C2E7819B21F677E00023F4FB /* CameraAppTests.xctest */;
+			productReference = C2E7819B21F677E00023F4FB /* 朋友抽象脑洞Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		C2E781A521F677E00023F4FB /* CameraAppUITests */ = {
+		C2E781A521F677E00023F4FB /* 朋友抽象脑洞UITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C2E781B521F677E00023F4FB /* Build configuration list for PBXNativeTarget "CameraAppUITests" */;
+			buildConfigurationList = C2E781B521F677E00023F4FB /* Build configuration list for PBXNativeTarget "朋友抽象脑洞UITests" */;
 			buildPhases = (
 				C2E781A221F677E00023F4FB /* Sources */,
 				C2E781A321F677E00023F4FB /* Frameworks */,
@@ -316,9 +316,9 @@
 			dependencies = (
 				C2E781A821F677E00023F4FB /* PBXTargetDependency */,
 			);
-			name = CameraAppUITests;
+			name = "朋友抽象脑洞UITests";
 			productName = CameraAppUITests;
-			productReference = C2E781A621F677E00023F4FB /* CameraAppUITests.xctest */;
+			productReference = C2E781A621F677E00023F4FB /* 朋友抽象脑洞UITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -358,7 +358,7 @@
 					};
 				};
 			};
-			buildConfigurationList = C2E7818221F677DD0023F4FB /* Build configuration list for PBXProject "朋友抽象脑洞a" */;
+			buildConfigurationList = C2E7818221F677DD0023F4FB /* Build configuration list for PBXProject "朋友抽象脑洞" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -372,9 +372,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				C2E7818621F677DD0023F4FB /* CameraApp */,
-				C2E7819A21F677E00023F4FB /* CameraAppTests */,
-				C2E781A521F677E00023F4FB /* CameraAppUITests */,
+				C2E7818621F677DD0023F4FB /* 朋友抽象脑洞 */,
+				C2E7819A21F677E00023F4FB /* 朋友抽象脑洞Tests */,
+				C2E781A521F677E00023F4FB /* 朋友抽象脑洞UITests */,
 			);
 		};
 /* End PBXProject section */
@@ -501,12 +501,12 @@
 /* Begin PBXTargetDependency section */
 		C2E7819D21F677E00023F4FB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C2E7818621F677DD0023F4FB /* CameraApp */;
+			target = C2E7818621F677DD0023F4FB /* 朋友抽象脑洞 */;
 			targetProxy = C2E7819C21F677E00023F4FB /* PBXContainerItemProxy */;
 		};
 		C2E781A821F677E00023F4FB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C2E7818621F677DD0023F4FB /* CameraApp */;
+			target = C2E7818621F677DD0023F4FB /* 朋友抽象脑洞 */;
 			targetProxy = C2E781A721F677E00023F4FB /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -657,14 +657,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = "YES\nhhYES\nYES";
-				CODE_SIGN_ENTITLEMENTS = CameraApp/CameraApp.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "朋友抽象脑洞/朋友抽象脑洞.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 498U3HSJ48;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/CameraApp",
 				);
-				INFOPLIST_FILE = CameraApp/Info.plist;
+				INFOPLIST_FILE = "朋友抽象脑洞/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "朋友抽象脑洞";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -684,14 +684,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = "YES\nhhYES\nYES";
-				CODE_SIGN_ENTITLEMENTS = CameraApp/CameraApp.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "朋友抽象脑洞/朋友抽象脑洞.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 498U3HSJ48;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/CameraApp",
 				);
-				INFOPLIST_FILE = CameraApp/Info.plist;
+				INFOPLIST_FILE = "朋友抽象脑洞/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "朋友抽象脑洞";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -790,7 +790,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C2E7818221F677DD0023F4FB /* Build configuration list for PBXProject "朋友抽象脑洞a" */ = {
+		C2E7818221F677DD0023F4FB /* Build configuration list for PBXProject "朋友抽象脑洞" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C2E781AD21F677E00023F4FB /* Debug */,
@@ -799,7 +799,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C2E781AF21F677E00023F4FB /* Build configuration list for PBXNativeTarget "CameraApp" */ = {
+		C2E781AF21F677E00023F4FB /* Build configuration list for PBXNativeTarget "朋友抽象脑洞" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C2E781B021F677E00023F4FB /* Debug */,
@@ -808,7 +808,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C2E781B221F677E00023F4FB /* Build configuration list for PBXNativeTarget "CameraAppTests" */ = {
+		C2E781B221F677E00023F4FB /* Build configuration list for PBXNativeTarget "朋友抽象脑洞Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C2E781B321F677E00023F4FB /* Debug */,
@@ -817,7 +817,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C2E781B521F677E00023F4FB /* Build configuration list for PBXNativeTarget "CameraAppUITests" */ = {
+		C2E781B521F677E00023F4FB /* Build configuration list for PBXNativeTarget "朋友抽象脑洞UITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C2E781B621F677E00023F4FB /* Debug */,
