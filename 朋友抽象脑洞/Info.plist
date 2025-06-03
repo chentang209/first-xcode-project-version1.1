@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>UIUserInterfaceStyle</key>
-	<string>Light</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en_US</string>
 	<key>CFBundleDisplayName</key>
@@ -21,7 +19,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.1</string>
 	<key>CFBundleVersion</key>
-	<string>3</string>
+	<string>4</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -33,6 +31,12 @@
 	<string>朋友抽象脑洞 请求访问相机仅用于获取游戏所需图像。您的隐私安全将得到充分保护。</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>朋友抽象脑洞 申请访问相册仅用于获取游戏所需图片，您的隐私安全将得到严格保护。</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>我们需要您的定位权限仅用于进行游戏功能。您的隐私安全将得到充分保护。</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>我们需要您的定位权限仅用于进行游戏功能。您的隐私安全将得到充分保护。</string>
+	<key>PARSE_SERVER_URL</key>
+	<string>http://8.138.186.198/parse</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -54,7 +58,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>PARSE_SERVER_URL</key>
-	<string>http://8.138.186.198/parse</string>
+	<key>UIUserInterfaceStyle</key>
+	<string>Light</string>
 </dict>
 </plist>
