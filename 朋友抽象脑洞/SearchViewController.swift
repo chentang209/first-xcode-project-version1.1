@@ -17,7 +17,7 @@ class SearchViewController: UIViewController, UIGestureRecognizerDelegate, myTab
     var userObj: PFObject!
     var searching = false
     var arrayUserObj: [PFObject] = []
-    var flag: Bool!
+    var flag = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -274,11 +274,6 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
                             
                             dgroup.notify(queue: .main) {
                                 
-//                                let tableQuery = PFQuery(className: "JoinTable")
-//                                tableQuery.whereKey("from", equalTo: PFUser.current())
-//                                tableQuery.whereKey("to", equalTo: self.userObj)
-//                                tableQuery.whereKeyExists("request")
-                                
                                 let query1 = PFQuery(className: "JoinTable")
                                 query1.whereKey("from", equalTo: PFUser.current()!) // 当前用户 → 目标用户
                                 query1.whereKey("to", equalTo: self.userObj)
@@ -321,120 +316,148 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
                                             
                                             let alert = UIAlertController(title: "好友请求已发送！", message: "", preferredStyle: .alert)
                                             self.present(alert, animated: true)
-                                            
-                                            let joinTable = PFObject(className: "JoinTable")
-                                            
-                                            joinTable.setObject("sendrequest" , forKey: "request")
-                                            joinTable.setObject(self.userObj as Any, forKey: "to")
-                                            joinTable.setObject(PFUser.current() as Any, forKey: "from")
-                                            let groupACL = PFACL()
-                                            groupACL.setReadAccess(true, for: self.userObj as! PFUser)
-                                            groupACL.setReadAccess(true, for: PFUser.current()!)
-                                            groupACL.setWriteAccess(true, for: self.userObj as! PFUser)
-                                            joinTable.acl = groupACL
-                                            
-                                            let gp11 = DispatchGroup()
-                                            
-                                            gp11.enter()
-                                            joinTable.saveInBackground{(success, error) in
-                                                
-                                                if success {
-                                                    print("sendrequest 保存成功")
-                                                    gp11.leave()
-                                                } else {
-                                                    
-                                                    if let error = error {
-                                                        print(error)
-                                                        alert.dismiss(animated: true)
-                                                        let alert = UIAlertController(title: "发生内部错误，请稍后再试", message: "", preferredStyle: .alert)
-                                                        alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
-                                                        self.present(alert, animated: true)
-                                                        
-                                                    } else {
-                                                        
-                                                        print("table error")
-                                                        alert.dismiss(animated: true)
-                                                        let alert = UIAlertController(title: "发生内部错误，请稍后再试", message: "", preferredStyle: .alert)
-                                                        alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
-                                                        self.present(alert, animated: true)
-                                                        
-                                                    }
-                                                }
-                                                
-                                                gp11.notify(queue: .main) {
-                                                    
+
+                                            // 1. 检查是否已有拒绝请求记录可更新
+                                            if let existingRequest = objs?.first, existingRequest["request"] as? String == "rejectrequest" {
+                                                existingRequest["request"] = "sendrequest"
+                                                existingRequest.saveInBackground { success, error in
                                                     alert.dismiss(animated: true)
                                                     
-                                                }
-                                                
-                                                PFCloud.callFunction(inBackground: "friendReqPush", withParameters: [
-                                                    "someId": self.userObj.objectId ?? "",
-                                                    "someName": PFUser.current()?["username"] ?? ""
-                                                ]) { (result, error) in
-                                                    if let error = error {
-                                                        print("[Cloud] 发送好友申请通知失败: \(error.localizedDescription)")
+                                                    if success {
+                                                        // 发送推送通知
+                                                        guard let userId = self.userObj.objectId,
+                                                              let username = PFUser.current()?["username"] else { return }
+                                                        
+                                                        PFCloud.callFunction(inBackground: "friendReqPush", withParameters: [
+                                                            "someId": userId,
+                                                            "someName": username
+                                                        ]) { (result, error) in
+                                                            if let error = error {
+                                                                print("[Cloud] 发送好友申请通知失败: \(error.localizedDescription)")
+                                                            } else {
+                                                                print("[Cloud] 好友申请通知已发送: \(String(describing: result))")
+                                                            }
+                                                        }
                                                     } else {
-                                                        print("[Cloud] 好友申请通知已发送: \(String(describing: result))")
+                                                        // 显示错误提示
+                                                        let errorAlert = UIAlertController(
+                                                            title: "发生内部错误，请稍后再试",
+                                                            message: error?.localizedDescription,
+                                                            preferredStyle: .alert
+                                                        )
+                                                        errorAlert.addAction(UIAlertAction(title: "知道了", style: .default))
+                                                        self.present(errorAlert, animated: true)
                                                     }
                                                 }
+                                            }
+                                            // 2. 如果没有则创建新请求
+                                            else {
+                                                let joinTable = PFObject(className: "JoinTable")
                                                 
+                                                // 设置请求数据
+                                                joinTable["request"] = "sendrequest"
+                                                joinTable["to"] = self.userObj
+                                                joinTable["from"] = PFUser.current()
+                                                
+                                                // 设置ACL权限
+                                                let groupACL = PFACL()
+                                                if let toUser = self.userObj as? PFUser {
+                                                    groupACL.setReadAccess(true, for: toUser)
+                                                    groupACL.setWriteAccess(true, for: toUser)
+                                                }
+                                                if let currentUser = PFUser.current() {
+                                                    groupACL.setReadAccess(true, for: currentUser)
+                                                }
+                                                joinTable.acl = groupACL
+                                                
+                                                // 保存请求
+                                                joinTable.saveInBackground { success, error in
+                                                    alert.dismiss(animated: true)
+                                                    
+                                                    if success {
+                                                        print("sendrequest 保存成功")
+                                                        
+                                                        // 发送推送通知
+                                                        guard let userId = self.userObj.objectId,
+                                                              let username = PFUser.current()?["username"] else { return }
+                                                        
+                                                        PFCloud.callFunction(inBackground: "friendReqPush", withParameters: [
+                                                            "someId": userId,
+                                                            "someName": username
+                                                        ]) { (result, error) in
+                                                            if let error = error {
+                                                                print("[Cloud] 发送好友申请通知失败: \(error.localizedDescription)")
+                                                            } else {
+                                                                print("[Cloud] 好友申请通知已发送: \(String(describing: result))")
+                                                            }
+                                                        }
+                                                    } else {
+                                                        // 显示错误提示
+                                                        let errorAlert = UIAlertController(
+                                                            title: "发生内部错误，请稍后再试",
+                                                            message: error?.localizedDescription,
+                                                            preferredStyle: .alert
+                                                        )
+                                                        errorAlert.addAction(UIAlertAction(title: "知道了", style: .default))
+                                                        self.present(errorAlert, animated: true)
+                                                    }
+                                                }
                                             }
                                             
                                         }
                                         
                                     } else {
                                         
-                                        if self.flag != true {
+                                        let alert = UIAlertController(title: "好友请求已发送！", message: "", preferredStyle: .alert)
+                                        self.present(alert, animated: true)
+                                        
+                                        let joinTable = PFObject(className: "JoinTable")
+                                        
+                                        joinTable.setObject("sendrequest" , forKey: "request")
+                                        joinTable.setObject(self.userObj as Any, forKey: "to")
+                                        joinTable.setObject(PFUser.current() as Any, forKey: "from")
+                                        let groupACL = PFACL()
+                                        groupACL.setReadAccess(true, for: self.userObj as! PFUser)
+                                        groupACL.setReadAccess(true, for: PFUser.current()!)
+                                        groupACL.setWriteAccess(true, for: self.userObj as! PFUser)
+                                        joinTable.acl = groupACL
+                                        
+                                        let gp11 = DispatchGroup()
+                                        
+                                        gp11.enter()
+                                        joinTable.saveInBackground{(success, error) in
                                             
-                                            let alert = UIAlertController(title: "好友请求已发送！", message: "", preferredStyle: .alert)
-                                            self.present(alert, animated: true)
-                                            
-                                            let joinTable = PFObject(className: "JoinTable")
-                                            
-                                            joinTable.setObject("sendrequest" , forKey: "request")
-                                            joinTable.setObject(self.userObj as Any, forKey: "to")
-                                            joinTable.setObject(PFUser.current() as Any, forKey: "from")
-                                            let groupACL = PFACL()
-                                            groupACL.setReadAccess(true, for: self.userObj as! PFUser)
-                                            groupACL.setReadAccess(true, for: PFUser.current()!)
-                                            groupACL.setWriteAccess(true, for: self.userObj as! PFUser)
-                                            joinTable.acl = groupACL
-                                            
-                                            let gp11 = DispatchGroup()
-                                            
-                                            gp11.enter()
-                                            joinTable.saveInBackground{(success, error) in
+                                            if success {
                                                 
-                                                if success {
-                                                    
-                                                    gp11.leave()
+                                                gp11.leave()
+                                                
+                                            } else {
+                                                
+                                                if let error = error {
+                                                    print(error)
+                                                    alert.dismiss(animated: true)
+                                                    let alert = UIAlertController(title: "发生内部错误，请稍后再试", message: "", preferredStyle: .alert)
+                                                    alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
+                                                    self.present(alert, animated: true)
                                                     
                                                 } else {
                                                     
-                                                    if let error = error {
-                                                        print(error)
-                                                        alert.dismiss(animated: true)
-                                                        let alert = UIAlertController(title: "发生内部错误，请稍后再试", message: "", preferredStyle: .alert)
-                                                        alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
-                                                        self.present(alert, animated: true)
-                                                        
-                                                    } else {
-                                                        
-                                                        print("table error")
-                                                        alert.dismiss(animated: true)
-                                                        let alert = UIAlertController(title: "发生内部错误，请稍后再试", message: "", preferredStyle: .alert)
-                                                        alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
-                                                        self.present(alert, animated: true)
-                                                        
-                                                    }
-                                                }
-                                                
-                                                gp11.notify(queue: .main) {
-                                                    
+                                                    print("table error")
                                                     alert.dismiss(animated: true)
+                                                    let alert = UIAlertController(title: "发生内部错误，请稍后再试", message: "", preferredStyle: .alert)
+                                                    alert.addAction(UIAlertAction(title: "知道了", style: .default, handler: nil))
+                                                    self.present(alert, animated: true)
                                                     
                                                 }
+                                            }
+                                            
+                                            gp11.notify(queue: .main) {
                                                 
+                                                alert.dismiss(animated: true)
+                                                
+                                            }
+                                            
+                                            if (!self.flag) {
                                                 PFCloud.callFunction(inBackground: "friendReqPush", withParameters: ["someId": self.userObj.objectId , "someName":PFUser.current()!["username"]]) {(result, error) in
                                                     
                                                     if (error == nil) {
@@ -444,9 +467,7 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
                                                     }
                                                     
                                                 }
-                                                
                                             }
-                                            
                                         }
                                         
                                     }
