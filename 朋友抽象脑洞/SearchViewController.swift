@@ -292,7 +292,7 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
                                         
                                         if objs?.first!["request"] as! String == "sendrequest" {
                                             
-                                            let alert = UIAlertController(title: "你/对方已申请添加好友", message: "", preferredStyle: .alert)
+                                            let alert = UIAlertController(title: "你或对方已申请添加好友", message: "", preferredStyle: .alert)
                                             self.present(alert, animated: true)
                                             let when = DispatchTime.now() + 2
                                             DispatchQueue.main.asyncAfter(deadline: when) {

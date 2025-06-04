@@ -11,6 +11,6 @@
 #endif
 
 
-FOUNDATION_EXPORT double Pods_CameraAppVersionNumber;
-FOUNDATION_EXPORT const unsigned char Pods_CameraAppVersionString[];
+FOUNDATION_EXPORT double Pods_______VersionNumber;
+FOUNDATION_EXPORT const unsigned char Pods_______VersionString[];
 

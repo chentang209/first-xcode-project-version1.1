@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1D58F69F76D61674B2035F63 /* Pods_CameraApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D14F35A1C008B719CB88E638 /* Pods_CameraApp.framework */; };
 		C20DE6262228BAC0005F1267 /* Modal.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20DE6252228BAC0005F1267 /* Modal.swift */; };
 		C20DE6282228BB09005F1267 /* CustomAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20DE6272228BB09005F1267 /* CustomAlert.swift */; };
 		C20DE62A22295AA3005F1267 /* FriendViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20DE62922295AA3005F1267 /* FriendViewController.swift */; };
@@ -64,8 +63,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		586C7431EE0636A72147CE63 /* Pods-CameraApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CameraApp.debug.xcconfig"; path = "Target Support Files/Pods-CameraApp/Pods-CameraApp.debug.xcconfig"; sourceTree = "<group>"; };
-		B41C9502FCE96C75DE1C7339 /* Pods-CameraApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CameraApp.release.xcconfig"; path = "Target Support Files/Pods-CameraApp/Pods-CameraApp.release.xcconfig"; sourceTree = "<group>"; };
+		2850BB013C065EB175A972B2 /* Pods-朋友抽象脑洞.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-朋友抽象脑洞.debug.xcconfig"; path = "Target Support Files/Pods-朋友抽象脑洞/Pods-朋友抽象脑洞.debug.xcconfig"; sourceTree = "<group>"; };
+		882881E8FF8AA7BFB1DCA519 /* Pods-朋友抽象脑洞.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-朋友抽象脑洞.release.xcconfig"; path = "Target Support Files/Pods-朋友抽象脑洞/Pods-朋友抽象脑洞.release.xcconfig"; sourceTree = "<group>"; };
+		BFE67A86AF50FFAFB56FBCCC /* Pods_______.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "Pods_______.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C20DE6252228BAC0005F1267 /* Modal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Modal.swift; sourceTree = "<group>"; };
 		C20DE6272228BB09005F1267 /* CustomAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlert.swift; sourceTree = "<group>"; };
 		C20DE62922295AA3005F1267 /* FriendViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendViewController.swift; sourceTree = "<group>"; };
@@ -111,7 +111,6 @@
 		C473A88C2DC7F32500168A11 /* yanhua.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = yanhua.gif; sourceTree = "<group>"; };
 		C49EF1CF2DA5D846002EA63E /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		C4C98FF62DE1ED500008FC44 /* index.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = index.js; sourceTree = "<group>"; };
-		D14F35A1C008B719CB88E638 /* Pods_CameraApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CameraApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -130,7 +129,6 @@
 				C2F6F97E221F7E0C002E67E2 /* Parse.framework in Frameworks */,
 				C2E4001D22054C6E00DA2F80 /* CloudKit.framework in Frameworks */,
 				C2F6F97F221F7E0C002E67E2 /* Bolts.framework in Frameworks */,
-				1D58F69F76D61674B2035F63 /* Pods_CameraApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -154,8 +152,8 @@
 		9CE4315BC5825426E45FF001 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				586C7431EE0636A72147CE63 /* Pods-CameraApp.debug.xcconfig */,
-				B41C9502FCE96C75DE1C7339 /* Pods-CameraApp.release.xcconfig */,
+				2850BB013C065EB175A972B2 /* Pods-朋友抽象脑洞.debug.xcconfig */,
+				882881E8FF8AA7BFB1DCA519 /* Pods-朋友抽象脑洞.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -168,7 +166,7 @@
 				C2F6F976221F7CF1002E67E2 /* AudioToolbox.framework */,
 				C2E4001C22054C6E00DA2F80 /* CloudKit.framework */,
 				C2E4001A22052EED00DA2F80 /* ExternalAccessory.framework */,
-				D14F35A1C008B719CB88E638 /* Pods_CameraApp.framework */,
+				BFE67A86AF50FFAFB56FBCCC /* Pods_______.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -417,15 +415,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CameraApp/Pods-CameraApp-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-朋友抽象脑洞/Pods-朋友抽象脑洞-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CameraApp/Pods-CameraApp-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-朋友抽象脑洞/Pods-朋友抽象脑洞-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CameraApp/Pods-CameraApp-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-朋友抽象脑洞/Pods-朋友抽象脑洞-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		648873EECE4C47B946AF5374 /* [CP] Check Pods Manifest.lock */ = {
@@ -443,7 +441,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-CameraApp-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-朋友抽象脑洞-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -653,7 +651,7 @@
 		};
 		C2E781B021F677E00023F4FB /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 586C7431EE0636A72147CE63 /* Pods-CameraApp.debug.xcconfig */;
+			baseConfigurationReference = 2850BB013C065EB175A972B2 /* Pods-朋友抽象脑洞.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = "YES\nhhYES\nYES";
@@ -666,7 +664,7 @@
 				);
 				INFOPLIST_FILE = "朋友抽象脑洞/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "朋友抽象脑洞";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -680,7 +678,7 @@
 		};
 		C2E781B121F677E00023F4FB /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B41C9502FCE96C75DE1C7339 /* Pods-CameraApp.release.xcconfig */;
+			baseConfigurationReference = 882881E8FF8AA7BFB1DCA519 /* Pods-朋友抽象脑洞.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = "YES\nhhYES\nYES";
@@ -693,7 +691,7 @@
 				);
 				INFOPLIST_FILE = "朋友抽象脑洞/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "朋友抽象脑洞";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
