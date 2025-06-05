@@ -1082,22 +1082,30 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                                 print("记录已存在: \(that?.objectId ?? "")")
                                 d1.leave()
                             } catch {
-                                // 3. 如果记录不存在（或查询失败），则创建新记录
-                                let newRapport = PFObject(className: "Rapport")
-                                newRapport["from"] = PFUser.current()!
-                                newRapport["to"] = user!
-                                newRapport["numOfQuestionToHim"] = [user?.objectId : 0]
-                                newRapport["numHisCorrect"] = [user?.objectId : 0]
-                                newRapport["level"] = "无"
-                                newRapport["compatibilityScore"] = 0.0
-                                
-                                newRapport.acl?.setWriteAccess(true, for: user!)
-                                
-                                // 4. 保存新记录
-                                newRapport.saveInBackground { (success, error) in
+                                // 3. 如果记录不存在（或查询失败），则创建双向记录
+                                let newRapportFromTo = PFObject(className: "Rapport")
+                                newRapportFromTo["from"] = PFUser.current()!
+                                newRapportFromTo["to"] = user!
+                                newRapportFromTo["numOfQuestionToHim"] = [user?.objectId : 0]
+                                newRapportFromTo["numHisCorrect"] = [user?.objectId : 0]
+                                newRapportFromTo["level"] = "无"
+                                newRapportFromTo["compatibilityScore"] = 0.0
+                                newRapportFromTo.acl?.setWriteAccess(true, for: user!)
+
+                                let newRapportToFrom = PFObject(className: "Rapport")
+                                newRapportToFrom["from"] = user!  // 交换 from/to
+                                newRapportToFrom["to"] = PFUser.current()!
+                                newRapportToFrom["numOfQuestionToHim"] = [PFUser.current()?.objectId : 0]
+                                newRapportToFrom["numHisCorrect"] = [PFUser.current()?.objectId : 0]
+                                newRapportToFrom["level"] = "无"
+                                newRapportToFrom["compatibilityScore"] = 0.0
+                                newRapportToFrom.acl?.setWriteAccess(true, for: PFUser.current()!)
+
+                                // 4. 批量保存两条记录（原子操作，避免部分成功）
+                                PFObject.saveAll(inBackground: [newRapportFromTo, newRapportToFrom]) { (success, error) in
                                     if success {
-                                        print("新记录创建成功: \(newRapport.objectId ?? "")")
-                                        that = newRapport
+                                        print("双向记录创建成功: From=\(newRapportFromTo.objectId ?? ""), To=\(newRapportToFrom.objectId ?? "")")
+                                        that = newRapportFromTo  // 根据需要返回其中一个
                                         d1.leave()
                                     } else {
                                         print("创建失败: \(error?.localizedDescription ?? "")")

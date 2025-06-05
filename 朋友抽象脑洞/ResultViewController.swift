@@ -160,9 +160,7 @@ class ResultViewController: UIViewController {
                         } catch {
                             print("保存失败: \(error.localizedDescription)")
                         }
-                        
-//                      try! obj!.save()
-                        
+                                                
                     }
                     
                     self.ratio = Double(correct) / Double(numq)
@@ -286,7 +284,7 @@ class ResultViewController: UIViewController {
                 
                 tableQuery.findObjectsInBackground(block: { (objs, err) in
                     
-                    if objs != nil && objs?[0] != nil {
+                    if objs != nil && objs!.count > 0 && objs?[0] != nil {
                         // ✅ 新增：将 level 保存到 Rapport 文档
                         objs?[0]["level"] = level0  // 添加 level 字段
                         objs?[0]["compatibilityScore"] = h0  // 可选：存储数值型默契度
@@ -299,7 +297,7 @@ class ResultViewController: UIViewController {
                         }
                     }
                     
-                    if objs != nil && objs?[1] != nil {
+                    if objs != nil && objs!.count > 1 && objs?[1] != nil {
                         // ✅ 新增：将 level 保存到 Rapport 文档
                         objs?[1]["level"] = level0  // 添加 level 字段
                         objs?[1]["compatibilityScore"] = h0  // 可选：存储数值型默契度
