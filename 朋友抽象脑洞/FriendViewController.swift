@@ -1091,6 +1091,7 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                                 newRapportFromTo["level"] = "无"
                                 newRapportFromTo["compatibilityScore"] = 0.0
                                 newRapportFromTo.acl?.setWriteAccess(true, for: user!)
+                                newRapportFromTo.acl?.setWriteAccess(true, for: PFUser.current()!)
 
                                 let newRapportToFrom = PFObject(className: "Rapport")
                                 newRapportToFrom["from"] = user!  // 交换 from/to
@@ -1100,6 +1101,7 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                                 newRapportToFrom["level"] = "无"
                                 newRapportToFrom["compatibilityScore"] = 0.0
                                 newRapportToFrom.acl?.setWriteAccess(true, for: PFUser.current()!)
+                                newRapportToFrom.acl?.setWriteAccess(true, for: user!)
 
                                 // 4. 批量保存两条记录（原子操作，避免部分成功）
                                 PFObject.saveAll(inBackground: [newRapportFromTo, newRapportToFrom]) { (success, error) in
