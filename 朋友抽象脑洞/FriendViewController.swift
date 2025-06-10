@@ -25,14 +25,15 @@ class FriendViewController: UIViewController, tableDelegate {
     var cond = false
     var friendListUpdate: Bool!
     var friendDelegate: friendDelegate!
+    let current = PFUser.current()
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-//        SessionManager.shared.resetTimer()
+        //        SessionManager.shared.resetTimer()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        SessionManager.shared.resetTimer()
+        //        SessionManager.shared.resetTimer()
     }
     
     override func viewDidLoad() {
@@ -55,66 +56,6 @@ class FriendViewController: UIViewController, tableDelegate {
         // 确保导航栏不透明
         navigationController?.navigationBar.isTranslucent = true
         navigationController?.navigationBar.barTintColor = UIColor.white
-        
-        let current = PFUser.current()
-        let friendReqList = current!["friendReqList"] as! [PFObject]
-        
-        self.friendReqList = friendReqList.compactMap { $0 as? PFUser }
-        
-        print("显示friendReqList数据: \(self.friendReqList)")
-        
-        let grp = DispatchGroup()
-        
-        // 优先展示请求列表逻辑：有未处理请求时显示请求列表，否则显示好友列表
-        if !self.friendReqList.isEmpty {
-            self.title = "请求列表"
-            print("显示请求列表，共\(self.friendReqList.count)条请求")
-            DispatchQueue.main.async {
-                self.friendList = self.friendReqList
-                self.tableView.reloadData()
-            }
-            if self.friendDelegate != nil {
-                self.friendDelegate.reddot(bol: "true")
-            }
-        } else {
-            //            self.title = "好友列表"
-            print("无未处理请求，显示好友列表")
-            
-            grp.enter()
-            // 清除本地缓存，从 Parse 服务器获取最新数据
-            fetchFriendList(cachePolicy: .networkOnly) { [weak self] friends in
-                self?.friendList = friends
-                grp.leave()
-                self?.tableView.reloadData()
-            }
-            
-            // self.friendList = current!["friendList"] as! [PFObject]
-            DispatchQueue.main.async {
-                self.title = "好友列表"
-                self.tableView.reloadData()
-            }
-            if self.friendDelegate != nil {
-                self.friendDelegate.reddot(bol: "false")
-            }
-        }
-        
-        grp.notify(queue: .main) {
-            if self.friendReqList.isEmpty && self.friendList.isEmpty {
-                
-                let alert = UIAlertController(title: "请添加好友", message: "", preferredStyle: .alert)
-                self.present(alert, animated: true)
-                let when = DispatchTime.now() + 1
-                DispatchQueue.main.asyncAfter(deadline: when) {
-                    
-                    alert.dismiss(animated: true)
-                    self.performSegue(withIdentifier: "finishSendTi", sender: self)
-                    
-                }
-                
-            }
-        }
-        
-        self.tableView.reloadData()
         
         let qe = PFQuery(className: "JoinTable")
         qe.whereKey("to", equalTo: PFUser.current()!)
@@ -154,8 +95,8 @@ class FriendViewController: UIViewController, tableDelegate {
                             
                             print("equal")
                             self.friendReqList.append(sender)
-                            current!.setObject(self.friendReqList, forKey: "friendReqList")
-                            current?.saveEventually()
+                            self.current!.setObject(self.friendReqList, forKey: "friendReqList")
+                            self.current?.saveEventually()
                             
                         }
                         
@@ -163,8 +104,8 @@ class FriendViewController: UIViewController, tableDelegate {
                         
                         print("69696969")
                         self.friendReqList.append(sender)
-                        current!.setObject(self.friendReqList, forKey: "friendReqList")
-                        current?.saveEventually()
+                        self.current!.setObject(self.friendReqList, forKey: "friendReqList")
+                        self.current?.saveEventually()
                         
                     }
                     
@@ -177,6 +118,64 @@ class FriendViewController: UIViewController, tableDelegate {
         }
         
         group1.notify(queue: .main) {
+            
+            let friendReqList = self.current!["friendReqList"] as! [PFObject]
+            
+            self.friendReqList = friendReqList.compactMap { $0 as? PFUser }
+            
+            print("显示friendReqList数据: \(self.friendReqList)")
+            
+            let grp = DispatchGroup()
+            
+            // 优先展示请求列表逻辑：有未处理请求时显示请求列表，否则显示好友列表
+            if !self.friendReqList.isEmpty {
+                self.title = "请求列表"
+                print("显示请求列表，共\(self.friendReqList.count)条请求")
+                DispatchQueue.main.async {
+                    self.friendList = self.friendReqList
+                    self.tableView.reloadData()
+                }
+                if self.friendDelegate != nil {
+                    self.friendDelegate.reddot(bol: "true")
+                }
+            } else {
+                //            self.title = "好友列表"
+                print("无未处理请求，显示好友列表")
+                
+                grp.enter()
+                // 清除本地缓存，从 Parse 服务器获取最新数据
+                self.fetchFriendList(cachePolicy: .networkOnly) { [weak self] friends in
+                    self?.friendList = friends
+                    grp.leave()
+                    self?.tableView.reloadData()
+                }
+                
+                // self.friendList = current!["friendList"] as! [PFObject]
+                DispatchQueue.main.async {
+                    self.title = "好友列表"
+                    self.tableView.reloadData()
+                }
+                if self.friendDelegate != nil {
+                    self.friendDelegate.reddot(bol: "false")
+                }
+            }
+            
+            grp.notify(queue: .main) {
+                if self.friendReqList.isEmpty && self.friendList.isEmpty {
+                    
+                    let alert = UIAlertController(title: "请添加好友", message: "", preferredStyle: .alert)
+                    self.present(alert, animated: true)
+                    let when = DispatchTime.now() + 1
+                    DispatchQueue.main.asyncAfter(deadline: when) {
+                        
+                        alert.dismiss(animated: true)
+                        self.performSegue(withIdentifier: "finishSendTi", sender: self)
+                        
+                    }
+                    
+                }
+            }
+            
             // 强制更新标题显示
             DispatchQueue.main.async {
                 if !self.friendReqList.isEmpty {
@@ -223,13 +222,9 @@ class FriendViewController: UIViewController, tableDelegate {
                         }
                         
                         if flag == 0 {
-                            
-                            let gp2 = DispatchGroup()
-                            
+                                                        
                             self.arrayUserObj.append(user)
                             print("\(self.arrayUserObj.count)nnnn")
-                            // 防止自动修改Parse服务器数据
-                            // current!.setObject(self.arrayUserObj, forKey: "friendList")
                             
                             // 不自动保存到服务器，只在本地更新
                             self.arrayUserObj = current!["friendList"] as! [PFObject]
@@ -289,10 +284,6 @@ class FriendViewController: UIViewController, tableDelegate {
                             }
                             
                             if flag == 0 {
-                                
-                                // 防止自动修改Parse服务器数据
-                                // self.arrayUserObj.append(user)
-                                // current2!.setObject(self.arrayUserObj, forKey: "friendList")
                                 
                                 // 不自动保存到服务器，只在本地更新
                                 self.arrayUserObj = current2!["friendList"] as! [PFObject]
@@ -371,12 +362,6 @@ class FriendViewController: UIViewController, tableDelegate {
                                     rapport.setObject(user as Any, forKey: "to")
                                     rapport.setObject(current as Any, forKey: "from")
                                     
-                                    // 防止自动修改Rapport表数据
-                                    // rapport.saveInBackground{(success, error) in
-                                    //     if success {
-                                    //         print("numOfQuestionToHim2 saved")
-                                    //     }
-                                    // }
                                     print("只在本地创建关系，不自动保存到服务器")
                                     
                                 }
@@ -455,8 +440,6 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                     gr.leave()
                     
                     gr.notify(queue: .main) {
-//                        let currentCell = self.tableView.cellForRow(at: indexPath) as! FriendCell
-//                        let friendToDeleteName = currentCell.friendName.text
                         
                         // 1. 本地 friendList 数组移除
                         let toDelUser = self.friendList[indexPath.row] as? PFUser
@@ -474,13 +457,6 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                             userObj?.saveInBackground { (success, error) in
                                 if success {
                                     print("Parse friendList 已移除好友")
-                                    // 强制从服务器获取最新数据（添加cachePolicy参数）
-                                    //                                    self.fetchFriendList(cachePolicy: .networkOnly) { friends in
-                                    //                                        self.friendList = friends
-                                    //                                        DispatchQueue.main.async {
-                                    //                                            self.tableView.reloadData()
-                                    //                                        }
-                                    //                                    }
                                     
                                     let params = ["userId": toDelUser?.objectId]
                                     
@@ -579,11 +555,6 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
             // 使用自定义默认图像，而不是系统图像
             cell.friendIcon.image = UIImage(named: "default_avatar") ?? UIImage()
         }
-        
-        //        fetchFriendList { [weak self] friends in
-        //            self?.friendList = friends
-        //            self?.tableView.reloadData()
-        //        }
         
         // 确保索引有效
         guard indexPath.row < friendList.count else {
@@ -692,12 +663,12 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                     if let cells = tableView.visibleCells as? [FriendCell],
                        let visibleCell = cells.first(where: { $0.tag == indexPath.row }) {
                         
-                       guard let userId = userData["objectId"] as? String else {
+                        guard let userId = userData["objectId"] as? String else {
                             print("用户ID缺失")
                             return
-                       }
-                    
-                       var tmpUser: PFUser?
+                        }
+                        
+                        var tmpUser: PFUser?
                         do {
                             let result = try PFCloud.callFunction("searchUsers", withParameters: ["username": username]) as? [PFObject]
                             guard let users = result, let user = users.first as? PFUser else {
@@ -879,10 +850,6 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                 let query1 = PFQuery(className: "JoinTable")
                 
                 let gp = DispatchGroup()
-                
-                //                let uquery = PFUser.query()
-                //                uquery?.whereKey("username", equalTo: id)
-                //                let target = try! uquery?.getFirstObject()
                 
                 var foundUser: PFUser? = nil
                 
@@ -1092,7 +1059,7 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                                 newRapportFromTo["compatibilityScore"] = 0.0
                                 newRapportFromTo.acl?.setWriteAccess(true, for: user!)
                                 newRapportFromTo.acl?.setWriteAccess(true, for: PFUser.current()!)
-
+                                
                                 let newRapportToFrom = PFObject(className: "Rapport")
                                 newRapportToFrom["from"] = user!  // 交换 from/to
                                 newRapportToFrom["to"] = PFUser.current()!
@@ -1102,7 +1069,7 @@ extension FriendViewController: UITableViewDataSource, UITableViewDelegate {
                                 newRapportToFrom["compatibilityScore"] = 0.0
                                 newRapportToFrom.acl?.setWriteAccess(true, for: PFUser.current()!)
                                 newRapportToFrom.acl?.setWriteAccess(true, for: user!)
-
+                                
                                 // 4. 批量保存两条记录（原子操作，避免部分成功）
                                 PFObject.saveAll(inBackground: [newRapportFromTo, newRapportToFrom]) { (success, error) in
                                     if success {
