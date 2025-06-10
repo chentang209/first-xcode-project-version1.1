@@ -162,7 +162,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
-        SessionManager.shared.startMonitoring()
+//        SessionManager.shared.startMonitoring()
         
         UIApplication.shared.applicationIconBadgeNumber = 0
         let pfi = PFInstallation.current()

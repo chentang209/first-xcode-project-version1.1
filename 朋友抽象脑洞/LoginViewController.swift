@@ -19,7 +19,7 @@ class LoginViewController: UIViewController{
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        SessionManager.shared.resetTimer()
+//        SessionManager.shared.resetTimer()
     }
     
     override func viewDidLoad() {

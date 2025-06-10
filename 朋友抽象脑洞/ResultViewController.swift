@@ -77,7 +77,7 @@ class ResultViewController: UIViewController {
         
         playCustomSound()
         
-        SessionManager.shared.resetTimer()
+//        SessionManager.shared.resetTimer()
     }
     
     func playCustomSound() {

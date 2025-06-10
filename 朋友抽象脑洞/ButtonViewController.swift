@@ -40,7 +40,7 @@ class ButtonViewController: UIViewController{
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        SessionManager.shared.resetTimer()
+//        SessionManager.shared.resetTimer()
     }
     
     override func viewDidLoad() {
@@ -212,7 +212,7 @@ class ButtonViewController: UIViewController{
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        SessionManager.shared.resetTimer()
+//        SessionManager.shared.resetTimer()
         
         if (diction.count != 4) {
             let alert = UIAlertController(title: "请点击➕添加问题的4张图片", message: "", preferredStyle: .alert)

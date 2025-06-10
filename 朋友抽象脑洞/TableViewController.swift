@@ -124,7 +124,7 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
         print("did")
         //self.tableView.reloadData()
         appendArray()
-        SessionManager.shared.resetTimer()
+//        SessionManager.shared.resetTimer()
     }
     
     override func viewWillDisappear(_ animated: Bool) {

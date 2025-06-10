@@ -28,11 +28,11 @@ class FriendViewController: UIViewController, tableDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        SessionManager.shared.resetTimer()
+//        SessionManager.shared.resetTimer()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        SessionManager.shared.resetTimer()
+//        SessionManager.shared.resetTimer()
     }
     
     override func viewDidLoad() {
