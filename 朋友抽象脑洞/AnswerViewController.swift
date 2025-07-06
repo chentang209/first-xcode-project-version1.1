@@ -63,10 +63,11 @@ class AnswerViewController: UIViewController {
         
         // 设置按钮的图片显示模式
         [but1, but2, but3, but4].forEach { button in
-            button?.imageView?.contentMode = .scaleAspectFit
+            button?.imageView?.contentMode = .scaleAspectFill  // 使用 scaleAspectFill 填充整个按钮
             button?.contentHorizontalAlignment = .fill
             button?.contentVerticalAlignment = .fill
             button?.imageView?.clipsToBounds = true
+            button?.clipsToBounds = true  // 确保图片不会超出按钮边界
         }
         
         DispatchQueue.global().async { [self] in

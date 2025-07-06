@@ -53,10 +53,11 @@ class ButtonViewController: UIViewController{
         
         // 设置按钮的图片显示模式
         [button, button2, button3, button4].forEach { button in
-            button?.imageView?.contentMode = .scaleAspectFit
+            button?.imageView?.contentMode = .scaleAspectFill  // 更改为 scaleAspectFill 以填充整个按钮
             button?.contentHorizontalAlignment = .fill
             button?.contentVerticalAlignment = .fill
             button?.imageView?.clipsToBounds = true
+            button?.clipsToBounds = true  // 确保图片不会超出按钮边界
         }
         
         let myColor = UIColor.green
