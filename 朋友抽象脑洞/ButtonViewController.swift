@@ -34,13 +34,13 @@ class ButtonViewController: UIViewController{
     var identical: Bool = true
     
     //override func viewWillAppear(_ animated: Bool) {
-      //  super.viewWillAppear(animated)
-        //navigationController?.setNavigationBarHidden(false, animated: animated)
+    //  super.viewWillAppear(animated)
+    //navigationController?.setNavigationBarHidden(false, animated: animated)
     //}
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-//        SessionManager.shared.resetTimer()
+        //        SessionManager.shared.resetTimer()
     }
     
     override func viewDidLoad() {
@@ -80,7 +80,7 @@ class ButtonViewController: UIViewController{
             if diction.count == 4{
                 
                 let alert = UIAlertController(title: "确定用这四张图吗?", message: "", preferredStyle: .alert)
-
+                
                 alert.addAction(UIAlertAction(title: "是", style: .default, handler: { action in
                     
                     self.navigationItem.hidesBackButton = true
@@ -109,10 +109,10 @@ class ButtonViewController: UIViewController{
                     let alert = UIAlertController(title: "请点击你想要更换的图片", message: "", preferredStyle: .alert)
                     
                     alert.addAction(UIAlertAction(title: "好", style: .default, handler: nil))
-                
+                    
                     self.present(alert, animated: true)
                 }))
-            
+                
                 self.present(alert, animated: true)
             }
             
@@ -187,7 +187,7 @@ class ButtonViewController: UIViewController{
                 img = UIImage(data: data!)
                 group.leave()
             }
-           
+            
             group.notify(queue: .main){
                 self.store.updateValue(img, forKey: "self_icon")
                 self.store.updateValue(username as AnyObject, forKey: "self_name")
@@ -199,7 +199,31 @@ class ButtonViewController: UIViewController{
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        SessionManager.shared.resetTimer()
+        
+        if green {
+            
+            if !empty && !identical && (store["op1"] as? String != "") && (store["op2"] as? String != "") && (store["op3"] as? String != "") && (store["op4"] as? String != "") {
+                
+                alertw = UIAlertController(title: "确定用这些选项吗?", message: "", preferredStyle: .alert)
+                
+                alertw.addAction(UIAlertAction(title: "确定", style: .default, handler: { action in
+                    
+                    let alert = UIAlertController(title: "选择一个正确答案", message: "", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "好", style: .default, handler: nil))
+                    self.present(alert, animated: true)
+                    
+                    self.hao = true
+                    
+                }))
+                
+                alertw.addAction(UIAlertAction(title: "再改改", style: .cancel, handler: nil
+                                              ))
+                
+                self.present(alertw, animated: true)
+                
+            }
+            
+        }
         
         if (diction.count != 4) {
             let alert = UIAlertController(title: "请点击➕添加问题的4张图片", message: "", preferredStyle: .alert)
@@ -256,20 +280,20 @@ extension ButtonViewController: UITextFieldDelegate{
                 option1.resignFirstResponder()
                 self.option1.layer.borderWidth = 2.0
                 let alert = UIAlertController(title: "确定是这个答案吗?", message: "", preferredStyle: .alert)
-
+                
                 alert.addAction(UIAlertAction(title: "确定", style: .default, handler: { action in
                     self.correct = textField.text!
                     self.store.updateValue(self.correct as AnyObject, forKey: "correct")
                     self.performSegue(withIdentifier: "showSegue", sender: self)
                 }))
-
+                
                 alert.addAction(UIAlertAction(title: "再改改", style: .cancel, handler: { action in
                     self.option1.layer.borderWidth = 0.0
                     self.option2.layer.borderWidth = 0.0
                     self.option3.layer.borderWidth = 0.0
                     self.option4.layer.borderWidth = 0.0
                 }))
-
+                
                 if presentedViewController == nil {
                     self.present(alert, animated: true, completion: nil)
                 } else {
@@ -359,7 +383,7 @@ extension ButtonViewController: UITextFieldDelegate{
             }
             
             
-        
+            
         }
         
         if textField == option1{
@@ -376,35 +400,12 @@ extension ButtonViewController: UITextFieldDelegate{
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-       
-        if green{
-            
-            if textField.text!.count <= 8{
+        if green {
+            if textField.text!.count <= 8 {
                 self.store.updateValue(option1.text! as AnyObject, forKey: "op1")
                 self.store.updateValue(option2.text! as AnyObject, forKey: "op2")
                 self.store.updateValue(option3.text! as AnyObject, forKey: "op3")
                 self.store.updateValue(option4.text! as AnyObject, forKey: "op4")
-            }
-            
-            if !empty && !identical && (store["op1"] as? String != "") && (store["op2"] as? String != "") && (store["op3"] as? String != "") && (store["op4"] as? String != "") {
-          
-                alertw = UIAlertController(title: "确定用这些选项吗?", message: "", preferredStyle: .alert)
-            
-                alertw.addAction(UIAlertAction(title: "确定", style: .default, handler: { action in
-                   
-                    let alert = UIAlertController(title: "选择一个正确答案", message: "", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "好", style: .default, handler: nil))
-                    self.present(alert, animated: true)
-                    
-                    self.hao = true
-                
-                }))
-            
-                alertw.addAction(UIAlertAction(title: "再改改", style: .cancel, handler: nil
-                ))
-            
-                self.present(alertw, animated: true)
-            
             }
         }
     }
@@ -437,5 +438,3 @@ extension ButtonViewController: UITextFieldDelegate{
     }
     
 }
-
-
