@@ -51,6 +51,14 @@ class ButtonViewController: UIViewController{
         self.option3.isUserInteractionEnabled = false
         self.option4.isUserInteractionEnabled = false
         
+        // 设置按钮的图片显示模式
+        [button, button2, button3, button4].forEach { button in
+            button?.imageView?.contentMode = .scaleAspectFit
+            button?.contentHorizontalAlignment = .fill
+            button?.contentVerticalAlignment = .fill
+            button?.imageView?.clipsToBounds = true
+        }
+        
         let myColor = UIColor.green
         option1.layer.borderColor = myColor.cgColor
         option1.layer.borderWidth = 0.0
@@ -107,40 +115,18 @@ class ButtonViewController: UIViewController{
                 self.present(alert, animated: true)
             }
             
-            switch counter{
-                case 1: print(diction)
-                        button.setImage(diction[1], for: [])
-                        if diction[2] != nil
-                        {button2.setImage(diction[2], for: [])}
-                        if diction[3] != nil
-                        {button3.setImage(diction[3], for: [])}
-                        if diction[4] != nil
-                        {button4.setImage(diction[4], for: [])}
-                case 2: print(diction)
-                        button2.setImage(diction[2], for: [])
-                        if diction[1] != nil
-                        {button.setImage(diction[1], for: [])}
-                        if diction[3] != nil
-                        {button3.setImage(diction[3], for: [])}
-                        if diction[4] != nil
-                        {button4.setImage(diction[4], for: [])}
-                case 3: print(diction)
-                        button3.setImage(diction[3], for: [])
-                        if diction[1] != nil
-                        {button.setImage(diction[1], for: [])}
-                        if diction[2] != nil
-                        {button2.setImage(diction[2], for: [])}
-                        if diction[4] != nil
-                        {button4.setImage(diction[4], for: [])}
-                case 4: print(diction)
-                        button4.setImage(diction[4], for: [])
-                        if diction[1] != nil
-                        {button.setImage(diction[1], for: [])}
-                        if diction[2] != nil
-                        {button2.setImage(diction[2], for: [])}
-                        if diction[3] != nil
-                        {button3.setImage(diction[3], for: [])}
-                default: break
+            // 设置按钮图片，确保图片按比例缩放
+            if let image1 = diction[1]?.withRenderingMode(.alwaysOriginal) {
+                button.setImage(image1, for: .normal)
+            }
+            if let image2 = diction[2]?.withRenderingMode(.alwaysOriginal) {
+                button2.setImage(image2, for: .normal)
+            }
+            if let image3 = diction[3]?.withRenderingMode(.alwaysOriginal) {
+                button3.setImage(image3, for: .normal)
+            }
+            if let image4 = diction[4]?.withRenderingMode(.alwaysOriginal) {
+                button4.setImage(image4, for: .normal)
             }
         }
     }

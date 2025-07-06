@@ -12,7 +12,7 @@ import SwiftGifOrigin
 import AVFoundation
 
 class ResultViewController: UIViewController {
-
+    
     var result = false
     var objectId: String!
     var ratio: Double!
@@ -44,7 +44,7 @@ class ResultViewController: UIViewController {
         yun1.image = UIImage(named: "yun2")
         yun2.image = UIImage(named: "yun2")
         yun3.image = UIImage(named: "yun3")
-
+        
         fanhui.isUserInteractionEnabled = false
         
         if result {
@@ -64,7 +64,7 @@ class ResultViewController: UIViewController {
             text2.textColor = UIColor.red
             let images = createImageArray(total: 5)
             animate(imageView: crowView, images: images)
-        
+            
         }
         
         doStuff()
@@ -77,12 +77,12 @@ class ResultViewController: UIViewController {
         
         playCustomSound()
         
-//        SessionManager.shared.resetTimer()
+        //        SessionManager.shared.resetTimer()
     }
     
     func playCustomSound() {
         var soundURL: URL?
-
+        
         if result {
             guard let url = Bundle.main.url(forResource: "correct", withExtension: "m4a") else {
                 print("无法找到正确音频文件")
@@ -160,7 +160,7 @@ class ResultViewController: UIViewController {
                         } catch {
                             print("保存失败: \(error.localizedDescription)")
                         }
-                                                
+                        
                     }
                     
                     self.ratio = Double(correct) / Double(numq)
@@ -270,47 +270,47 @@ class ResultViewController: UIViewController {
                         
                     }
                     
+                    let query1 = PFQuery(className: "Rapport")
+                    query1.whereKey("from", equalTo: PFUser.current()!)
+                    query1.whereKey("to", equalTo: sender)
+                    
+                    let query2 = PFQuery(className: "Rapport")
+                    query2.whereKey("from", equalTo: sender)
+                    query2.whereKey("to", equalTo: PFUser.current()!)
+                    
+                    let tableQuery = PFQuery.orQuery(withSubqueries: [query1, query2])
+                    
+                    tableQuery.findObjectsInBackground(block: { (objs, err) in
+                        
+                        if objs != nil && objs!.count > 0 && objs?[0] != nil {
+                            // ✅ 新增：将 level 保存到 Rapport 文档
+                            objs?[0]["level"] = level0  // 添加 level 字段
+                            objs?[0]["compatibilityScore"] = h0  // 可选：存储数值型默契度
+                            objs?[0].saveInBackground { (success, error) in
+                                if success {
+                                    print("1. ✅ level 和 compatibilityScore 已保存到服务器")
+                                } else if let error = error {
+                                    print("1. ❌ 保存失败: \(error.localizedDescription)")
+                                }
+                            }
+                        }
+                        
+                        if objs != nil && objs!.count > 1 && objs?[1] != nil {
+                            // ✅ 新增：将 level 保存到 Rapport 文档
+                            objs?[1]["level"] = level0  // 添加 level 字段
+                            objs?[1]["compatibilityScore"] = h0  // 可选：存储数值型默契度
+                            objs?[1].saveInBackground { (success, error) in
+                                if success {
+                                    print("2. ✅ level 和 compatibilityScore 已保存到服务器")
+                                } else if let error = error {
+                                    print("2. ❌ 保存失败: \(error.localizedDescription)")
+                                }
+                            }
+                        }
+                        
+                    })
+                    
                 }
-                
-                let query1 = PFQuery(className: "Rapport")
-                query1.whereKey("from", equalTo: PFUser.current()!)
-                query1.whereKey("to", equalTo: sender)
-                
-                let query2 = PFQuery(className: "Rapport")
-                query2.whereKey("from", equalTo: sender)
-                query2.whereKey("to", equalTo: PFUser.current()!)
-                
-                let tableQuery = PFQuery.orQuery(withSubqueries: [query1, query2])
-                
-                tableQuery.findObjectsInBackground(block: { (objs, err) in
-                    
-                    if objs != nil && objs!.count > 0 && objs?[0] != nil {
-                        // ✅ 新增：将 level 保存到 Rapport 文档
-                        objs?[0]["level"] = level0  // 添加 level 字段
-                        objs?[0]["compatibilityScore"] = h0  // 可选：存储数值型默契度
-                        objs?[0].saveInBackground { (success, error) in
-                            if success {
-                                print("1. ✅ level 和 compatibilityScore 已保存到服务器")
-                            } else if let error = error {
-                                print("1. ❌ 保存失败: \(error.localizedDescription)")
-                            }
-                        }
-                    }
-                    
-                    if objs != nil && objs!.count > 1 && objs?[1] != nil {
-                        // ✅ 新增：将 level 保存到 Rapport 文档
-                        objs?[1]["level"] = level0  // 添加 level 字段
-                        objs?[1]["compatibilityScore"] = h0  // 可选：存储数值型默契度
-                        objs?[1].saveInBackground { (success, error) in
-                            if success {
-                                print("2. ✅ level 和 compatibilityScore 已保存到服务器")
-                            } else if let error = error {
-                                print("2. ❌ 保存失败: \(error.localizedDescription)")
-                            }
-                        }
-                    }
-                    
-                })
                 
                 do {
                     guard let sender = sender as? PFUser else {
@@ -355,7 +355,7 @@ class ResultViewController: UIViewController {
                     }
                     
                 }
-            
+                
             }
             gp.leave()
         }
@@ -372,10 +372,10 @@ class ResultViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         print("prepare")
     }
-            
+    
     func createImageArray(total: Int)  -> [UIImage] {
         var imageArray: [UIImage] = []
-
+        
         //imageArray.append(UIImage(named: "null")!)
         for i in 0..<total {
             let i = "\(i + 1)"

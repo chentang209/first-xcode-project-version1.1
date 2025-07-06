@@ -12,7 +12,7 @@
         <!--ButtonViewController-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController storyboardIdentifier="ButtonViewController" title="ButtonViewController" id="BYZ-38-t0r" customClass="ButtonViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ButtonViewController" title="ButtonViewController" id="BYZ-38-t0r" customClass="ButtonViewController" customModule="朋友抽象脑洞" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -100,7 +100,7 @@
         <!--Friend View Controller-->
         <scene sceneID="lBg-5j-g1N">
             <objects>
-                <viewController storyboardIdentifier="FriendViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="B8J-yc-wE8" customClass="FriendViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="FriendViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="B8J-yc-wE8" customClass="FriendViewController" customModule="朋友抽象脑洞" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="lBM-U0-5ex">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -110,7 +110,7 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="FriendCell" rowHeight="90" id="Xj6-oY-gsq" customClass="FriendCell" customModule="CameraApp" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="FriendCell" rowHeight="90" id="Xj6-oY-gsq" customClass="FriendCell" customModule="朋友抽象脑洞" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="50" width="375" height="90"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Xj6-oY-gsq" id="PBt-jo-Obr">
@@ -165,7 +165,7 @@
         <!--ViewController-->
         <scene sceneID="Ztp-CA-be0">
             <objects>
-                <viewController storyboardIdentifier="AnswerViewController" id="DJC-bb-DiO" userLabel="ViewController" customClass="AnswerViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="AnswerViewController" id="DJC-bb-DiO" userLabel="ViewController" customClass="AnswerViewController" customModule="朋友抽象脑洞" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="mOt-Ei-ocg">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -261,7 +261,7 @@
         <!--ViewController-->
         <scene sceneID="OZ2-Vp-8bR">
             <objects>
-                <viewController storyboardIdentifier="ResultViewController" id="9Lh-zz-4Ii" userLabel="ViewController" customClass="ResultViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ResultViewController" id="9Lh-zz-4Ii" userLabel="ViewController" customClass="ResultViewController" customModule="朋友抽象脑洞" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="AOr-Dp-4yf">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -349,7 +349,7 @@
         <!--ViewController-->
         <scene sceneID="iY0-pN-xid">
             <objects>
-                <viewController storyboardIdentifier="PhotoViewController" id="zeH-1D-FdE" userLabel="ViewController" customClass="PhotoViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="PhotoViewController" id="zeH-1D-FdE" userLabel="ViewController" customClass="PhotoViewController" customModule="朋友抽象脑洞" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="c32-j8-3fK">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -416,7 +416,7 @@
         <!--ViewController-->
         <scene sceneID="e4F-Xq-Dd0">
             <objects>
-                <viewController storyboardIdentifier="ShowViewController" id="Gxg-qE-iDC" userLabel="ViewController" customClass="ShowViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ShowViewController" id="Gxg-qE-iDC" userLabel="ViewController" customClass="ShowViewController" customModule="朋友抽象脑洞" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ryv-Kc-cjy">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -479,7 +479,7 @@
         <!--ViewController-->
         <scene sceneID="hHd-E5-4a0">
             <objects>
-                <viewController storyboardIdentifier="FullPicViewController" id="HJb-1P-nUm" userLabel="ViewController" customClass="FullPicViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="FullPicViewController" id="HJb-1P-nUm" userLabel="ViewController" customClass="FullPicViewController" customModule="朋友抽象脑洞" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="SfH-gi-JeQ">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -513,7 +513,7 @@
         <!--ViewController-->
         <scene sceneID="ItD-4f-jb6">
             <objects>
-                <viewController storyboardIdentifier="TableViewController" id="r88-0t-lLy" userLabel="ViewController" customClass="TableViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="TableViewController" id="r88-0t-lLy" userLabel="ViewController" customClass="TableViewController" customModule="朋友抽象脑洞" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="SGY-KO-Qcr">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -522,7 +522,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="AvatarCell" id="qjK-6f-9ps" customClass="AvatarCell" customModule="CameraApp" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="AvatarCell" id="qjK-6f-9ps" customClass="AvatarCell" customModule="朋友抽象脑洞" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="50" width="375" height="90"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="qjK-6f-9ps" id="iXz-nk-McO">
@@ -594,7 +594,7 @@
         <!--View Controller-->
         <scene sceneID="xaV-Ff-lQH">
             <objects>
-                <viewController storyboardIdentifier="MainViewController" id="OV0-F5-lBC" customClass="ViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MainViewController" id="OV0-F5-lBC" customClass="ViewController" customModule="朋友抽象脑洞" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="9Kw-SQ-zd1">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -630,7 +630,7 @@
         <!--ViewController-->
         <scene sceneID="PPF-dp-stv">
             <objects>
-                <viewController storyboardIdentifier="SearchViewController" id="bFT-sG-dQU" userLabel="ViewController" customClass="SearchViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SearchViewController" id="bFT-sG-dQU" userLabel="ViewController" customClass="SearchViewController" customModule="朋友抽象脑洞" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="X7l-8y-uLm">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -640,7 +640,7 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="IconCell" rowHeight="100" id="ehg-OF-ICn" customClass="IconCell" customModule="CameraApp" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="IconCell" rowHeight="100" id="ehg-OF-ICn" customClass="IconCell" customModule="朋友抽象脑洞" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="50" width="375" height="100"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ehg-OF-ICn" id="JBQ-5g-Noh">
@@ -691,7 +691,7 @@
         <!--ViewController-->
         <scene sceneID="eZk-Zk-0Me">
             <objects>
-                <viewController storyboardIdentifier="LoginViewController" id="6aT-nk-Uiv" userLabel="ViewController" customClass="LoginViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="LoginViewController" id="6aT-nk-Uiv" userLabel="ViewController" customClass="LoginViewController" customModule="朋友抽象脑洞" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Xpr-vd-rFh">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
@@ -787,7 +787,7 @@
         <!--ViewController-->
         <scene sceneID="Hs3-Vd-mdl">
             <objects>
-                <viewController storyboardIdentifier="SignupViewController" id="NKb-GC-VY5" userLabel="ViewController" customClass="SignupViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SignupViewController" id="NKb-GC-VY5" userLabel="ViewController" customClass="SignupViewController" customModule="朋友抽象脑洞" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="KEc-z1-4mh">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -932,11 +932,12 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
+        <segue reference="2cf-uc-ozM"/>
         <segue reference="i1K-PO-Xkt"/>
         <segue reference="gPw-Kh-Rf9"/>
-        <segue reference="msc-TX-eu2"/>
+        <segue reference="6t0-go-yZg"/>
         <segue reference="hYI-hF-d1i"/>
-        <segue reference="ts0-aK-8r9"/>
+        <segue reference="O3q-Eg-Bb5"/>
         <segue reference="30I-uy-PAM"/>
     </inferredMetricsTieBreakers>
     <resources>

@@ -61,36 +61,52 @@ class AnswerViewController: UIViewController {
         opt3.text = dict["op3"] as? String
         opt4.text = dict["op4"] as? String
         
+        // 设置按钮的图片显示模式
+        [but1, but2, but3, but4].forEach { button in
+            button?.imageView?.contentMode = .scaleAspectFit
+            button?.contentHorizontalAlignment = .fill
+            button?.contentVerticalAlignment = .fill
+            button?.imageView?.clipsToBounds = true
+        }
+        
         DispatchQueue.global().async { [self] in
-            guard let fileObject = dict["pic1"]! as? PFFileObject else { return }
-            if let data = self.getFileDataSync(fileObject: fileObject) {
-                let pic1 = UIImage(data: data)
-                DispatchQueue.main.async {
-                    self.but1.setImage(pic1, for: [])
+            // 加载第一张图片
+            if let fileObject = dict["pic1"] as? PFFileObject {
+                if let data = self.getFileDataSync(fileObject: fileObject),
+                   let image = UIImage(data: data)?.withRenderingMode(.alwaysOriginal) {
+                    DispatchQueue.main.async {
+                        self.but1.setImage(image, for: .normal)
+                    }
                 }
             }
             
-            guard let fileObject = dict["pic2"]! as? PFFileObject else { return }
-            if let data = self.getFileDataSync(fileObject: fileObject) {
-                let pic2 = UIImage(data: data)
-                DispatchQueue.main.async {
-                    self.but2.setImage(pic2, for: [])
+            // 加载第二张图片
+            if let fileObject = dict["pic2"] as? PFFileObject {
+                if let data = self.getFileDataSync(fileObject: fileObject),
+                   let image = UIImage(data: data)?.withRenderingMode(.alwaysOriginal) {
+                    DispatchQueue.main.async {
+                        self.but2.setImage(image, for: .normal)
+                    }
                 }
             }
             
-            guard let fileObject = dict["pic3"]! as? PFFileObject else { return }
-            if let data = self.getFileDataSync(fileObject: fileObject) {
-                let pic3 = UIImage(data: data)
-                DispatchQueue.main.async {
-                    self.but3.setImage(pic3, for: [])
+            // 加载第三张图片
+            if let fileObject = dict["pic3"] as? PFFileObject {
+                if let data = self.getFileDataSync(fileObject: fileObject),
+                   let image = UIImage(data: data)?.withRenderingMode(.alwaysOriginal) {
+                    DispatchQueue.main.async {
+                        self.but3.setImage(image, for: .normal)
+                    }
                 }
             }
             
-            guard let fileObject = dict["pic4"]! as? PFFileObject else { return }
-            if let data = self.getFileDataSync(fileObject: fileObject) {
-                let pic4 = UIImage(data: data)
-                DispatchQueue.main.async {
-                    self.but4.setImage(pic4, for: [])
+            // 加载第四张图片
+            if let fileObject = dict["pic4"] as? PFFileObject {
+                if let data = self.getFileDataSync(fileObject: fileObject),
+                   let image = UIImage(data: data)?.withRenderingMode(.alwaysOriginal) {
+                    DispatchQueue.main.async {
+                        self.but4.setImage(image, for: .normal)
+                    }
                 }
             }
         }
@@ -186,18 +202,52 @@ extension AnswerViewController: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         
         textField.resignFirstResponder()
+        
+        // 重置所有文本框的边框
+        [opt1, opt2, opt3, opt4].forEach { 
+            $0?.layer.borderWidth = 0.0
+            $0?.layer.borderColor = UIColor.green.cgColor
+        }
+        
+        // 设置当前选中的文本框边框
         textField.layer.borderWidth = 2.0
+        textField.layer.borderColor = UIColor.blue.cgColor
+        
         let alert = UIAlertController(title: "确定是这个答案吗?", message: "", preferredStyle: .alert)
         
-        alert.addAction(UIAlertAction(title: "确定", style: .default, handler: { action in
+        alert.addAction(UIAlertAction(title: "确定", style: .default, handler: { [weak self] action in
+            guard let self = self else { return }
             
-            if textField.text == self.dict["correct"] as! String {
-                self.result = true
-            } else {
-                self.result = false
+            // 判断答案是否正确
+            let isCorrect = textField.text == self.dict["correct"] as? String
+            self.result = isCorrect
+            
+            // 高亮显示正确答案
+            let correctAnswer = self.dict["correct"] as? String ?? ""
+            if self.opt1.text == correctAnswer {
+                self.opt1.layer.borderWidth = 3.0
+                self.opt1.layer.borderColor = UIColor.green.cgColor
+            } else if self.opt2.text == correctAnswer {
+                self.opt2.layer.borderWidth = 3.0
+                self.opt2.layer.borderColor = UIColor.green.cgColor
+            } else if self.opt3.text == correctAnswer {
+                self.opt3.layer.borderWidth = 3.0
+                self.opt3.layer.borderColor = UIColor.green.cgColor
+            } else if self.opt4.text == correctAnswer {
+                self.opt4.layer.borderWidth = 3.0
+                self.opt4.layer.borderColor = UIColor.green.cgColor
             }
             
-            self.performSegue(withIdentifier: "resultSegue", sender: self)
+            // 如果回答错误，将用户选择的选项标记为红色
+            if !isCorrect {
+                textField.layer.borderColor = UIColor.red.cgColor
+            }
+            
+            // 延迟跳转，让用户看到正确答案
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self.performSegue(withIdentifier: "resultSegue", sender: self)
+            }
+            
         }))
         
         alert.addAction(UIAlertAction(title: "再改改", style: .cancel, handler: { action in
