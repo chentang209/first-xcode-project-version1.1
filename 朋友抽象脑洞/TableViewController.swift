@@ -82,12 +82,14 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
         
         let search = UIBarButtonItem(title: "🔍好友", style: .plain, target: self, action: #selector(searchTapped))
         let logout = UIBarButtonItem(title: "登出", style: .plain, target: self, action: #selector(logoutTapped))
+        let settings = UIBarButtonItem(title: "⚙️", style: .plain, target: self, action: #selector(settingsTapped))
         
-        navigationItem.rightBarButtonItems = [logout, add, search]
+        navigationItem.rightBarButtonItems = [logout, add, search, settings]
         
         search.imageInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: 0, right: -70)
         add.imageInsets = UIEdgeInsets(top: 0.0, left: 35, bottom: 0, right: 25)
         logout.imageInsets = UIEdgeInsets(top: 0.0, left: -55, bottom: 0, right: 0)
+        settings.imageInsets = UIEdgeInsets(top: 0.0, left: -35, bottom: 0, right: 0)
         
         createArray()
         
@@ -240,6 +242,242 @@ class TableViewController: UIViewController, avatarDelegate, friendDelegate, vie
         }
         
         
+    }
+    
+    @objc func settingsTapped(sender: UITapGestureRecognizer) {
+        let alert = UIAlertController(title: "账户设置", message: "请选择要执行的操作", preferredStyle: .actionSheet)
+        
+        // 显示账户信息
+        alert.addAction(UIAlertAction(title: "👤 账户信息", style: .default, handler: { _ in
+            self.showAccountInfo()
+        }))
+        
+        // 删除账户选项
+        alert.addAction(UIAlertAction(title: "🗑️ 删除账户", style: .destructive, handler: { _ in
+            self.showAccountDeletionConfirmation()
+        }))
+        
+        // 关于应用
+        alert.addAction(UIAlertAction(title: "ℹ️ 关于应用", style: .default, handler: { _ in
+            self.showAboutInfo()
+        }))
+        
+        alert.addAction(UIAlertAction(title: "取消", style: .cancel, handler: nil))
+        
+        // 确保当前视图已经加载到视图层次结构中
+        if self.view.window != nil {
+            self.present(alert, animated: true)
+        }
+    }
+    
+    func showAccountInfo() {
+        guard let currentUser = PFUser.current() else {
+            self.showDeletionError("无法获取用户信息")
+            return
+        }
+        
+        let username = currentUser.username ?? "未知"
+        
+        // Use DateFormatter for better iOS compatibility
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .short
+        dateFormatter.locale = Locale(identifier: "zh_CN")
+        
+        let createdAt: String
+        if let createdDate = currentUser.createdAt {
+            createdAt = dateFormatter.string(from: createdDate)
+        } else {
+            createdAt = "未知"
+        }
+        
+        let alert = UIAlertController(
+            title: "账户信息",
+            message: "用户名: \(username)\n创建时间: \(createdAt)",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "确定", style: .default))
+        
+        if self.view.window != nil {
+            self.present(alert, animated: true)
+        }
+    }
+    
+    func showAboutInfo() {
+        let alert = UIAlertController(
+            title: "关于应用",
+            message: "朋友抽象脑洞 v1.1\n\n一个有趣的社交问答游戏，通过图片和问题来测试朋友之间的默契程度。\n\n感谢您的使用！",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "确定", style: .default))
+        
+        if self.view.window != nil {
+            self.present(alert, animated: true)
+        }
+    }
+    
+    func showAccountDeletionConfirmation() {
+        let alert = UIAlertController(
+            title: "⚠️ 删除账户警告",
+            message: "删除账户是不可逆操作，将永久删除您的所有数据，包括：\n• 个人信息\n• 好友关系\n• 游戏记录\n• 所有相关数据\n\n此操作无法撤销！",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "我确定要删除", style: .destructive, handler: { _ in
+            self.showDataDeletionPreview()
+        }))
+        
+        alert.addAction(UIAlertAction(title: "取消", style: .cancel, handler: nil))
+        
+        if self.view.window != nil {
+            self.present(alert, animated: true)
+        }
+    }
+    
+    func showDataDeletionPreview() {
+        guard let currentUser = PFUser.current() else {
+            self.showDeletionError("无法获取用户信息")
+            return
+        }
+        
+        let alert = UIAlertController(
+            title: "数据删除预览",
+            message: "即将删除以下数据：\n• 用户账户：\(currentUser.username ?? "未知")\n• 所有好友关系\n• 所有游戏记录\n• 设备安装信息\n• 用户头像文件\n\n确认继续吗？",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "继续删除", style: .destructive, handler: { _ in
+            self.showFinalConfirmation()
+        }))
+        
+        alert.addAction(UIAlertAction(title: "取消", style: .cancel, handler: nil))
+        
+        if self.view.window != nil {
+            self.present(alert, animated: true)
+        }
+    }
+    
+    func showFinalConfirmation() {
+        let alert = UIAlertController(
+            title: "最后确认",
+            message: "请输入您的用户名以确认删除账户：",
+            preferredStyle: .alert
+        )
+        
+        alert.addTextField { textField in
+            textField.placeholder = "输入用户名"
+            textField.autocapitalizationType = .none
+            textField.autocorrectionType = .no
+        }
+        
+        alert.addAction(UIAlertAction(title: "删除账户", style: .destructive, handler: { _ in
+            if let textField = alert.textFields?.first,
+               let enteredUsername = textField.text?.trimmingCharacters(in: .whitespacesAndNewlines),
+               let currentUser = PFUser.current(),
+               let currentUsername = currentUser.username {
+                
+                if enteredUsername == currentUsername {
+                    self.performAccountDeletion()
+                } else {
+                    self.showUsernameMismatchError()
+                }
+            } else {
+                self.showUsernameMismatchError()
+            }
+        }))
+        
+        alert.addAction(UIAlertAction(title: "取消", style: .cancel, handler: nil))
+        
+        if self.view.window != nil {
+            self.present(alert, animated: true)
+        }
+    }
+    
+    func showUsernameMismatchError() {
+        let alert = UIAlertController(
+            title: "用户名不匹配",
+            message: "输入的用户名与当前账户不匹配，请重新输入正确的用户名。",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "重试", style: .default, handler: { _ in
+            self.showFinalConfirmation()
+        }))
+        
+        alert.addAction(UIAlertAction(title: "取消", style: .cancel, handler: nil))
+        
+        if self.view.window != nil {
+            self.present(alert, animated: true)
+        }
+    }
+    
+    func performAccountDeletion() {
+        guard let currentUser = PFUser.current() else {
+            self.showDeletionError("无法获取当前用户信息")
+            return
+        }
+        
+        // 显示删除进度
+        let progressAlert = UIAlertController(
+            title: "正在删除账户",
+            message: "请稍候，正在删除您的账户数据...",
+            preferredStyle: .alert
+        )
+        
+        if self.view.window != nil {
+            self.present(progressAlert, animated: true)
+        }
+        
+        // 使用云函数进行完整的账户删除
+        PFCloud.callFunction(inBackground: "deleteUserAccount", withParameters: [:]) { [weak self] (result, error) in
+            DispatchQueue.main.async {
+                progressAlert.dismiss(animated: true) {
+                    if let error = error {
+                        self?.showDeletionError("删除账户失败: \(error.localizedDescription)")
+                    } else if let result = result as? [String: Any], let success = result["success"] as? Bool, success {
+                        self?.showDeletionSuccess()
+                    } else {
+                        self?.showDeletionError("删除账户时发生未知错误")
+                    }
+                }
+            }
+        }
+    }
+    
+
+    
+    func showDeletionSuccess() {
+        let alert = UIAlertController(
+            title: "账户删除成功",
+            message: "您的账户已成功删除。感谢您使用我们的应用！",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "确定", style: .default, handler: { _ in
+            // 清除本地用户数据并跳转到登录页面
+            PFUser.logOut()
+            self.performSegue(withIdentifier: "logoutSegue", sender: self)
+        }))
+        
+        if self.view.window != nil {
+            self.present(alert, animated: true)
+        }
+    }
+    
+    func showDeletionError(_ message: String) {
+        let alert = UIAlertController(
+            title: "删除失败",
+            message: message,
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "确定", style: .default, handler: nil))
+        
+        if self.view.window != nil {
+            self.present(alert, animated: true)
+        }
     }
     
     

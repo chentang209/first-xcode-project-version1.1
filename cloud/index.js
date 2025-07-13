@@ -495,3 +495,130 @@ Parse.Cloud.define("questionFeedback", async (request) => {
         throw new Parse.Error(500, "推送发送失败: " + e.message);
     }
 });
+
+// Cloud Function: deleteUserAccount
+Parse.Cloud.define("deleteUserAccount", async (request) => {
+    try {
+        const currentUser = request.user;
+        if (!currentUser) {
+            throw new Parse.Error(401, "用户未登录或会话无效");
+        }
+
+        console.log(`开始删除用户账户: ${currentUser.get("username")} (${currentUser.id})`);
+
+        // 1. 删除用户发送的好友请求
+        const sentRequestsQuery = new Parse.Query("JoinTable");
+        sentRequestsQuery.equalTo("from", currentUser);
+        const sentRequests = await sentRequestsQuery.find({ useMasterKey: true });
+        if (sentRequests.length > 0) {
+            await Parse.Object.destroyAll(sentRequests, { useMasterKey: true });
+            console.log(`删除了 ${sentRequests.length} 条发送的好友请求`);
+        }
+
+        // 2. 删除用户接收的好友请求
+        const receivedRequestsQuery = new Parse.Query("JoinTable");
+        receivedRequestsQuery.equalTo("to", currentUser);
+        const receivedRequests = await receivedRequestsQuery.find({ useMasterKey: true });
+        if (receivedRequests.length > 0) {
+            await Parse.Object.destroyAll(receivedRequests, { useMasterKey: true });
+            console.log(`删除了 ${receivedRequests.length} 条接收的好友请求`);
+        }
+
+        // 3. 从其他用户的好友列表中移除当前用户
+        const usersWithCurrentUserQuery = new Parse.Query(Parse.User);
+        usersWithCurrentUserQuery.equalTo("friendList", currentUser);
+        const usersWithCurrentUser = await usersWithCurrentUserQuery.find({ useMasterKey: true });
+        
+        for (const user of usersWithCurrentUser) {
+            const friendList = user.get("friendList") || [];
+            const updatedFriendList = friendList.filter(friend => friend.id !== currentUser.id);
+            user.set("friendList", updatedFriendList);
+            await user.save(null, { useMasterKey: true });
+        }
+        console.log(`从 ${usersWithCurrentUser.length} 个用户的好友列表中移除了当前用户`);
+
+        // 4. 删除用户相关的游戏记录（Rapport表）
+        const rapportQuery = new Parse.Query("Rapport");
+        rapportQuery._orQuery([
+            new Parse.Query("Rapport").equalTo("from", currentUser),
+            new Parse.Query("Rapport").equalTo("to", currentUser)
+        ]);
+        const rapportRecords = await rapportQuery.find({ useMasterKey: true });
+        if (rapportRecords.length > 0) {
+            await Parse.Object.destroyAll(rapportRecords, { useMasterKey: true });
+            console.log(`删除了 ${rapportRecords.length} 条游戏记录`);
+        }
+
+        // 5. 删除用户的设备安装记录
+        const installationQuery = new Parse.Query(Parse.Installation);
+        installationQuery.equalTo("user", currentUser);
+        const installations = await installationQuery.find({ useMasterKey: true });
+        if (installations.length > 0) {
+            await Parse.Object.destroyAll(installations, { useMasterKey: true });
+            console.log(`删除了 ${installations.length} 条设备安装记录`);
+        }
+
+        // 6. 删除用户头像文件（如果存在）
+        const avatar = currentUser.get("avatar");
+        if (avatar && avatar instanceof Parse.File) {
+            try {
+                await avatar.destroy({ useMasterKey: true });
+                console.log("删除了用户头像文件");
+            } catch (error) {
+                console.log("删除头像文件失败:", error.message);
+            }
+        }
+
+        // 7. 最后删除用户账户
+        await currentUser.destroy({ useMasterKey: true });
+        console.log("用户账户删除成功");
+
+        return {
+            success: true,
+            message: "账户删除成功",
+            deletedRecords: {
+                sentRequests: sentRequests.length,
+                receivedRequests: receivedRequests.length,
+                friendListUpdates: usersWithCurrentUser.length,
+                rapportRecords: rapportRecords.length,
+                installations: installations.length
+            }
+        };
+
+    } catch (error) {
+        console.error("删除用户账户失败:", error);
+        throw new Parse.Error(500, `删除账户失败: ${error.message}`);
+    }
+});
+
+Parse.Cloud.define("testAPNs", async (request) => {
+  const { deviceToken } = request.params; // 传入目标设备的 deviceToken
+
+  if (!deviceToken) {
+    throw new Error("Missing deviceToken parameter");
+  }
+
+  // 使用 Parse.Push 发送推送
+  const pushQuery = new Parse.Query(Parse.Installation);
+  pushQuery.equalTo("deviceToken", deviceToken);
+
+  try {
+    await Parse.Push.send({
+      where: pushQuery,
+      data: {
+        aps: {
+          alert: "APNs 测试推送！",
+          sound: "default",
+          badge: 1,
+        },
+      },
+    }, {
+      useMasterKey: true, // 使用 MasterKey 绕过权限限制
+    });
+
+    return { success: true, message: "推送已发送" };
+  } catch (error) {
+    console.error("APNs 推送失败:", error);
+    return { success: false, error: error.message };
+  }
+});
